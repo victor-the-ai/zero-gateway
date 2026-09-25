@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from free_llm.registry import RegistryManager
+from zerogateway.registry import RegistryManager
 
 def test_registry_loads_successfully():
     reg = RegistryManager(auto_sync=False)

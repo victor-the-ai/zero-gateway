@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "sdk" / "python"))
 
-from free_llm.registry import RegistryManager
+from zerogateway.registry import RegistryManager
 
 load_dotenv()
 
@@ -47,7 +47,6 @@ def run_health_checks():
             }
             continue
 
-        # Choose the first model to probe
         test_model = p.models[0].id if p.models else "default"
         headers = {"Content-Type": "application/json"}
         headers.update(p.api.default_headers)

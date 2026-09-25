@@ -10,9 +10,9 @@ from .registry import RegistryManager
 # Load any .env in cwd or parents
 load_dotenv()
 
-logger = logging.getLogger("free_llm.router")
+logger = logging.getLogger("zerogateway.router")
 
-class FreeLLMRouter:
+class ZeroGatewayRouter:
     """
     Intelligent router and cascading failover engine for free LLM providers.
     """
@@ -98,7 +98,6 @@ class FreeLLMRouter:
         def sort_key(item: Tuple[ProviderSpec, str]):
             provider, _ = item
             throttled = 1 if self._is_throttled(provider.id) else 0
-            # Priority: permanent_free with key (tier 0) -> zero_auth (tier 1)
             tier_order = 1 if provider.tier.auth_type == "none" else 0
             return (throttled, tier_order)
 
@@ -160,12 +159,13 @@ class FreeLLMRouter:
 
                     resp.raise_for_status()
                     data = resp.json()
-                    data["_free_llm_meta"] = {
+                    data["_zerogateway_meta"] = {
                         "provider_id": provider.id,
                         "provider_name": provider.name,
                         "model_served": model_id,
                         "base_url": provider.api.base_url
                     }
+                    data["_free_llm_meta"] = data["_zerogateway_meta"]
                     self._record_stat(provider.id, "success")
                     return data
 
@@ -235,3 +235,5 @@ class FreeLLMRouter:
                 continue
 
         raise RuntimeError(f"All free providers failed for stream: {last_error}")
+
+FreeLLMRouter = ZeroGatewayRouter

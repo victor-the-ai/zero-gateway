@@ -4,10 +4,10 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
 from ..models import ChatCompletionRequest
-from ..router import FreeLLMRouter
+from ..router import ZeroGatewayRouter
 
 app = FastAPI(
-    title="Free LLM Proxy Gateway",
+    title="Zerogateway Proxy",
     description="Drop-in OpenAI-compatible proxy with automatic fallback across free LLM providers",
     version="0.1.0"
 )
@@ -20,12 +20,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-router_instance = FreeLLMRouter()
+router_instance = ZeroGatewayRouter()
 
 @app.get("/")
 def index():
     return {
-        "service": "Free LLM Proxy Gateway",
+        "service": "Zerogateway Proxy",
         "status": "online",
         "documentation": "/docs",
         "active_providers": [p.name for p in router_instance.get_configured_providers()]
@@ -70,7 +70,7 @@ def list_models():
             "id": a,
             "object": "model",
             "created": 1700000000,
-            "owned_by": "free-llm-router",
+            "owned_by": "zerogateway",
             "permission": [],
             "root": a,
             "parent": None
@@ -112,5 +112,5 @@ async def chat_completions(request: ChatCompletionRequest):
 
 def start_server(host: str = "0.0.0.0", port: int = 8080):
     import uvicorn
-    print(f"🚀 Starting Free LLM Proxy at http://{host}:{port}...")
+    print(f"🚀 Starting Zerogateway Proxy at http://{host}:{port}...")
     uvicorn.run(app, host=host, port=port)

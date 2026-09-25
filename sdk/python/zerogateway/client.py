@@ -1,9 +1,9 @@
 from typing import List, Dict, Any, Optional, Union
 from .models import ChatCompletionRequest, ChatMessage
-from .router import FreeLLMRouter
+from .router import ZeroGatewayRouter
 
 class ChatCompletions:
-    def __init__(self, router: FreeLLMRouter):
+    def __init__(self, router: ZeroGatewayRouter):
         self.router = router
 
     def create(
@@ -36,7 +36,7 @@ class ChatCompletions:
         return ChatCompletionResponse(data)
 
 class Chat:
-    def __init__(self, router: FreeLLMRouter):
+    def __init__(self, router: ZeroGatewayRouter):
         self.completions = ChatCompletions(router)
 
 class ChatCompletionResponse:
@@ -44,8 +44,9 @@ class ChatCompletionResponse:
         self._raw = raw
         self.id = raw.get("id")
         self.model = raw.get("model")
-        self.provider_id = raw.get("_free_llm_meta", {}).get("provider_id")
-        self.provider_name = raw.get("_free_llm_meta", {}).get("provider_name")
+        meta = raw.get("_zerogateway_meta") or raw.get("_free_llm_meta") or {}
+        self.provider_id = meta.get("provider_id")
+        self.provider_name = meta.get("provider_name")
         self.choices = [
             Choice(c) for c in raw.get("choices", [])
         ]
@@ -73,13 +74,13 @@ class Message:
         self.role = role
         self.content = content
 
-class FreeLLMClient:
+class ZeroGatewayClient:
     """
-    OpenAI-compatible client for querying free LLM providers.
+    OpenAI-compatible client for querying free LLM providers via Zerogateway.
     """
 
     def __init__(self, registry_url: Optional[str] = None):
-        self.router = FreeLLMRouter()
+        self.router = ZeroGatewayRouter()
         self.chat = Chat(self.router)
 
     def list_models(self) -> List[Dict[str, Any]]:
@@ -87,3 +88,5 @@ class FreeLLMClient:
 
     def list_active_providers(self) -> List[str]:
         return [p.name for p in self.router.get_configured_providers()]
+
+FreeLLMClient = ZeroGatewayClient

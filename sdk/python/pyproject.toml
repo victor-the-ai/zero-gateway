@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "free-llm"
+name = "zerogateway"
 version = "0.1.0"
 description = "A unified router and client for free LLM providers with automatic rate-limit failover"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
 authors = [
-    {name = "Free LLM Hub Contributors"}
+    {name = "Zerogateway Contributors"}
 ]
 dependencies = [
     "httpx>=0.25.0",
@@ -30,8 +30,8 @@ dev = [
 ]
 
 [project.scripts]
-free-llm = "free_llm.cli:main"
+zerogateway = "zerogateway.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["free_llm*"]
+include = ["zerogateway*"]

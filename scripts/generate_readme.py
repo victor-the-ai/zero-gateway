@@ -37,17 +37,17 @@ def generate_readme():
 
     table_content = "\n".join(table_rows)
 
-    readme_content = f"""# Free LLM Access Hub & Router 🚀
+    readme_content = f"""# Zerogateway 🚀
 
-[![Registry Validation](https://github.com/free-llm-hub/free-llm-hub/actions/workflows/validate_registry.yml/badge.svg)](https://github.com/free-llm-hub/free-llm-hub/actions)
-[![Canary Health Probes](https://github.com/free-llm-hub/free-llm-hub/actions/workflows/health_check.yml/badge.svg)](https://github.com/free-llm-hub/free-llm-hub/actions)
+[![Registry Validation](https://github.com/zerogateway/zero-gateway/actions/workflows/validate_registry.yml/badge.svg)](https://github.com/zerogateway/zero-gateway/actions)
+[![Canary Health Probes](https://github.com/zerogateway/zero-gateway/actions/workflows/health_check.yml/badge.svg)](https://github.com/zerogateway/zero-gateway/actions)
 [![Total Free Providers](https://img.shields.io/badge/Free%20Providers-{stats['total_providers']}-brightgreen.svg)](#tracked-free-providers)
 [![Total Models](https://img.shields.io/badge/Models%20Available-{stats['total_models']}-blue.svg)](#tracked-free-providers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A centralized Git-synced registry and unified client router for **100% free API access to Large Language Models**.
 
-Never let rate limits (HTTP 429) or expired promotional offers disrupt your workflow again. **Free LLM Hub** tracks active free tiers, aggregates quotas, and cascades across multiple free providers behind a single OpenAI-compatible endpoint.
+Never let rate limits (HTTP 429) or expired promotional offers disrupt your workflow again. **Zerogateway** tracks active free tiers, aggregates quotas, and cascades across multiple free providers behind a single OpenAI-compatible endpoint.
 
 ---
 
@@ -77,8 +77,8 @@ Currently indexing **{stats['total_providers']} providers** and **{stats['total_
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/free-llm-hub.git
-cd free-llm-hub
+git clone https://github.com/zerogateway/zero-gateway.git
+cd zero-gateway
 
 # Set up virtual environment
 python3 -m venv .venv
@@ -113,9 +113,9 @@ GITHUB_TOKEN="ghp_..."
 ### Mode A: Python SDK
 
 ```python
-from free_llm import FreeLLMClient
+from zerogateway import ZeroGatewayClient
 
-client = FreeLLMClient()
+client = ZeroGatewayClient()
 
 # Request using model alias or exact model ID
 # The router automatically selects an active free provider with available quota
@@ -133,12 +133,12 @@ print(f"Served by: {{response.provider_id}}")
 Launch the OpenAI-compatible proxy server:
 
 ```bash
-free-llm serve --port 8080
+zerogateway serve --port 8080
 ```
 
 Now point your favorite tool to `http://localhost:8080/v1`:
 - **Base URL**: `http://localhost:8080/v1`
-- **API Key**: `free-llm`
+- **API Key**: `zerogateway`
 - **Model**: `llama-3.3-70b` (or `gpt-4o-mini`, `gemini-flash`, `auto`)
 
 If Groq hits a rate limit, the proxy automatically falls back to Cerebras, SambaNova, or OpenRouter with zero interruption to your editing session!

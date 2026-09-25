@@ -1,11 +1,11 @@
 import pytest
 import httpx
 from unittest.mock import MagicMock, patch
-from free_llm.router import FreeLLMRouter
-from free_llm.models import ChatCompletionRequest, ChatMessage, ProviderSpec
+from zerogateway.router import ZeroGatewayRouter
+from zerogateway.models import ChatCompletionRequest, ChatMessage, ProviderSpec
 
 def test_resolve_candidates():
-    router = FreeLLMRouter()
+    router = ZeroGatewayRouter()
     # Mock configured keys for groq and cerebras
     with patch.object(router, "is_provider_configured", return_value=True):
         candidates = router.resolve_candidates("llama-3.3-70b")
@@ -14,7 +14,7 @@ def test_resolve_candidates():
         assert "groq" in provider_ids or "cerebras" in provider_ids
 
 def test_cascade_failover_on_429():
-    router = FreeLLMRouter()
+    router = ZeroGatewayRouter()
     
     # Fake two candidate providers
     mock_p1 = router.registry.get_provider("groq")
@@ -49,7 +49,7 @@ def test_cascade_failover_on_429():
 
             # Verification
             assert result["choices"][0]["message"]["content"] == "Hello from Cerebras!"
-            assert result["_free_llm_meta"]["provider_id"] == "cerebras"
+            assert result["_zerogateway_meta"]["provider_id"] == "cerebras"
             # Verify groq was marked throttled
             assert router._is_throttled("groq") is True
             assert router._is_throttled("cerebras") is False

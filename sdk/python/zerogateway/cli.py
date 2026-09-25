@@ -6,23 +6,23 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from .registry import RegistryManager
-from .router import FreeLLMRouter
-from .client import FreeLLMClient
+from .router import ZeroGatewayRouter
+from .client import ZeroGatewayClient
 
 console = Console()
 
 @click.group()
 def main():
-    """Free LLM Hub CLI - Manage and route across free LLM providers."""
+    """Zerogateway CLI - Manage and route across free LLM providers."""
     pass
 
 @main.command()
 def status():
     """Display the status of tracked free providers and configured keys."""
-    router = FreeLLMRouter()
+    router = ZeroGatewayRouter()
     configured = {p.id for p in router.get_configured_providers()}
 
-    table = Table(title="🌟 Tracked Free LLM Providers", show_header=True, header_style="bold cyan")
+    table = Table(title="🌟 Tracked Free LLM Providers (Zerogateway)", show_header=True, header_style="bold cyan")
     table.add_column("Provider", style="bold")
     table.add_column("Access Type")
     table.add_column("Card Needed?")
@@ -66,11 +66,11 @@ def sync():
 def serve(host: str, port: int):
     """Start the OpenAI-compatible local proxy server."""
     from .proxy.server import start_server
-    console.print(Panel(f"[bold green]Starting Free LLM Proxy Gateway[/bold green]\n\n"
+    console.print(Panel(f"[bold green]Starting Zerogateway Proxy[/bold green]\n\n"
                         f"Listening on: [cyan]http://{host}:{port}/v1[/cyan]\n"
                         f"OpenAI Base URL: [cyan]http://localhost:{port}/v1[/cyan]\n"
-                        f"API Key: [dim]free-llm (or any string)[/dim]",
-                        title="Free LLM Gateway", expand=False))
+                        f"API Key: [dim]zerogateway (or any string)[/dim]",
+                        title="Zerogateway", expand=False))
     start_server(host=host, port=port)
 
 @main.command()
@@ -79,7 +79,7 @@ def serve(host: str, port: int):
 def test(model: str, prompt: str):
     """Send a test query to verify free provider routing."""
     console.print(f"[cyan]Testing model '{model}' with prompt: '{prompt}'...[/cyan]")
-    client = FreeLLMClient()
+    client = ZeroGatewayClient()
 
     start = time.time()
     try:

@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
-from free_llm.proxy.server import app
+from zerogateway.proxy.server import app
 
 client = TestClient(app)
 
@@ -32,13 +32,13 @@ def test_proxy_chat_completions():
             "message": {"role": "assistant", "content": "Proxy routing response"},
             "finish_reason": "stop"
         }],
-        "_free_llm_meta": {
+        "_zerogateway_meta": {
             "provider_id": "groq",
             "provider_name": "GroqCloud"
         }
     }
 
-    with patch("free_llm.proxy.server.router_instance.execute_chat_completion", return_value=mock_response):
+    with patch("zerogateway.proxy.server.router_instance.execute_chat_completion", return_value=mock_response):
         payload = {
             "model": "llama-3.3-70b",
             "messages": [{"role": "user", "content": "Hello via proxy!"}]

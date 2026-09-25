@@ -6,18 +6,18 @@ from pathlib import Path
 from typing import Optional, Dict, List, Any
 from .models import RegistryData, ProviderSpec
 
-DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/free-llm-hub/free-llm-hub/main/registry/index.json"
-CACHE_DIR = Path(os.path.expanduser(os.getenv("FREE_LLM_CACHE_DIR", "~/.cache/free_llm")))
+DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/zerogateway/zero-gateway/main/registry/index.json"
+CACHE_DIR = Path(os.path.expanduser(os.getenv("ZERO_GATEWAY_CACHE_DIR", os.getenv("FREE_LLM_CACHE_DIR", "~/.cache/zerogateway"))))
 CACHE_FILE = CACHE_DIR / "registry_index.json"
 CACHE_TTL_SECONDS = 86400  # 24 hours
 
 class RegistryManager:
     """
-    Manages fetching, caching, and loading of the Free LLM Registry.
+    Manages fetching, caching, and loading of the Zerogateway Registry.
     """
 
     def __init__(self, registry_url: Optional[str] = None, auto_sync: bool = True):
-        self.registry_url = registry_url or os.getenv("FREE_LLM_REGISTRY_URL", DEFAULT_REGISTRY_URL)
+        self.registry_url = registry_url or os.getenv("ZERO_GATEWAY_REGISTRY_URL", os.getenv("FREE_LLM_REGISTRY_URL", DEFAULT_REGISTRY_URL))
         self.auto_sync = auto_sync
         self._data: Optional[RegistryData] = None
         self.load()
@@ -26,7 +26,7 @@ class RegistryManager:
         """
         Loads the registry data following this priority:
         1. Remote sync if force_remote or cache expired
-        2. Local cache file (~/.cache/free_llm/registry_index.json)
+        2. Local cache file (~/.cache/zerogateway/registry_index.json)
         3. Bundled registry file in the repository (fallback)
         """
         if force_remote or (self.auto_sync and self._is_cache_stale()):
@@ -54,7 +54,7 @@ class RegistryManager:
             self._data = RegistryData(**content)
             return self._data
 
-        raise RuntimeError("Failed to load Free LLM Registry: No cache or bundled registry found.")
+        raise RuntimeError("Failed to load Zerogateway Registry: No cache or bundled registry found.")
 
     def sync(self) -> None:
         """
