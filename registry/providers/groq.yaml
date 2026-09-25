@@ -1,0 +1,54 @@
+id: groq
+name: GroqCloud
+website: https://groq.com
+console_url: https://console.groq.com/keys
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github, google, email]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "High speed LPU inference with generous free tier RPM/TPM limits on open source models."
+
+api:
+  format: openai_compatible
+  base_url: https://api.groq.com/openai/v1
+  env_var: GROQ_API_KEY
+  default_headers: {}
+
+limits:
+  requests_per_minute: 30
+  requests_per_day: 14400
+  tokens_per_minute: 6000
+  tokens_per_day: 500000
+  concurrency: 5
+
+models:
+  - id: llama-3.3-70b-versatile
+    display_name: LLaMA 3.3 70B Versatile
+    aliases: [llama-3.3-70b, fast-smart, general]
+    context_window: 128000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: llama-3.1-8b-instant
+    display_name: LLaMA 3.1 8B Instant
+    aliases: [llama-3.1-8b, ultra-fast, small]
+    context_window: 128000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: mixtral-8x7b-32768
+    display_name: Mixtral 8x7B Instruct
+    aliases: [mixtral-8x7b]
+    context_window: 32768
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true

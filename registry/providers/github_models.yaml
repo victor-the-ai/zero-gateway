@@ -1,0 +1,46 @@
+id: github_models
+name: GitHub Models (Marketplace Free Tier)
+website: https://github.com/marketplace/models
+console_url: https://github.com/settings/tokens
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "Free playground & API for GitHub users using standard GitHub Personal Access Tokens (PAT). Offers GPT-4o, Claude 3.5 Sonnet, and Llama 3.3."
+
+api:
+  format: openai_compatible
+  base_url: https://models.inference.ai.azure.com
+  env_var: GITHUB_TOKEN
+  default_headers: {}
+
+limits:
+  requests_per_minute: 15
+  requests_per_day: 150
+  tokens_per_minute: 8000
+  tokens_per_day: null
+  concurrency: 1
+
+models:
+  - id: gpt-4o-mini
+    display_name: OpenAI GPT-4o Mini
+    aliases: [gpt-4o-mini, fast-smart]
+    context_window: 128000
+    supports_tools: true
+    supports_vision: true
+    supports_streaming: true
+
+  - id: Meta-Llama-3.3-70B-Instruct
+    display_name: Meta LLaMA 3.3 70B Instruct
+    aliases: [llama-3.3-70b, general]
+    context_window: 64000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true

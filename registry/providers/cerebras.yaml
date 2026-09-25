@@ -1,0 +1,46 @@
+id: cerebras
+name: Cerebras Inference
+website: https://cerebras.ai
+console_url: https://cloud.cerebras.ai/platform/
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github, google, email]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "World's fastest LLaMA inference speeds (1000+ tokens/sec) on CS-3 wafer-scale engine."
+
+api:
+  format: openai_compatible
+  base_url: https://api.cerebras.ai/v1
+  env_var: CEREBRAS_API_KEY
+  default_headers: {}
+
+limits:
+  requests_per_minute: 30
+  requests_per_day: 14400
+  tokens_per_minute: 60000
+  tokens_per_day: 1000000
+  concurrency: 5
+
+models:
+  - id: llama3.3-70b
+    display_name: LLaMA 3.3 70B
+    aliases: [llama-3.3-70b, fast-smart]
+    context_window: 8192
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: llama3.1-8b
+    display_name: LLaMA 3.1 8B
+    aliases: [llama-3.1-8b, ultra-fast]
+    context_window: 8192
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true

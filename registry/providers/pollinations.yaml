@@ -1,0 +1,46 @@
+id: pollinations
+name: Pollinations AI
+website: https://pollinations.ai
+console_url: https://pollinations.ai
+status: active
+
+tier:
+  type: no_key_required
+  requires_credit_card: false
+  auth_type: none
+  signup_methods: []
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "Public free inference without requiring any API key or registration. Great for instant zero-config testing."
+
+api:
+  format: openai_compatible
+  base_url: https://text.pollinations.ai/openai
+  env_var: null
+  default_headers: {}
+
+limits:
+  requests_per_minute: 10
+  requests_per_day: 500
+  tokens_per_minute: null
+  tokens_per_day: null
+  concurrency: 1
+
+models:
+  - id: openai
+    display_name: GPT-4o Mini (Pollinations)
+    aliases: [gpt-4o-mini, fast-smart, zero-auth]
+    context_window: 32000
+    supports_tools: false
+    supports_vision: false
+    supports_streaming: true
+
+  - id: mistral
+    display_name: Mistral Nemo (Pollinations)
+    aliases: [mistral, zero-auth]
+    context_window: 32000
+    supports_tools: false
+    supports_vision: false
+    supports_streaming: true

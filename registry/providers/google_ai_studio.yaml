@@ -1,0 +1,54 @@
+id: google_ai_studio
+name: Google AI Studio (Gemini Free Tier)
+website: https://aistudio.google.com
+console_url: https://aistudio.google.com/app/apikey
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [google]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "Official free tier from Google with massive context windows (1M-2M tokens) and multimodal support."
+
+api:
+  format: openai_compatible
+  base_url: https://generativelanguage.googleapis.com/v1beta/openai/
+  env_var: GEMINI_API_KEY
+  default_headers: {}
+
+limits:
+  requests_per_minute: 15
+  requests_per_day: 1500
+  tokens_per_minute: 1000000
+  tokens_per_day: null
+  concurrency: 5
+
+models:
+  - id: gemini-2.5-flash
+    display_name: Gemini 2.5 Flash
+    aliases: [gemini-flash, fast-smart, multimodal]
+    context_window: 1048576
+    supports_tools: true
+    supports_vision: true
+    supports_streaming: true
+
+  - id: gemini-2.0-flash
+    display_name: Gemini 2.0 Flash
+    aliases: [gemini-flash-2, fast-agent]
+    context_window: 1048576
+    supports_tools: true
+    supports_vision: true
+    supports_streaming: true
+
+  - id: gemini-1.5-flash
+    display_name: Gemini 1.5 Flash
+    aliases: [gemini-1.5-flash]
+    context_window: 1048576
+    supports_tools: true
+    supports_vision: true
+    supports_streaming: true

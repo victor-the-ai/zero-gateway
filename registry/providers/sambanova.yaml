@@ -1,0 +1,54 @@
+id: sambanova
+name: SambaNova Cloud
+website: https://sambanova.ai
+console_url: https://cloud.sambanova.ai/apis
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github, google, email]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "High speed SN40L chip inference. Supports full 70B and 405B models plus DeepSeek."
+
+api:
+  format: openai_compatible
+  base_url: https://api.sambanova.ai/v1
+  env_var: SAMBANOVA_API_KEY
+  default_headers: {}
+
+limits:
+  requests_per_minute: 20
+  requests_per_day: 1000
+  tokens_per_minute: 10000
+  tokens_per_day: 200000
+  concurrency: 2
+
+models:
+  - id: Meta-Llama-3.3-70B-Instruct
+    display_name: LLaMA 3.3 70B Instruct
+    aliases: [llama-3.3-70b, fast-smart]
+    context_window: 8192
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: Meta-Llama-3.1-8B-Instruct
+    display_name: LLaMA 3.1 8B Instruct
+    aliases: [llama-3.1-8b, ultra-fast]
+    context_window: 8192
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: Meta-Llama-3.1-405B-Instruct
+    display_name: LLaMA 3.1 405B Instruct
+    aliases: [llama-3.1-405b, frontier]
+    context_window: 8192
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true

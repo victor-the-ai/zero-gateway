@@ -1,0 +1,37 @@
+name: Validate Registry
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ./sdk/python
+          pip install pytest pytest-asyncio
+
+      - name: Validate YAML Providers and Recompile Index
+        run: |
+          python scripts/compile_registry.py
+
+      - name: Verify Index is Up-to-date
+        run: |
+          git diff --exit-code registry/index.json || (echo "registry/index.json is outdated! Run python scripts/compile_registry.py and commit." && exit 1)
+
+      - name: Run Test Suite
+        run: |
+          pytest tests/ -v

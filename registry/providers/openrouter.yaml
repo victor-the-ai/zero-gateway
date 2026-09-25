@@ -1,0 +1,56 @@
+id: openrouter
+name: OpenRouter Free Models
+website: https://openrouter.ai
+console_url: https://openrouter.ai/settings/keys
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github, google, email]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "Aggregator hosting multiple models with ':free' suffix. Completely free to use with zero balance."
+
+api:
+  format: openai_compatible
+  base_url: https://openrouter.ai/api/v1
+  env_var: OPENROUTER_API_KEY
+  default_headers:
+    HTTP-Referer: https://github.com/free-llm-hub
+    X-Title: Free LLM Hub
+
+limits:
+  requests_per_minute: 20
+  requests_per_day: 200
+  tokens_per_minute: null
+  tokens_per_day: null
+  concurrency: 2
+
+models:
+  - id: meta-llama/llama-3.3-70b-instruct:free
+    display_name: LLaMA 3.3 70B (Free Tier)
+    aliases: [llama-3.3-70b, fast-smart]
+    context_window: 131072
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: deepseek/deepseek-r1:free
+    display_name: DeepSeek R1 (Free Tier)
+    aliases: [deepseek-r1, reasoning]
+    context_window: 64000
+    supports_tools: false
+    supports_vision: false
+    supports_streaming: true
+
+  - id: mistralai/mistral-7b-instruct:free
+    display_name: Mistral 7B Instruct (Free Tier)
+    aliases: [mistral-7b, small]
+    context_window: 32768
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true

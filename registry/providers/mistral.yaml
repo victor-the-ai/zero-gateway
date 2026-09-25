@@ -1,0 +1,54 @@
+id: mistral
+name: Mistral AI (Free Experimentation Tier)
+website: https://mistral.ai
+console_url: https://console.mistral.ai/api-keys/
+status: active
+
+tier:
+  type: permanent_free
+  requires_credit_card: false
+  auth_type: api_key
+  signup_methods: [github, google, email]
+  promo_details:
+    expires_at: null
+    initial_credits_usd: 0
+    promo_code: null
+    notes: "Official free tier for testing and experimentation across open and frontier Mistral models."
+
+api:
+  format: openai_compatible
+  base_url: https://api.mistral.ai/v1
+  env_var: MISTRAL_API_KEY
+  default_headers: {}
+
+limits:
+  requests_per_minute: 60
+  requests_per_day: null
+  tokens_per_minute: 500000
+  tokens_per_day: null
+  concurrency: 2
+
+models:
+  - id: codestral-latest
+    display_name: Codestral
+    aliases: [codestral, code, fast-code]
+    context_window: 256000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: mistral-small-latest
+    display_name: Mistral Small
+    aliases: [mistral-small, fast-smart]
+    context_window: 128000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
+
+  - id: open-mistral-nemo
+    display_name: Mistral NeMo
+    aliases: [mistral-nemo, small]
+    context_window: 128000
+    supports_tools: true
+    supports_vision: false
+    supports_streaming: true
