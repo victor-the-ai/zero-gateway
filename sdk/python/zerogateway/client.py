@@ -79,8 +79,18 @@ class ZeroGatewayClient:
     OpenAI-compatible client for querying free LLM providers via Zerogateway.
     """
 
-    def __init__(self, registry_url: Optional[str] = None):
-        self.router = ZeroGatewayRouter()
+    def __init__(
+        self,
+        registry_url: Optional[str] = None,
+        enable_key_rotation: Optional[bool] = None,
+        enable_provider_rotation: Optional[bool] = None,
+        api_keys: Optional[Dict[str, List[str]]] = None,
+    ):
+        self.router = ZeroGatewayRouter(
+            enable_key_rotation=enable_key_rotation,
+            enable_provider_rotation=enable_provider_rotation,
+            api_keys=api_keys,
+        )
         self.chat = Chat(self.router)
 
     def list_models(self) -> List[Dict[str, Any]]:
@@ -90,3 +100,4 @@ class ZeroGatewayClient:
         return [p.name for p in self.router.get_configured_providers()]
 
 FreeLLMClient = ZeroGatewayClient
+
