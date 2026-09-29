@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Optional, Dict, List, Any
 from .models import RegistryData, ProviderSpec
 
-DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/zerogateway/zero-gateway/main/registry/index.json"
+DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/victor-the-ai/zero-gateway/main/registry/index.json"
 CACHE_DIR = Path(os.path.expanduser(os.getenv("ZERO_GATEWAY_CACHE_DIR", os.getenv("FREE_LLM_CACHE_DIR", "~/.cache/zerogateway"))))
 CACHE_FILE = CACHE_DIR / "registry_index.json"
 CACHE_TTL_SECONDS = 86400  # 24 hours
@@ -27,7 +27,8 @@ class RegistryManager:
         Loads the registry data following this priority:
         1. Remote sync if force_remote or cache expired
         2. Local cache file (~/.cache/zerogateway/registry_index.json)
-        3. Bundled registry file in the repository (fallback)
+        3. Bundled package registry (data/index.json)
+        4. Bundled registry file in the repository (fallback)
         """
         if force_remote or (self.auto_sync and self._is_cache_stale()):
             try:
@@ -46,6 +47,17 @@ class RegistryManager:
             except Exception:
                 pass
 
+        # Fallback to package bundled data (for pip-installed package)
+        bundled_index = Path(__file__).resolve().parent / "data" / "index.json"
+        if bundled_index.exists():
+            try:
+                with open(bundled_index, "r", encoding="utf-8") as f:
+                    content = json.load(f)
+                self._data = RegistryData(**content)
+                return self._data
+            except Exception:
+                pass
+
         # Fallback to local repo file if running inside clone
         repo_index = Path(__file__).resolve().parent.parent.parent.parent / "registry" / "index.json"
         if repo_index.exists():
@@ -55,6 +67,7 @@ class RegistryManager:
             return self._data
 
         raise RuntimeError("Failed to load Zerogateway Registry: No cache or bundled registry found.")
+
 
     def sync(self) -> None:
         """

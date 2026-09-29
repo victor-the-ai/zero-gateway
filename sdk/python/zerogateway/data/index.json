@@ -1,0 +1,1112 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-09-25T08:44:39.237590+00:00",
+  "stats": {
+    "total_providers": 8,
+    "total_models": 21,
+    "unique_aliases": 25
+  },
+  "alias_routing_table": {
+    "llama-3.3-70b": [
+      {
+        "provider_id": "cerebras",
+        "model_id": "llama3.3-70b",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 60000,
+          "tokens_per_day": 1000000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "github_models",
+        "model_id": "Meta-Llama-3.3-70B-Instruct",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 150,
+          "tokens_per_minute": 8000,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.3-70b-versatile",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "openrouter",
+        "model_id": "meta-llama/llama-3.3-70b-instruct:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      },
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.3-70B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ],
+    "fast-smart": [
+      {
+        "provider_id": "cerebras",
+        "model_id": "llama3.3-70b",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 60000,
+          "tokens_per_day": 1000000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "github_models",
+        "model_id": "gpt-4o-mini",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 150,
+          "tokens_per_minute": 8000,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-2.5-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.3-70b-versatile",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "mistral",
+        "model_id": "mistral-small-latest",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      },
+      {
+        "provider_id": "openrouter",
+        "model_id": "meta-llama/llama-3.3-70b-instruct:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      },
+      {
+        "provider_id": "pollinations",
+        "model_id": "openai",
+        "limits": {
+          "requests_per_minute": 10,
+          "requests_per_day": 500,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.3-70B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ],
+    "llama-3.1-8b": [
+      {
+        "provider_id": "cerebras",
+        "model_id": "llama3.1-8b",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 60000,
+          "tokens_per_day": 1000000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.1-8b-instant",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.1-8B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ],
+    "ultra-fast": [
+      {
+        "provider_id": "cerebras",
+        "model_id": "llama3.1-8b",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 60000,
+          "tokens_per_day": 1000000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.1-8b-instant",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.1-8B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ],
+    "gpt-4o-mini": [
+      {
+        "provider_id": "github_models",
+        "model_id": "gpt-4o-mini",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 150,
+          "tokens_per_minute": 8000,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "pollinations",
+        "model_id": "openai",
+        "limits": {
+          "requests_per_minute": 10,
+          "requests_per_day": 500,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      }
+    ],
+    "general": [
+      {
+        "provider_id": "github_models",
+        "model_id": "Meta-Llama-3.3-70B-Instruct",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 150,
+          "tokens_per_minute": 8000,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.3-70b-versatile",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      }
+    ],
+    "gemini-flash": [
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-2.5-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      }
+    ],
+    "multimodal": [
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-2.5-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      }
+    ],
+    "gemini-flash-2": [
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-2.0-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      }
+    ],
+    "fast-agent": [
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-2.0-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      }
+    ],
+    "gemini-1.5-flash": [
+      {
+        "provider_id": "google_ai_studio",
+        "model_id": "gemini-1.5-flash",
+        "limits": {
+          "requests_per_minute": 15,
+          "requests_per_day": 1500,
+          "tokens_per_minute": 1000000,
+          "tokens_per_day": null,
+          "concurrency": 5
+        }
+      }
+    ],
+    "small": [
+      {
+        "provider_id": "groq",
+        "model_id": "llama-3.1-8b-instant",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      },
+      {
+        "provider_id": "mistral",
+        "model_id": "open-mistral-nemo",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      },
+      {
+        "provider_id": "openrouter",
+        "model_id": "mistralai/mistral-7b-instruct:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "mixtral-8x7b": [
+      {
+        "provider_id": "groq",
+        "model_id": "mixtral-8x7b-32768",
+        "limits": {
+          "requests_per_minute": 30,
+          "requests_per_day": 14400,
+          "tokens_per_minute": 6000,
+          "tokens_per_day": 500000,
+          "concurrency": 5
+        }
+      }
+    ],
+    "codestral": [
+      {
+        "provider_id": "mistral",
+        "model_id": "codestral-latest",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "code": [
+      {
+        "provider_id": "mistral",
+        "model_id": "codestral-latest",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "fast-code": [
+      {
+        "provider_id": "mistral",
+        "model_id": "codestral-latest",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "mistral-small": [
+      {
+        "provider_id": "mistral",
+        "model_id": "mistral-small-latest",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "mistral-nemo": [
+      {
+        "provider_id": "mistral",
+        "model_id": "open-mistral-nemo",
+        "limits": {
+          "requests_per_minute": 60,
+          "requests_per_day": null,
+          "tokens_per_minute": 500000,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "deepseek-r1": [
+      {
+        "provider_id": "openrouter",
+        "model_id": "deepseek/deepseek-r1:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "reasoning": [
+      {
+        "provider_id": "openrouter",
+        "model_id": "deepseek/deepseek-r1:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "mistral-7b": [
+      {
+        "provider_id": "openrouter",
+        "model_id": "mistralai/mistral-7b-instruct:free",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 200,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 2
+        }
+      }
+    ],
+    "zero-auth": [
+      {
+        "provider_id": "pollinations",
+        "model_id": "openai",
+        "limits": {
+          "requests_per_minute": 10,
+          "requests_per_day": 500,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      },
+      {
+        "provider_id": "pollinations",
+        "model_id": "mistral",
+        "limits": {
+          "requests_per_minute": 10,
+          "requests_per_day": 500,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      }
+    ],
+    "mistral": [
+      {
+        "provider_id": "pollinations",
+        "model_id": "mistral",
+        "limits": {
+          "requests_per_minute": 10,
+          "requests_per_day": 500,
+          "tokens_per_minute": null,
+          "tokens_per_day": null,
+          "concurrency": 1
+        }
+      }
+    ],
+    "llama-3.1-405b": [
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.1-405B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ],
+    "frontier": [
+      {
+        "provider_id": "sambanova",
+        "model_id": "Meta-Llama-3.1-405B-Instruct",
+        "limits": {
+          "requests_per_minute": 20,
+          "requests_per_day": 1000,
+          "tokens_per_minute": 10000,
+          "tokens_per_day": 200000,
+          "concurrency": 2
+        }
+      }
+    ]
+  },
+  "providers": [
+    {
+      "id": "cerebras",
+      "name": "Cerebras Inference",
+      "website": "https://cerebras.ai",
+      "console_url": "https://cloud.cerebras.ai/platform/",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github",
+          "google",
+          "email"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "World's fastest LLaMA inference speeds (1000+ tokens/sec) on CS-3 wafer-scale engine."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://api.cerebras.ai/v1",
+        "env_var": "CEREBRAS_API_KEY",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 30,
+        "requests_per_day": 14400,
+        "tokens_per_minute": 60000,
+        "tokens_per_day": 1000000,
+        "concurrency": 5
+      },
+      "models": [
+        {
+          "id": "llama3.3-70b",
+          "display_name": "LLaMA 3.3 70B",
+          "aliases": [
+            "llama-3.3-70b",
+            "fast-smart"
+          ],
+          "context_window": 8192,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "llama3.1-8b",
+          "display_name": "LLaMA 3.1 8B",
+          "aliases": [
+            "llama-3.1-8b",
+            "ultra-fast"
+          ],
+          "context_window": 8192,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "github_models",
+      "name": "GitHub Models (Marketplace Free Tier)",
+      "website": "https://github.com/marketplace/models",
+      "console_url": "https://github.com/settings/tokens",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "Free playground & API for GitHub users using standard GitHub Personal Access Tokens (PAT). Offers GPT-4o, Claude 3.5 Sonnet, and Llama 3.3."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://models.inference.ai.azure.com",
+        "env_var": "GITHUB_TOKEN",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 15,
+        "requests_per_day": 150,
+        "tokens_per_minute": 8000,
+        "tokens_per_day": null,
+        "concurrency": 1
+      },
+      "models": [
+        {
+          "id": "gpt-4o-mini",
+          "display_name": "OpenAI GPT-4o Mini",
+          "aliases": [
+            "gpt-4o-mini",
+            "fast-smart"
+          ],
+          "context_window": 128000,
+          "supports_tools": true,
+          "supports_vision": true,
+          "supports_streaming": true
+        },
+        {
+          "id": "Meta-Llama-3.3-70B-Instruct",
+          "display_name": "Meta LLaMA 3.3 70B Instruct",
+          "aliases": [
+            "llama-3.3-70b",
+            "general"
+          ],
+          "context_window": 64000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "google_ai_studio",
+      "name": "Google AI Studio (Gemini Free Tier)",
+      "website": "https://aistudio.google.com",
+      "console_url": "https://aistudio.google.com/app/apikey",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "google"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "Official free tier from Google with massive context windows (1M-2M tokens) and multimodal support."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        "env_var": "GEMINI_API_KEY",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 15,
+        "requests_per_day": 1500,
+        "tokens_per_minute": 1000000,
+        "tokens_per_day": null,
+        "concurrency": 5
+      },
+      "models": [
+        {
+          "id": "gemini-2.5-flash",
+          "display_name": "Gemini 2.5 Flash",
+          "aliases": [
+            "gemini-flash",
+            "fast-smart",
+            "multimodal"
+          ],
+          "context_window": 1048576,
+          "supports_tools": true,
+          "supports_vision": true,
+          "supports_streaming": true
+        },
+        {
+          "id": "gemini-2.0-flash",
+          "display_name": "Gemini 2.0 Flash",
+          "aliases": [
+            "gemini-flash-2",
+            "fast-agent"
+          ],
+          "context_window": 1048576,
+          "supports_tools": true,
+          "supports_vision": true,
+          "supports_streaming": true
+        },
+        {
+          "id": "gemini-1.5-flash",
+          "display_name": "Gemini 1.5 Flash",
+          "aliases": [
+            "gemini-1.5-flash"
+          ],
+          "context_window": 1048576,
+          "supports_tools": true,
+          "supports_vision": true,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "groq",
+      "name": "GroqCloud",
+      "website": "https://groq.com",
+      "console_url": "https://console.groq.com/keys",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github",
+          "google",
+          "email"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "High speed LPU inference with generous free tier RPM/TPM limits on open source models."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://api.groq.com/openai/v1",
+        "env_var": "GROQ_API_KEY",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 30,
+        "requests_per_day": 14400,
+        "tokens_per_minute": 6000,
+        "tokens_per_day": 500000,
+        "concurrency": 5
+      },
+      "models": [
+        {
+          "id": "llama-3.3-70b-versatile",
+          "display_name": "LLaMA 3.3 70B Versatile",
+          "aliases": [
+            "llama-3.3-70b",
+            "fast-smart",
+            "general"
+          ],
+          "context_window": 128000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "llama-3.1-8b-instant",
+          "display_name": "LLaMA 3.1 8B Instant",
+          "aliases": [
+            "llama-3.1-8b",
+            "ultra-fast",
+            "small"
+          ],
+          "context_window": 128000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "mixtral-8x7b-32768",
+          "display_name": "Mixtral 8x7B Instruct",
+          "aliases": [
+            "mixtral-8x7b"
+          ],
+          "context_window": 32768,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "mistral",
+      "name": "Mistral AI (Free Experimentation Tier)",
+      "website": "https://mistral.ai",
+      "console_url": "https://console.mistral.ai/api-keys/",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github",
+          "google",
+          "email"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "Official free tier for testing and experimentation across open and frontier Mistral models."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://api.mistral.ai/v1",
+        "env_var": "MISTRAL_API_KEY",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 60,
+        "requests_per_day": null,
+        "tokens_per_minute": 500000,
+        "tokens_per_day": null,
+        "concurrency": 2
+      },
+      "models": [
+        {
+          "id": "codestral-latest",
+          "display_name": "Codestral",
+          "aliases": [
+            "codestral",
+            "code",
+            "fast-code"
+          ],
+          "context_window": 256000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "mistral-small-latest",
+          "display_name": "Mistral Small",
+          "aliases": [
+            "mistral-small",
+            "fast-smart"
+          ],
+          "context_window": 128000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "open-mistral-nemo",
+          "display_name": "Mistral NeMo",
+          "aliases": [
+            "mistral-nemo",
+            "small"
+          ],
+          "context_window": 128000,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "openrouter",
+      "name": "OpenRouter Free Models",
+      "website": "https://openrouter.ai",
+      "console_url": "https://openrouter.ai/settings/keys",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github",
+          "google",
+          "email"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "Aggregator hosting multiple models with ':free' suffix. Completely free to use with zero balance."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://openrouter.ai/api/v1",
+        "env_var": "OPENROUTER_API_KEY",
+        "default_headers": {
+          "HTTP-Referer": "https://github.com/free-llm-hub",
+          "X-Title": "Free LLM Hub"
+        }
+      },
+      "limits": {
+        "requests_per_minute": 20,
+        "requests_per_day": 200,
+        "tokens_per_minute": null,
+        "tokens_per_day": null,
+        "concurrency": 2
+      },
+      "models": [
+        {
+          "id": "meta-llama/llama-3.3-70b-instruct:free",
+          "display_name": "LLaMA 3.3 70B (Free Tier)",
+          "aliases": [
+            "llama-3.3-70b",
+            "fast-smart"
+          ],
+          "context_window": 131072,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "deepseek/deepseek-r1:free",
+          "display_name": "DeepSeek R1 (Free Tier)",
+          "aliases": [
+            "deepseek-r1",
+            "reasoning"
+          ],
+          "context_window": 64000,
+          "supports_tools": false,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "mistralai/mistral-7b-instruct:free",
+          "display_name": "Mistral 7B Instruct (Free Tier)",
+          "aliases": [
+            "mistral-7b",
+            "small"
+          ],
+          "context_window": 32768,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "pollinations",
+      "name": "Pollinations AI",
+      "website": "https://pollinations.ai",
+      "console_url": "https://pollinations.ai",
+      "status": "active",
+      "tier": {
+        "type": "no_key_required",
+        "requires_credit_card": false,
+        "auth_type": "none",
+        "signup_methods": [],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "Public free inference without requiring any API key or registration. Great for instant zero-config testing."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://text.pollinations.ai/openai",
+        "env_var": null,
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 10,
+        "requests_per_day": 500,
+        "tokens_per_minute": null,
+        "tokens_per_day": null,
+        "concurrency": 1
+      },
+      "models": [
+        {
+          "id": "openai",
+          "display_name": "GPT-4o Mini (Pollinations)",
+          "aliases": [
+            "gpt-4o-mini",
+            "fast-smart",
+            "zero-auth"
+          ],
+          "context_window": 32000,
+          "supports_tools": false,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "mistral",
+          "display_name": "Mistral Nemo (Pollinations)",
+          "aliases": [
+            "mistral",
+            "zero-auth"
+          ],
+          "context_window": 32000,
+          "supports_tools": false,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    },
+    {
+      "id": "sambanova",
+      "name": "SambaNova Cloud",
+      "website": "https://sambanova.ai",
+      "console_url": "https://cloud.sambanova.ai/apis",
+      "status": "active",
+      "tier": {
+        "type": "permanent_free",
+        "requires_credit_card": false,
+        "auth_type": "api_key",
+        "signup_methods": [
+          "github",
+          "google",
+          "email"
+        ],
+        "promo_details": {
+          "expires_at": null,
+          "initial_credits_usd": 0.0,
+          "promo_code": null,
+          "notes": "High speed SN40L chip inference. Supports full 70B and 405B models plus DeepSeek."
+        }
+      },
+      "api": {
+        "format": "openai_compatible",
+        "base_url": "https://api.sambanova.ai/v1",
+        "env_var": "SAMBANOVA_API_KEY",
+        "default_headers": {}
+      },
+      "limits": {
+        "requests_per_minute": 20,
+        "requests_per_day": 1000,
+        "tokens_per_minute": 10000,
+        "tokens_per_day": 200000,
+        "concurrency": 2
+      },
+      "models": [
+        {
+          "id": "Meta-Llama-3.3-70B-Instruct",
+          "display_name": "LLaMA 3.3 70B Instruct",
+          "aliases": [
+            "llama-3.3-70b",
+            "fast-smart"
+          ],
+          "context_window": 8192,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "Meta-Llama-3.1-8B-Instruct",
+          "display_name": "LLaMA 3.1 8B Instruct",
+          "aliases": [
+            "llama-3.1-8b",
+            "ultra-fast"
+          ],
+          "context_window": 8192,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        },
+        {
+          "id": "Meta-Llama-3.1-405B-Instruct",
+          "display_name": "LLaMA 3.1 405B Instruct",
+          "aliases": [
+            "llama-3.1-405b",
+            "frontier"
+          ],
+          "context_window": 8192,
+          "supports_tools": true,
+          "supports_vision": false,
+          "supports_streaming": true
+        }
+      ]
+    }
+  ]
+}
