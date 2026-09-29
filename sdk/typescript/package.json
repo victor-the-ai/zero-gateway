@@ -1,0 +1,69 @@
+{
+  "name": "zerogateway",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Unified router and client for 100% free LLM providers with automatic rate-limit failover and key swapping",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "bin": {
+    "zerogateway": "./dist/cli.js"
+  },
+
+  "files": [
+    "dist",
+    "data",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/index.test.ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "llm",
+    "ai",
+    "gateway",
+    "router",
+    "failover",
+    "free-ai",
+    "openai",
+    "groq",
+    "cerebras",
+    "gemini",
+    "mistral",
+    "openrouter"
+  ],
+  "author": "Zerogateway Contributors",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victor-the-ai/zero-gateway.git"
+  },
+  "bugs": {
+    "url": "https://github.com/victor-the-ai/zero-gateway/issues"
+  },
+  "homepage": "https://github.com/victor-the-ai/zero-gateway#readme",
+  "dependencies": {
+    "commander": "^13.1.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsup": "^8.3.6",
+    "typescript": "^5.7.3"
+  }
+}

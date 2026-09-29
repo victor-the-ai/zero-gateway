@@ -44,3 +44,7 @@ htmlcov/
 
 # Cache
 .cache/
+
+# Node
+node_modules/
+
