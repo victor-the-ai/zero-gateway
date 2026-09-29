@@ -1,0 +1,224 @@
+# Zerogateway — Comprehensive Technical Specification & Reference
+
+> Complete technical documentation for Zerogateway: architecture, API specifications, router mechanics, failover algorithms, key rotation protocols, and client SDKs.
+
+## 1. Executive Summary
+
+Zerogateway is an open-source, resilient AI API gateway that aggregates free-tier Large Language Model (LLM) endpoints from multiple independent providers. By implementing transparent failover, rate-limit cascading, multi-key rotation, and reset-window estimation, Zerogateway eliminates the single point of failure and intermittent 429 rate limit errors inherent in free AI services.
+
+- **Primary Repository**: https://github.com/victor-the-ai/zero-gateway
+- **Official Documentation**: https://victor-the-ai.github.io/zero-gateway/
+- **PyPI Distribution**: https://pypi.org/project/zerogateway/
+- **npm Distribution**: https://www.npmjs.com/package/zerogateway
+- **License**: MIT License
+
+---
+
+## 2. Architecture & Design Principles
+
+### 2.1 The Two-Tier Rotation Architecture
+
+Zerogateway separates resilience into two orthogonal dimensions:
+
+1. **Intra-Provider Key Rotation**:
+   - Multiple API keys can be specified for any single provider (e.g. `GEMINI_API_KEY="key1,key2,key3"`).
+   - If Key 1 triggers an HTTP 429 (quota exhausted) or HTTP 401/403 (expired key), the router extracts the exact quota reset delay, flags Key 1 as throttled until that specific timestamp, and immediately attempts Key 2.
+   - Key rotation is controlled via `enable_key_rotation` (default: `False` for conservative behavior, toggled via environment variable `ENABLE_KEY_ROTATION=true` or client parameter).
+
+2. **Inter-Provider Model Cascading**:
+   - Standard model aliases map to candidate provider pools. For instance, the alias `llama-3.3-70b` maps candidates:
+     1. Cerebras (`llama3.3-70b`, 30 RPM)
+     2. GroqCloud (`llama-3.3-70b-versatile`, 30 RPM)
+     3. SambaNova (`Meta-Llama-3.3-70B-Instruct`, 20 RPM)
+     4. OpenRouter (`meta-llama/llama-3.3-70b-instruct:free`, 20 RPM)
+   - If all keys for Provider 1 are exhausted or fail, the router automatically cascades to Provider 2 without aborting the client connection.
+   - Provider cascading is controlled via `enable_provider_rotation` (default: `True`).
+
+### 2.2 Reset Window Extraction Algorithm
+
+Zerogateway dynamically extracts the exact reset window from provider responses using the following precedence:
+
+1. **Standard `Retry-After` HTTP Header**:
+   - Parses integer or floating-point second offsets.
+2. **Rate Limit Reset Headers**:
+   - `x-ratelimit-reset`, `x-ratelimit-reset-requests`, `x-ratelimit-reset-tokens`.
+   - Distinguishes between delta seconds (e.g. `60`) and epoch timestamps (e.g. `1727618400`), computing `epoch - current_time`.
+3. **Provider-Specific Error Payload Inspection**:
+   - Google AI Studio / Gemini: Inspects JSON error response `error.details[].retryDelay` (e.g. `"6.345s"`).
+   - Regex fallback for textual error messages: `"retry after ([0-9.]+)s"`.
+4. **Default Cooldown Fallback**:
+   - If no reset information is exposed by the provider, defaults to 60.0 seconds.
+
+---
+
+## 3. Supported Free Providers & Registry
+
+Zerogateway maintains a Git-synced JSON/YAML registry updated via daily automated canary probes.
+
+### 3.1 Active Providers
+
+1. **Cerebras Inference** (`cerebras`):
+   - Authentication: Free API key (`CEREBRAS_API_KEY`).
+   - Free Rate Limits: 30 RPM, 14,400 RPD, 60,000 TPM.
+   - Base URL: `https://api.cerebras.ai/v1`.
+   - Models: `llama3.3-70b`, `llama3.1-8b`.
+
+2. **Google AI Studio** (`google_ai_studio`):
+   - Authentication: Free API key (`GEMINI_API_KEY`).
+   - Free Rate Limits: 15 RPM, 1,500 RPD, 1,000,000 TPM.
+   - Base URL: `https://generativelanguage.googleapis.com/v1beta/openai`.
+   - Models: `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-pro`.
+
+3. **GroqCloud** (`groq`):
+   - Authentication: Free API key (`GROQ_API_KEY`).
+   - Free Rate Limits: 30 RPM, 14,400 RPD, 6,000 TPM.
+   - Base URL: `https://api.groq.com/openai/v1`.
+   - Models: `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`.
+
+4. **SambaNova Cloud** (`sambanova`):
+   - Authentication: Free API key (`SAMBANOVA_API_KEY`).
+   - Free Rate Limits: 20 RPM, 1,000 RPD.
+   - Base URL: `https://api.sambanova.ai/v1`.
+   - Models: `Meta-Llama-3.3-70B-Instruct`, `Meta-Llama-3.1-8B-Instruct`, `Meta-Llama-3.1-405B-Instruct`.
+
+5. **Mistral AI** (`mistral`):
+   - Authentication: Free API key (`MISTRAL_API_KEY`).
+   - Free Rate Limits: 60 RPM, 1,000,000 TPM.
+   - Base URL: `https://api.mistral.ai/v1`.
+   - Models: `codestral-latest`, `mistral-small-latest`, `open-mistral-nemo`.
+
+6. **OpenRouter Free Models** (`openrouter`):
+   - Authentication: Free API key (`OPENROUTER_API_KEY`).
+   - Free Rate Limits: 20 RPM, 200 RPD.
+   - Base URL: `https://openrouter.ai/api/v1`.
+   - Models: `deepseek/deepseek-r1:free`, `meta-llama/llama-3.3-70b-instruct:free`, `mistralai/mistral-7b-instruct:free`.
+
+7. **GitHub Models** (`github_models`):
+   - Authentication: GitHub Personal Access Token (`GITHUB_TOKEN`).
+   - Free Rate Limits: 15 RPM, 150 RPD.
+   - Base URL: `https://models.inference.ai.azure.com`.
+   - Models: `gpt-4o-mini`, `Meta-Llama-3.3-70B-Instruct`, `Mistral-large-2407`.
+
+8. **Pollinations AI** (`pollinations`):
+   - Authentication: None (Zero-Auth, no signup required).
+   - Free Rate Limits: 10 RPM, 500 RPD.
+   - Base URL: `https://text.pollinations.ai/openai`.
+   - Models: `openai`, `mistral`.
+
+---
+
+## 4. Universal Model Aliases
+
+When requesting completions, clients can specify either provider-native IDs or universal aliases:
+
+- `auto`: Dynamically selects the best available free provider.
+- `llama-3.3-70b`: Routes to Cerebras, Groq, SambaNova, or OpenRouter.
+- `gemini-flash`: Routes to Google AI Studio Gemini 2.0/1.5 Flash.
+- `gpt-4o-mini`: Routes to GitHub Models GPT-4o mini.
+- `fast-smart`: Evaluates fastest responsive models across active providers.
+
+---
+
+## 5. Software Interfaces
+
+### 5.1 Python SDK (`zerogateway`)
+
+```python
+from zerogateway import ZeroGatewayClient
+
+client = ZeroGatewayClient(
+    enable_key_rotation=True,
+    enable_provider_rotation=True
+)
+
+# Non-streaming
+res = client.chat.completions.create(
+    model="llama-3.3-70b",
+    messages=[{"role": "user", "content": "Explain quantum computing in 10 words."}],
+    stream=False
+)
+print("Content:", res.choices[0].message.content)
+print("Served by Provider:", res._zerogateway_meta["provider_name"])
+
+# Streaming (SSE)
+stream = client.chat.completions.create(
+    model="gemini-flash",
+    messages=[{"role": "user", "content": "Write a Python generator."}],
+    stream=True
+)
+for chunk in stream:
+    print(chunk, end="", flush=True)
+```
+
+### 5.2 TypeScript / Node.js SDK (`zerogateway`)
+
+```typescript
+import { ZeroGatewayClient } from "zerogateway";
+
+const client = new ZeroGatewayClient({
+  enableKeyRotation: true,
+  enableProviderRotation: true,
+  apiKeys: {
+    gemini: ["AIzaSyKey1...", "AIzaSyKey2..."],
+    groq: ["gsk_..."]
+  }
+});
+
+const response = await client.chat.completions.create({
+  model: "llama-3.3-70b",
+  messages: [{ role: "user", content: "Write a debounce function in TypeScript." }],
+  stream: true
+});
+
+for await (const chunk of response) {
+  process.stdout.write(chunk);
+}
+```
+
+### 5.3 In-Browser Standalone Bundle
+
+```html
+<script src="https://victor-the-ai.github.io/zero-gateway/zerogateway.browser.global.js"></script>
+<script>
+  const client = new window.ZeroGateway.ZeroGatewayClient();
+  client.chat.completions.create({
+    model: "openai",
+    messages: [{ role: "user", content: "Hello directly from the browser!" }],
+    stream: true
+  }).then(async (stream) => {
+    for await (const chunk of stream) {
+      console.log(chunk);
+    }
+  });
+</script>
+```
+
+### 5.4 OpenAI-Compatible Proxy Server
+
+```bash
+zerogateway serve --host 0.0.0.0 --port 8080
+```
+
+Endpoints:
+- `POST /v1/chat/completions`: Standard OpenAI Chat Completions (JSON & SSE stream).
+- `GET /v1/models`: List currently available models and aliases.
+- `GET /health`: Healthcheck probe.
+- `GET /status`: Live provider cooldown and rotation metrics.
+- `GET /robots.txt`, `GET /sitemap.xml`, `GET /llms.txt`: Machine-readable metadata.
+
+Header Overrides:
+- `X-Enable-Key-Rotation: true|false`
+- `X-Enable-Provider-Rotation: true|false`
+
+---
+
+## 6. Frequently Asked Questions (FAQ)
+
+### Q: Why does Zerogateway exist?
+**A**: Free AI tiers from Google AI Studio, Groq, Cerebras, and Mistral offer generous quotas, but hitting a single HTTP 429 rate limit breaks continuous developer workflows in coding assistants like Cursor and Cline. Zerogateway aggregates and pools these free quotas so developers can code uninterrupted at zero dollar cost.
+
+### Q: Does Zerogateway store or inspect prompts?
+**A**: No. Zerogateway is completely stateless and open-source. Prompts are passed directly to upstream provider endpoints via HTTPS TLS encryption without intermediate proxy storage.
+
+### Q: How does Zerogateway compare to OpenRouter or LiteLLM?
+**A**: While OpenRouter is a commercial hosted proxy and LiteLLM is a multi-provider billing wrapper, Zerogateway is exclusively engineered for free-tier resilience. It includes automated canary health verification to detect provider policy changes and specialized rate-limit reset window parsers for free tiers.

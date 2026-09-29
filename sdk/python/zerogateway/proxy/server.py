@@ -61,6 +61,60 @@ def landing_html():
         return HTMLResponse(content=landing_file.read_text(encoding="utf-8"))
     raise HTTPException(status_code=404, detail="Landing page not found")
 
+@app.get("/robots.txt")
+def robots_txt():
+    f = Path(__file__).resolve().parent.parent / "data" / "robots.txt"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "robots.txt"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="text/plain; charset=utf-8")
+    raise HTTPException(status_code=404, detail="robots.txt not found")
+
+@app.get("/sitemap.xml")
+def sitemap_xml():
+    f = Path(__file__).resolve().parent.parent / "data" / "sitemap.xml"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "sitemap.xml"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="application/xml; charset=utf-8")
+    raise HTTPException(status_code=404, detail="sitemap.xml not found")
+
+@app.get("/llms.txt")
+def llms_txt():
+    f = Path(__file__).resolve().parent.parent / "data" / "llms.txt"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "llms.txt"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="text/markdown; charset=utf-8")
+    raise HTTPException(status_code=404, detail="llms.txt not found")
+
+@app.get("/llms-full.txt")
+def llms_full_txt():
+    f = Path(__file__).resolve().parent.parent / "data" / "llms-full.txt"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "llms-full.txt"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="text/markdown; charset=utf-8")
+    raise HTTPException(status_code=404, detail="llms-full.txt not found")
+
+@app.get("/favicon.svg")
+def favicon_svg():
+    f = Path(__file__).resolve().parent.parent / "data" / "favicon.svg"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "favicon.svg"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="image/svg+xml")
+    raise HTTPException(status_code=404, detail="favicon.svg not found")
+
+@app.get("/og-image.svg")
+def og_image_svg():
+    f = Path(__file__).resolve().parent.parent / "data" / "og-image.svg"
+    if not f.exists():
+        f = Path(__file__).resolve().parents[4] / "docs" / "og-image.svg"
+    if f.exists():
+        return Response(content=f.read_bytes(), media_type="image/svg+xml")
+    raise HTTPException(status_code=404, detail="og-image.svg not found")
+
 
 
 @app.get("/health")

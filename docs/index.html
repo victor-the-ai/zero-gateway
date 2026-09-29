@@ -3,8 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zerogateway — 100% Free AI API Gateway & Cascading Router</title>
-  <meta name="description" content="A unified client router and OpenAI-compatible proxy for free LLM providers with automatic rate-limit cascading (429), multi-key swapping, and reset window tracking.">
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>Zerogateway — 100% Free AI API Gateway & Cascading LLM Router</title>
+  <meta name="title" content="Zerogateway — 100% Free AI API Gateway & Cascading LLM Router">
+  <meta name="description" content="Never hit an HTTP 429 rate limit again. Drop-in OpenAI-compatible proxy and client SDK with automatic provider cascading, multi-key auto-swapping, and reset window tracking across 8 free AI providers.">
+  <meta name="keywords" content="zerogateway, free ai api, free llm gateway, openai proxy, rate limit cascading, http 429 fix, multi key swapping, google gemini free tier, groq free tier, cerebras free tier, openrouter free, cursor free ai, cline free ai, continue dev proxy, librechat free api, ai router">
+  <meta name="author" content="victor-the-ai">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="theme-color" content="#090d16">
+
+  <!-- Canonical and Alternates for GEO & Crawlers -->
+  <link rel="canonical" href="https://victor-the-ai.github.io/zero-gateway/">
+  <link rel="alternate" type="text/markdown" href="llms.txt" title="LLMs.txt Specification">
+  <link rel="alternate" type="text/markdown" href="llms-full.txt" title="LLMs-full.txt Full Reference">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Open Graph / Facebook / Discord -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://victor-the-ai.github.io/zero-gateway/">
+  <meta property="og:title" content="Zerogateway — 100% Free AI API Gateway & Cascading LLM Router">
+  <meta property="og:description" content="Never hit an HTTP 429 rate limit again. Drop-in OpenAI-compatible proxy and SDK with multi-key auto-swapping and zero-downtime cascading across 8 free providers.">
+  <meta property="og:image" content="https://victor-the-ai.github.io/zero-gateway/og-image.svg">
+  <meta property="og:site_name" content="Zerogateway">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://victor-the-ai.github.io/zero-gateway/">
+  <meta name="twitter:title" content="Zerogateway — 100% Free AI API Gateway & Cascading LLM Router">
+  <meta name="twitter:description" content="Eliminate HTTP 429 rate limits. Open-source OpenAI-compatible proxy & SDK with multi-key auto swapping across 8 free AI providers.">
+  <meta name="twitter:image" content="https://victor-the-ai.github.io/zero-gateway/og-image.svg">
+  <meta name="twitter:creator" content="@victortheai">
+
+  <!-- Schema.org JSON-LD for Search Engines & Generative AI (GEO) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://victor-the-ai.github.io/zero-gateway/#website",
+        "url": "https://victor-the-ai.github.io/zero-gateway/",
+        "name": "Zerogateway",
+        "description": "100% Free AI API Gateway & Cascading LLM Router",
+        "publisher": {
+          "@type": "Organization",
+          "name": "victor-the-ai",
+          "url": "https://github.com/victor-the-ai"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://victor-the-ai.github.io/zero-gateway/#software",
+        "name": "Zerogateway",
+        "operatingSystem": "Cross-platform (Linux, macOS, Windows, Browser)",
+        "applicationCategory": "DeveloperApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "Open-source OpenAI-compatible gateway and cascading client router for free LLM providers with automatic HTTP 429 rate limit failover, multi-key swapping, and reset window tracking.",
+        "softwareVersion": "0.1.1",
+        "license": "https://opensource.org/licenses/MIT",
+        "codeRepository": "https://github.com/victor-the-ai/zero-gateway",
+        "programmingLanguage": ["Python", "TypeScript", "JavaScript"],
+        "featureList": [
+          "OpenAI-Compatible Proxy Server (:8080)",
+          "HTTP 429 Automatic Rate Limit Cascading",
+          "Intra-Provider Multi-Key Auto Swapping",
+          "Reset Window Header & Body Parsing",
+          "In-Browser JavaScript SDK & Live Playground",
+          "Automated Canary Health Probes",
+          "Drop-in integration for Cursor, Cline, Continue.dev, LibreChat"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://victor-the-ai.github.io/zero-gateway/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Zerogateway?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Zerogateway is an open-source, OpenAI-compatible AI gateway and client router (Python, TypeScript, and in-browser) that aggregates free-tier LLM providers. It prevents downtime by automatically swapping rate-limited API keys and cascading across alternate providers when HTTP 429 errors occur."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does Zerogateway handle HTTP 429 rate limits?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "When an HTTP 429 (Too Many Requests) is returned, Zerogateway parses the exact cooldown duration from Retry-After headers, x-ratelimit-reset headers, or provider error payloads (such as Google Gemini details.retryDelay). It puts the current key or provider on cooldown and transparently retries with the next active key or alternate provider hosting the same model family."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does intra-provider multi-key swapping work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can supply multiple comma-separated API keys for a provider (e.g. GEMINI_API_KEY=\"key1,key2,key3\"). If key 1 exhausts its quota, Zerogateway notes the reset window and immediately swaps to key 2 without failing the request."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can Zerogateway be used with Cursor, Cline, and Continue.dev?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Running 'zerogateway serve --port 8080' starts a local OpenAI-compatible server at http://localhost:8080/v1. You can configure Cursor, Cline, Continue.dev, or LibreChat to use http://localhost:8080/v1 as their base URL with streaming support."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Zerogateway 100% free and open source?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Zerogateway is 100% free and released under the permissive MIT License. All 8 tracked providers (Google AI Studio, Groq, Cerebras, SambaNova, Mistral, GitHub Models, Pollinations) offer free tiers without requiring a credit card."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I run Zerogateway directly in the browser?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Zerogateway includes a pure JavaScript browser bundle (zerogateway.browser.global.js) with zero Node.js dependencies. It supports keyless providers (Pollinations AI) for zero-auth instant testing and custom API keys via local browser memory."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -84,7 +216,7 @@
         <a href="#features" class="hover:text-white transition">Features</a>
         <a href="#providers" class="hover:text-white transition">Free Providers</a>
         <a href="#quickstart" class="hover:text-white transition">Quickstart</a>
-        <a href="#key-swapping" class="hover:text-white transition">Key Swapping</a>
+        <a href="#faq" class="hover:text-white transition">FAQ</a>
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
@@ -107,6 +239,9 @@
       </div>
     </div>
   </nav>
+
+  <!-- Main Semantic Content Container -->
+  <main id="main-content">
 
   <!-- Hero Section -->
   <section class="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center z-10">
@@ -822,6 +957,99 @@ console.log(<span class="text-emerald-300">`Served by: ${response._zerogateway_m
     </div>
   </section>
 
+  <!-- Frequently Asked Questions (FAQ) Section for SEO & GEO -->
+  <section id="faq" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10 relative">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 mb-3">
+        <span>KNOWLEDGE BASE & FAQ</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Frequently Asked Questions</h2>
+      <p class="text-slate-400 mt-3 text-sm">
+        Everything you need to know about rate limits, key swapping, free AI providers, and local proxy setup.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- FAQ 1 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-1')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">What is Zerogateway and how does it work?</span>
+          <svg id="chevron-faq-1" class="w-5 h-5 text-emerald-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-1" class="px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          Zerogateway is an open-source, OpenAI-compatible AI gateway and client router (available for Python, TypeScript/JavaScript, and direct in-browser usage). It aggregates 8 free-tier LLM providers behind a unified interface. When any provider returns an HTTP 429 (Too Many Requests) rate limit, Zerogateway automatically swaps to another active API key or seamlessly cascades to an alternate provider hosting the same model family without failing your application.
+        </div>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-2')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">How does intra-provider multi-key swapping work?</span>
+          <svg id="chevron-faq-2" class="w-5 h-5 text-slate-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-2" class="hidden px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          If you have multiple free API keys from Google AI Studio (Gemini), Groq, or Cerebras, you can provide them as comma-separated values in your environment (e.g. <code>GEMINI_API_KEY="key1,key2,key3"</code>) or client options. When key 1 hits a quota limit, Zerogateway records the exact reset window from provider error headers, puts key 1 on temporary cooldown, and transparently routes all subsequent requests to key 2.
+        </div>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-3')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">How does Zerogateway track rate-limit reset windows?</span>
+          <svg id="chevron-faq-3" class="w-5 h-5 text-slate-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-3" class="hidden px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          Instead of using arbitrary sleep delays, Zerogateway intelligently parses standard HTTP <code>Retry-After</code> headers, rate limit reset epoch timestamps (<code>x-ratelimit-reset</code>), and provider-specific error payloads (such as Google Gemini's <code>details.retryDelay</code>). Rate-limited keys and providers remain throttled only until their quota window resets, returning to the active pool automatically.
+        </div>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-4')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">Can I use Zerogateway with Cursor, Cline, Continue.dev, and LibreChat?</span>
+          <svg id="chevron-faq-4" class="w-5 h-5 text-slate-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-4" class="hidden px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          Yes! Zerogateway includes a built-in local OpenAI-compatible server. Running <code>zerogateway serve --port 8080</code> launches a proxy at <code>http://localhost:8080/v1</code> that supports streaming (Server-Sent Events) and tool calling. Configure Cursor or Cline with Base URL <code>http://localhost:8080/v1</code>, API Key <code>zerogateway</code>, and model <code>auto</code> or <code>llama-3.3-70b</code>.
+        </div>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-5')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">Is Zerogateway really 100% free and open-source?</span>
+          <svg id="chevron-faq-5" class="w-5 h-5 text-slate-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-5" class="hidden px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          Yes. Zerogateway is licensed under the permissive MIT License. There are no paid tiers, subscriptions, paywalls, or hidden telemetry. All 8 tracked providers (Google AI Studio, Groq, Cerebras, SambaNova, Mistral, GitHub Models, and Pollinations AI) offer generous free tiers that require no credit card.
+        </div>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+        <button onclick="toggleFaq('faq-6')" class="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-white/5 transition">
+          <span class="font-bold text-white text-sm sm:text-base">Does Zerogateway work in the browser without any backend?</span>
+          <svg id="chevron-faq-6" class="w-5 h-5 text-slate-400 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <div id="content-faq-6" class="hidden px-5 pb-5 pt-1 text-xs sm:text-sm text-slate-300 leading-relaxed border-t border-white/5">
+          Yes! We provide both an npm package and a standalone browser bundle (<code>zerogateway.browser.global.js</code>). For zero-auth providers like Pollinations AI, LLM completions execute 100% directly inside your browser with full streaming. You can test it live in the interactive playground above.
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CTA Banner -->
   <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10 relative">
     <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-brand-500/30 text-center relative overflow-hidden glow-glow">
@@ -839,6 +1067,8 @@ console.log(<span class="text-emerald-300">`Served by: ${response._zerogateway_m
       </div>
     </div>
   </section>
+
+  </main>
 
   <!-- Footer -->
   <footer class="border-t border-white/5 py-10 text-center text-xs text-slate-500 z-10 relative">
@@ -1332,6 +1562,22 @@ console.log(<span class="text-emerald-300">`Served by: ${response._zerogateway_m
         btnText.innerText = 'Copied!';
         setTimeout(() => { btnText.innerText = 'Copy Code'; }, 2000);
       });
+    }
+
+    function toggleFaq(faqId) {
+      const content = document.getElementById(`content-${faqId}`);
+      const chevron = document.getElementById(`chevron-${faqId}`);
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+        chevron.classList.add('text-emerald-400');
+        chevron.classList.remove('text-slate-400');
+      } else {
+        content.classList.add('hidden');
+        chevron.classList.remove('rotate-180');
+        chevron.classList.remove('text-emerald-400');
+        chevron.classList.add('text-slate-400');
+      }
     }
 
     // Initialize on DOM load

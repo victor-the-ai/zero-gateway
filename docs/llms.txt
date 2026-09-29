@@ -1,0 +1,107 @@
+# Zerogateway
+
+> Zerogateway is an open-source, 100% free AI API gateway, drop-in OpenAI-compatible proxy, and multi-language client router (Python, TypeScript, In-Browser) that eliminates HTTP 429 rate limits through automatic provider cascading, intra-provider multi-key swapping, and quota reset window tracking.
+
+Website: https://victor-the-ai.github.io/zero-gateway/
+GitHub Repository: https://github.com/victor-the-ai/zero-gateway
+PyPI Package: https://pypi.org/project/zerogateway/
+npm Package: https://www.npmjs.com/package/zerogateway
+License: MIT
+
+## Core Capabilities
+
+- **Zero-Downtime Cascading**: Automatically fails over to alternate free providers hosting the same model family (e.g., Groq -> Cerebras -> SambaNova) upon encountering HTTP 429 Rate Limits or server errors.
+- **Intra-Provider Multi-Key Swapping**: Supports multiple comma-separated API keys for a single provider (such as Google AI Studio / Gemini). If one key exhausts its quota, the client immediately swaps to the next active key.
+- **Reset Window Tracking**: Extracts retry delays from HTTP headers (`Retry-After`, `x-ratelimit-reset`) or provider error payloads (such as Google Gemini `details.retryDelay`), putting rate-limited keys on temporary cooldown until their quota window resets.
+- **Drop-in OpenAI-Compatible Proxy**: Runs locally at `http://localhost:8080/v1` for instant zero-configuration integration with Cursor, Cline, Continue.dev, LibreChat, and Open WebUI.
+- **Pure In-Browser JavaScript SDK**: Includes `ZeroGatewayClient` usable directly in frontends via CDN or npm with zero backend proxy requirements for zero-auth models.
+- **Automated Canary Probing**: Continuous CI probes verify endpoints daily to detect model deprecations or paywalls.
+
+## Tracked Free Providers
+
+Zerogateway indexes 8 active free providers offering 21 models with zero credit card requirements:
+
+| Provider | ID | Free Limits | Authentication | Top Models |
+| :--- | :--- | :--- | :--- | :--- |
+| **Cerebras Inference** | `cerebras` | 30 RPM / 14,400 RPD | Free API Key (`CEREBRAS_API_KEY`) | `llama-3.3-70b`, `llama-3.1-8b` |
+| **Google AI Studio** | `google_ai_studio` | 15 RPM / 1,500 RPD | Free API Key (`GEMINI_API_KEY`) | `gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash` |
+| **GroqCloud** | `groq` | 30 RPM / 14,400 RPD | Free API Key (`GROQ_API_KEY`) | `llama-3.3-70b-versatile`, `mixtral-8x7b` |
+| **SambaNova Cloud** | `sambanova` | 20 RPM / 1,000 RPD | Free API Key (`SAMBANOVA_API_KEY`) | `Meta-Llama-3.3-70B-Instruct`, `llama-405b` |
+| **Mistral AI** | `mistral` | 60 RPM / Uncapped | Free API Key (`MISTRAL_API_KEY`) | `codestral-latest`, `mistral-small` |
+| **OpenRouter Free** | `openrouter` | 20 RPM / 200 RPD | Free API Key (`OPENROUTER_API_KEY`) | `deepseek-r1:free`, `llama-3.3-70b:free` |
+| **GitHub Models** | `github_models` | 15 RPM / 150 RPD | GitHub Token (`GITHUB_TOKEN`) | `gpt-4o-mini`, `llama-3.3-70b` |
+| **Pollinations AI** | `pollinations` | 10 RPM / 500 RPD | Zero-Auth (No Key Needed) | `openai`, `mistral` |
+
+## Quickstart
+
+### Python SDK
+```bash
+pip install zerogateway
+```
+
+```python
+from zerogateway import ZeroGatewayClient
+
+client = ZeroGatewayClient(enable_key_rotation=True, enable_provider_rotation=True)
+response = client.chat.completions.create(
+    model="llama-3.3-70b",  # or "auto", "gemini-flash", "openai"
+    messages=[{"role": "user", "content": "Hello!"}],
+    stream=False
+)
+print(response.choices[0].message.content)
+print("Served by:", response.provider_name)
+```
+
+### TypeScript / JavaScript SDK
+```bash
+npm install zerogateway
+```
+
+```typescript
+import { ZeroGatewayClient } from "zerogateway";
+
+const client = new ZeroGatewayClient({
+  enableKeyRotation: true,
+  enableProviderRotation: true,
+  apiKeys: {
+    gemini: ["AIzaSyKey1...", "AIzaSyKey2..."], // Auto-swaps on 429
+  }
+});
+
+const response = await client.chat.completions.create({
+  model: "llama-3.3-70b",
+  messages: [{ role: "user", content: "Hello!" }],
+  stream: true
+});
+
+for await (const chunk of response) {
+  process.stdout.write(chunk);
+}
+```
+
+### In-Browser Playground & CDN
+```html
+<script src="https://victor-the-ai.github.io/zero-gateway/zerogateway.browser.global.js"></script>
+<script>
+  const client = new window.ZeroGateway.ZeroGatewayClient();
+  // Executes immediately without API keys using Pollinations AI
+  client.chat.completions.create({
+    model: "openai",
+    messages: [{ role: "user", content: "Tell me a joke." }]
+  }).then(res => console.log(res.choices[0].message.content));
+</script>
+```
+
+### Local Proxy Server (Cursor, Cline, Continue.dev)
+```bash
+zerogateway serve --port 8080
+```
+- Base URL: `http://localhost:8080/v1`
+- API Key: `zerogateway`
+- Model: `auto` (or `gemini-flash`, `llama-3.3-70b`, `gpt-4o-mini`)
+
+## Detailed Documentation
+
+- Full Reference Specification: https://victor-the-ai.github.io/zero-gateway/llms-full.txt
+- Online Playground: https://victor-the-ai.github.io/zero-gateway/#playground
+- Provider Limits Catalog: https://victor-the-ai.github.io/zero-gateway/#providers
