@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zerogateway — 100% Free AI API Gateway & Cascading Router</title>
+  <meta name="description" content="A unified client router and OpenAI-compatible proxy for free LLM providers with automatic rate-limit cascading (429), multi-key swapping, and reset window tracking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            },
+            accent: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #090d16;
+      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .grid-pattern {
+      background-size: 40px 40px;
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .glow-glow {
+      box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25);
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen selection:bg-brand-500 selection:text-black">
+  <!-- Grid Background -->
+  <div class="fixed inset-0 grid-pattern pointer-events-none z-0"></div>
+  <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-brand-500/10 via-accent-500/5 to-transparent blur-3xl pointer-events-none"></div>
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 border-b border-white/5 bg-[#090d16]/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-brand-500/20">
+          <svg class="w-5 h-5 text-black font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">Zerogateway</span>
+        <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-brand-500/10 text-brand-500 border border-brand-500/20">v0.1.0</span>
+      </div>
+
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#features" class="hover:text-white transition">Features</a>
+        <a href="#providers" class="hover:text-white transition">Free Providers</a>
+        <a href="#quickstart" class="hover:text-white transition">Quickstart</a>
+        <a href="#key-swapping" class="hover:text-white transition">Key Swapping</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="https://pypi.org/project/zerogateway/" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition">
+          <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          PyPI Package
+        </a>
+        <a href="https://github.com/victor-the-ai/zero-gateway" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-500 text-black hover:bg-brand-600 transition shadow-lg shadow-brand-500/20">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center z-10">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-emerald-400 mb-8">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      100% Free AI Access • 8 Providers • 21 Models Indexed
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
+      Never hit an <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">HTTP 429</span> rate limit again.
+    </h1>
+
+    <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      A unified router and drop-in OpenAI-compatible proxy for free LLMs. Auto-cascades across free providers, swaps rate-limited API keys, and tracks quota reset windows seamlessly.
+    </p>
+
+    <!-- Copy Command Box -->
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <div class="relative flex items-center bg-[#0e1626] border border-brand-500/30 rounded-xl px-4 py-3 shadow-xl glow-glow group">
+        <span class="text-emerald-400 font-mono text-sm mr-2">$</span>
+        <code id="pip-command" class="text-slate-200 font-mono text-sm mr-4 select-all">pip install zerogateway</code>
+        <button onclick="copyCommand()" class="text-xs bg-brand-500/20 hover:bg-brand-500/30 text-brand-500 font-semibold px-2.5 py-1 rounded-md transition flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+
+      <a href="#quickstart" class="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-semibold text-white transition flex items-center gap-2">
+        <span>Launch Local Proxy</span>
+        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Integrations Badges -->
+    <div class="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400">
+      <span class="text-slate-500 font-medium">Ready for:</span>
+      <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">Cursor</span>
+      <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">Cline</span>
+      <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">Continue.dev</span>
+      <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">LibreChat</span>
+      <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">Open WebUI</span>
+    </div>
+  </section>
+
+  <!-- Interactive Flow / Architecture Visual -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 z-10 relative">
+    <div class="glass-panel rounded-2xl p-6 sm:p-10 border border-white/10 relative overflow-hidden">
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="text-center max-w-xl mx-auto mb-10">
+        <h2 class="text-xs font-bold text-brand-500 uppercase tracking-wider mb-2">Zero-Downtime Cascading</h2>
+        <h3 class="text-2xl sm:text-3xl font-bold text-white">How Zerogateway routes your request</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+        <!-- Step 1 -->
+        <div class="bg-[#0b1120] border border-white/10 p-5 rounded-xl text-center">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mx-auto mb-3">1</div>
+          <h4 class="font-semibold text-white text-sm">Client Request</h4>
+          <p class="text-xs text-slate-400 mt-1">Cursor or Python client requests <code class="text-emerald-400">llama-3.3-70b</code></p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-[#0b1120] border border-amber-500/30 p-5 rounded-xl text-center relative">
+          <span class="absolute -top-2 right-4 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">HTTP 429</span>
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm mx-auto mb-3">2</div>
+          <h4 class="font-semibold text-white text-sm">Provider 1 Rate-Limited</h4>
+          <p class="text-xs text-slate-400 mt-1">Groq hits quota. Reset window parsed from headers.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-[#0b1120] border border-brand-500/40 p-5 rounded-xl text-center shadow-lg shadow-brand-500/10">
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-500/20 text-brand-400 border border-brand-500/30">Auto Swap</span>
+          <div class="w-8 h-8 rounded-lg bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-sm mx-auto mb-3">3</div>
+          <h4 class="font-semibold text-white text-sm">Instant Failover</h4>
+          <p class="text-xs text-slate-400 mt-1">Swaps to Key 2 or cascades to Cerebras / SambaNova.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="bg-[#0b1120] border border-emerald-500/40 p-5 rounded-xl text-center shadow-lg shadow-emerald-500/10">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mx-auto mb-3">✓</div>
+          <h4 class="font-semibold text-white text-sm">Success (HTTP 200)</h4>
+          <p class="text-xs text-slate-400 mt-1">Stream returned to IDE without interruption!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10 relative">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-xs font-bold text-brand-500 uppercase tracking-wider mb-2">Engineered for Free Tier Resilience</h2>
+      <h3 class="text-3xl sm:text-4xl font-extrabold text-white">Everything you need to run on free AI</h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Feature 1 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Multi-Key Swapping</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Provide comma-separated API keys for Google Gemini or other providers. If one key runs out of quota, it auto-swaps to the second key immediately.
+        </p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Reset Window Tracking</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Parses <code class="text-xs bg-white/5 px-1 py-0.5 rounded text-emerald-400">Retry-After</code> headers and Gemini <code class="text-xs bg-white/5 px-1 py-0.5 rounded text-emerald-400">retryDelay</code> error payloads to put keys on cooldown until their reset window expires.
+        </p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">OpenAI-Compatible Proxy</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Drop-in endpoint at <code class="text-xs bg-white/5 px-1 py-0.5 rounded text-indigo-400">http://localhost:8080/v1</code>. Supports streaming (SSE) and full tool/function calling formats.
+        </p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Zero-Auth & BYOK</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Start immediately without signing up using zero-auth endpoints (Pollinations), or supply your own free keys for Groq, Cerebras, and Gemini.
+        </p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Configurable Swapping</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Both intra-provider key swapping and inter-provider cascading are configurable options. Toggle via environment variables, code, or per-request headers.
+        </p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="glass-panel p-6 rounded-2xl hover:border-brand-500/40 transition">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Git-Synced Registry</h4>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Community curated YAML definitions with daily canary probing. Deprecated models and paid walls are detected and pruned automatically.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tracked Providers & Model Explorer -->
+  <section id="providers" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10 relative">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      <div>
+        <h2 class="text-xs font-bold text-brand-500 uppercase tracking-wider mb-2">Provider Catalog</h2>
+        <h3 class="text-3xl font-extrabold text-white">8 Active Free Providers</h3>
+      </div>
+      <div>
+        <input 
+          id="model-search" 
+          type="text" 
+          placeholder="Filter models (e.g. llama, gemini, mistral)..." 
+          oninput="filterCards()" 
+          class="bg-[#0b1120] border border-white/10 text-sm text-white px-4 py-2.5 rounded-xl w-72 focus:outline-none focus:border-brand-500"
+        />
+      </div>
+    </div>
+
+    <div id="provider-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Cerebras -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="llama3.3-70b llama3.1-8b cerebras">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">Cerebras</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">30 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Ultra-fast wafer-scale engine inference.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama3.3-70b</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama3.1-8b</span>
+        </div>
+      </div>
+
+      <!-- Groq -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="llama-3.3-70b-versatile llama-3.1-8b-instant mixtral-8x7b groq">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">GroqCloud</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">30 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">LPU speed with 14,400 free requests per day.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama-3.3-70b</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">mixtral-8x7b</span>
+        </div>
+      </div>
+
+      <!-- Google AI Studio -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="gemini-2.5-flash gemini-2.0-flash gemini-1.5-flash google">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">Google AI Studio</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">15 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">1M - 2M context windows with multi-modal support.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">gemini-2.0-flash</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">gemini-1.5-flash</span>
+        </div>
+      </div>
+
+      <!-- SambaNova -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="Meta-Llama-3.3-70B-Instruct Meta-Llama-3.1-405B sambanova">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">SambaNova</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">20 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Hosts full-precision 405B and 70B Llama models.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama-3.3-70b</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama-405b</span>
+        </div>
+      </div>
+
+      <!-- OpenRouter -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="deepseek-r1 llama-3.3-70b mistral-7b openrouter">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">OpenRouter Free</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">20 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Free community variants including DeepSeek R1.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">deepseek-r1:free</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama-3.3-70b:free</span>
+        </div>
+      </div>
+
+      <!-- Mistral AI -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="codestral-latest mistral-small-latest mistral">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">Mistral AI</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">60 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Official Codestral coding models and Mistral Small.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">codestral-latest</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">mistral-small</span>
+        </div>
+      </div>
+
+      <!-- GitHub Models -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="gpt-4o-mini llama-3.3-70b github">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">GitHub Models</span>
+          <span class="text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded">15 RPM</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Free Azure-backed GPT-4o mini via your GitHub PAT.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">gpt-4o-mini</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">llama-3.3-70b</span>
+        </div>
+      </div>
+
+      <!-- Pollinations -->
+      <div class="provider-card glass-panel p-5 rounded-xl border border-white/10" data-models="openai mistral pollinations zero-auth">
+        <div class="flex items-center justify-between mb-3">
+          <span class="font-bold text-white">Pollinations AI</span>
+          <span class="text-[10px] font-semibold bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded">Zero Auth</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3">Completely keyless access. No registration required.</p>
+        <div class="flex flex-wrap gap-1 text-[11px] font-mono text-slate-300">
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">openai</span>
+          <span class="bg-white/5 px-2 py-0.5 rounded border border-white/5">mistral</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Code / Quickstart -->
+  <section id="quickstart" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 z-10 relative">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-xs font-bold text-brand-500 uppercase tracking-wider mb-2">Usage Modes</h2>
+      <h3 class="text-3xl font-extrabold text-white">Two Minutes to Zero-Cost AI</h3>
+    </div>
+
+    <div class="glass-panel rounded-2xl border border-white/10 overflow-hidden max-w-4xl mx-auto">
+      <!-- Tabs -->
+      <div class="flex border-b border-white/10 bg-[#070b13] px-4 pt-3 gap-2 overflow-x-auto">
+        <button onclick="switchTab('tab-python')" id="btn-tab-python" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-[#0e1626] text-emerald-400 border-t border-x border-white/10">Python SDK</button>
+        <button onclick="switchTab('tab-proxy')" id="btn-tab-proxy" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">Cursor / Cline Proxy</button>
+        <button onclick="switchTab('tab-curl')" id="btn-tab-curl" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">cURL API</button>
+        <button onclick="switchTab('tab-keys')" id="btn-tab-keys" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">Multi-Key Config</button>
+      </div>
+
+      <!-- Tab Contents -->
+      <div class="p-6 font-mono text-xs text-slate-300 bg-[#090d16]">
+        <!-- Python -->
+        <div id="tab-python" class="tab-pane">
+<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500"># 1. Install</span>
+<span class="text-emerald-400">pip</span> install zerogateway
+
+<span class="text-slate-500"># 2. Run with smart fallback</span>
+<span class="text-purple-400">from</span> zerogateway <span class="text-purple-400">import</span> ZeroGatewayClient
+
+client = ZeroGatewayClient(enable_key_rotation=<span class="text-amber-400">True</span>)
+
+response = client.chat.completions.create(
+    model=<span class="text-emerald-300">"llama-3.3-70b"</span>, <span class="text-slate-500"># or "gemini-flash", "fast-smart", "auto"</span>
+    messages=[{<span class="text-emerald-300">"role"</span>: <span class="text-emerald-300">"user"</span>, <span class="text-emerald-300">"content"</span>: <span class="text-emerald-300">"Explain async in Python in 1 line."</span>}]
+)
+
+<span class="text-blue-400">print</span>(response.choices[0].message.content)
+<span class="text-blue-400">print</span>(<span class="text-emerald-300">f"Served by: {response.provider_id}"</span>)
+</pre>
+        </div>
+
+        <!-- Proxy -->
+        <div id="tab-proxy" class="tab-pane hidden">
+<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500"># Launch the local OpenAI-compatible server</span>
+<span class="text-emerald-400">zerogateway</span> serve --port 8080
+
+<span class="text-slate-500"># Configure your IDE (Cursor, Cline, Continue.dev, LibreChat):</span>
+<span class="text-amber-300">Base URL:</span> http://localhost:8080/v1
+<span class="text-amber-300">API Key:</span>  zerogateway
+<span class="text-amber-300">Model:</span>    auto <span class="text-slate-500">(or gemini-flash, llama-3.3-70b, gpt-4o-mini)</span>
+
+<span class="text-slate-500"># If Groq hits 429, the proxy cascades seamlessly in the background!</span>
+</pre>
+        </div>
+
+        <!-- cURL -->
+        <div id="tab-curl" class="tab-pane hidden">
+<pre class="overflow-x-auto leading-relaxed">curl http://localhost:8080/v1/chat/completions \
+  -H <span class="text-emerald-300">"Content-Type: application/json"</span> \
+  -H <span class="text-emerald-300">"Authorization: Bearer zerogateway"</span> \
+  -H <span class="text-emerald-300">"X-Enable-Key-Rotation: true"</span> \
+  -d <span class="text-amber-300">'{
+    "model": "auto",
+    "messages": [{"role": "user", "content": "What is the speed of light?"}]
+  }'</span>
+</pre>
+        </div>
+
+        <!-- Multi-Key -->
+        <div id="tab-keys" class="tab-pane hidden">
+<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500"># In your .env file:</span>
+<span class="text-slate-500"># Provide multiple comma-separated keys for Google AI Studio or Groq:</span>
+<span class="text-emerald-400">GEMINI_API_KEY</span>=<span class="text-emerald-300">"AIzaSyKey1...,AIzaSyKey2...,AIzaSyKey3..."</span>
+<span class="text-emerald-400">ENABLE_KEY_ROTATION</span>=<span class="text-amber-400">true</span>
+<span class="text-emerald-400">ENABLE_PROVIDER_ROTATION</span>=<span class="text-amber-400">true</span>
+
+<span class="text-slate-500"># When Key 1 hits 429, Zerogateway records the exact reset window from</span>
+<span class="text-slate-500"># Google's retryDelay payload, puts Key 1 on cooldown, and uses Key 2!</span>
+</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10 relative">
+    <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-brand-500/30 text-center relative overflow-hidden glow-glow">
+      <h3 class="text-3xl font-extrabold text-white mb-4">Start Building Without Limits</h3>
+      <p class="text-slate-400 max-w-xl mx-auto mb-8 text-sm sm:text-base">
+        Zero cost. Full cascading resilience. Open source and MIT licensed for all developers.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="https://github.com/victor-the-ai/zero-gateway" target="_blank" class="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-black font-bold text-sm transition">
+          Star on GitHub ⭐
+        </a>
+        <a href="https://pypi.org/project/zerogateway/" target="_blank" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition">
+          View on PyPI
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-10 text-center text-xs text-slate-500 z-10 relative">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-300">Zerogateway</span>
+        <span>•</span>
+        <span>MIT License</span>
+      </div>
+      <div>
+        Created for the developer community by <a href="https://github.com/victor-the-ai" target="_blank" class="text-slate-400 hover:text-white transition">victor-the-ai</a>.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function copyCommand() {
+      const text = document.getElementById('pip-command').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const copyText = document.getElementById('copy-text');
+        copyText.innerText = 'Copied!';
+        setTimeout(() => { copyText.innerText = 'Copy'; }, 2000);
+      });
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      const tabs = ['tab-python', 'tab-proxy', 'tab-curl', 'tab-keys'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('btn-' + t);
+        if (t === tabId) {
+          btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg bg-[#0e1626] text-emerald-400 border-t border-x border-white/10';
+        } else {
+          btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white';
+        }
+      });
+    }
+
+    function filterCards() {
+      const q = document.getElementById('model-search').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.provider-card');
+      cards.forEach(card => {
+        const models = card.getAttribute('data-models').toLowerCase();
+        if (!q || models.includes(q)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

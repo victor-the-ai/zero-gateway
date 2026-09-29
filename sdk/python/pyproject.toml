@@ -38,5 +38,6 @@ where = ["."]
 include = ["zerogateway*"]
 
 [tool.setuptools.package-data]
-zerogateway = ["data/*.json"]
+zerogateway = ["data/*.json", "data/*.html"]
+
 

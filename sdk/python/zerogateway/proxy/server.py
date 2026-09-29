@@ -1,8 +1,9 @@
 import time
+from pathlib import Path
 from typing import Dict, Any, List
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse, HTMLResponse
 from ..models import ChatCompletionRequest
 from ..router import ZeroGatewayRouter
 
@@ -23,13 +24,25 @@ app.add_middleware(
 router_instance = ZeroGatewayRouter()
 
 @app.get("/")
-def index():
+def index(request: Request):
+    accept = request.headers.get("accept", "")
+    # Check bundled data first, then repository docs
+    landing_file = Path(__file__).resolve().parent.parent / "data" / "index.html"
+    if not landing_file.exists():
+        landing_file = Path(__file__).resolve().parents[4] / "docs" / "index.html"
+
+    if "text/html" in accept and landing_file.exists():
+        return HTMLResponse(content=landing_file.read_text(encoding="utf-8"))
+
     return {
         "service": "Zerogateway Proxy",
         "status": "online",
         "documentation": "/docs",
+        "landing_page": "/index.html",
         "active_providers": [p.name for p in router_instance.get_configured_providers()]
     }
+
+
 
 @app.get("/health")
 def health():

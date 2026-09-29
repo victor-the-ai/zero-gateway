@@ -47,3 +47,16 @@ def test_proxy_chat_completions():
         assert res.status_code == 200
         res_json = res.json()
         assert res_json["choices"][0]["message"]["content"] == "Proxy routing response"
+
+def test_proxy_index_and_landing_page():
+    # JSON request
+    res_json = client.get("/")
+    assert res_json.status_code == 200
+    assert res_json.json()["service"] == "Zerogateway Proxy"
+
+    # HTML browser request
+    res_html = client.get("/", headers={"accept": "text/html"})
+    assert res_html.status_code == 200
+    assert "Zerogateway" in res_html.text
+    assert "HTTP 429" in res_html.text
+
