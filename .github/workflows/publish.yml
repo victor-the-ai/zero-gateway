@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Publish Packages (PyPI & npm)
 
 on:
   release:
@@ -7,7 +7,6 @@ on:
     tags:
       - "v*"
   workflow_dispatch:
-
 
 permissions:
   contents: read
@@ -38,3 +37,38 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: sdk/python/dist/
+
+  npm-publish:
+    name: Build and publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        working-directory: sdk/typescript
+        run: npm ci
+
+      - name: Build package
+        working-directory: sdk/typescript
+        run: npm run build
+
+      - name: Run tests
+        working-directory: sdk/typescript
+        run: npm test
+
+      - name: Publish package to npm
+        working-directory: sdk/typescript
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
