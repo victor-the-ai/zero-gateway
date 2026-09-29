@@ -2,10 +2,14 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 import { RegistryData, ProviderSpec, LimitsConfig } from "./models.js";
+import defaultRegistry from "../data/index.json" with { type: "json" };
 
 export const DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/victor-the-ai/zero-gateway/main/registry/index.json";
 
 function getCacheDir(): string {
+  if (typeof process === "undefined" || !process.env) {
+    return "/tmp/.cache/zerogateway";
+  }
   const custom = process.env.ZERO_GATEWAY_CACHE_DIR || process.env.FREE_LLM_CACHE_DIR;
   if (custom) {
     return custom.startsWith("~") ? path.join(os.homedir(), custom.slice(1)) : custom;
@@ -23,7 +27,8 @@ export class RegistryManager {
   private _data?: RegistryData;
 
   constructor(registryUrl?: string, autoSync: boolean = true) {
-    this.registryUrl = registryUrl || process.env.ZERO_GATEWAY_REGISTRY_URL || process.env.FREE_LLM_REGISTRY_URL || DEFAULT_REGISTRY_URL;
+    const envUrl = typeof process !== "undefined" && process.env ? (process.env.ZERO_GATEWAY_REGISTRY_URL || process.env.FREE_LLM_REGISTRY_URL) : undefined;
+    this.registryUrl = registryUrl || envUrl || DEFAULT_REGISTRY_URL;
     this.autoSync = autoSync;
     this.load();
   }
@@ -36,6 +41,9 @@ export class RegistryManager {
   }
 
   public isCacheStale(): boolean {
+    if (typeof window !== "undefined") {
+      return false;
+    }
     if (!fs.existsSync(CACHE_FILE)) {
       return true;
     }
@@ -48,6 +56,7 @@ export class RegistryManager {
     }
   }
 
+
   public load(forceRemote: boolean = false): RegistryData {
     if (forceRemote || (this.autoSync && this.isCacheStale())) {
       // Attempt background/synchronous-equivalent sync, or ignore error
@@ -56,6 +65,19 @@ export class RegistryManager {
       } catch {
         // Fall back gracefully to cache or bundled
       }
+    }
+
+    // 0. Browser environment
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("zerogateway_registry");
+        if (cached) {
+          this._data = JSON.parse(cached) as RegistryData;
+          return this._data;
+        }
+      } catch {}
+      this._data = defaultRegistry as unknown as RegistryData;
+      return this._data;
     }
 
     // 1. Try cache file
@@ -92,12 +114,13 @@ export class RegistryManager {
       }
     }
 
-    throw new Error("Failed to load Zerogateway Registry: No cache or bundled registry found.");
+    // 3. Fallback to embedded defaultRegistry
+    this._data = defaultRegistry as unknown as RegistryData;
+    return this._data;
   }
 
   private syncSync(): void {
-    // Synchronous fetch via child_process curl or node if needed, or fallback
-    // We provide async sync() for standard use
+    // Synchronous sync stub
   }
 
   public async sync(): Promise<void> {
@@ -106,10 +129,20 @@ export class RegistryManager {
       throw new Error(`Failed to fetch registry from ${this.registryUrl}: HTTP ${res.status}`);
     }
     const data = await res.json() as RegistryData;
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("zerogateway_registry", JSON.stringify(data));
+      } catch {}
+      this._data = data;
+      return;
+    }
+
     fs.mkdirSync(CACHE_DIR, { recursive: true });
     fs.writeFileSync(CACHE_FILE, JSON.stringify(data, null, 2), "utf-8");
     this._data = data;
   }
+
 
   public getProvider(providerId: string): ProviderSpec | undefined {
     return this.data.providers.find((p) => p.id === providerId);

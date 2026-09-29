@@ -1,8 +1,11 @@
 import dotenv from "dotenv";
 import { ProviderSpec, ChatCompletionRequest, ChatCompletionResponse, ZeroGatewayMeta } from "./models.js";
 import { RegistryManager } from "./registry.js";
+import { extractResetWindow } from "./utils.js";
 
 dotenv.config();
+
+export { extractResetWindow };
 
 export interface RouterOptions {
   registry?: RegistryManager;
@@ -12,73 +15,6 @@ export interface RouterOptions {
   defaultCooldown?: number;
 }
 
-export function extractResetWindow(
-  headers: Headers,
-  body?: any,
-  defaultCooldown: number = 60.0
-): number {
-  // 1. Retry-After header
-  const retryAfter = headers.get("retry-after");
-  if (retryAfter) {
-    const val = parseFloat(retryAfter);
-    if (!isNaN(val) && val > 0) {
-      return val;
-    }
-  }
-
-  // 2. X-RateLimit-Reset headers
-  for (const h of ["x-ratelimit-reset", "x-ratelimit-reset-requests", "x-ratelimit-reset-tokens"]) {
-    const rVal = headers.get(h);
-    if (rVal) {
-      const val = parseFloat(rVal);
-      if (!isNaN(val)) {
-        if (val > 1_000_000_000) {
-          // Epoch timestamp
-          const remaining = Math.max(1.0, (val * 1000 - Date.now()) / 1000);
-          return remaining;
-        } else if (val > 0) {
-          return val;
-        }
-      }
-    }
-  }
-
-  // 3. Provider error body (e.g. Google Gemini retryDelay or details)
-  if (body && typeof body === "object") {
-    const error = body.error;
-    if (error && typeof error === "object") {
-      // Google Gemini format: error.details -> retryDelay
-      const details = error.details;
-      if (Array.isArray(details)) {
-        for (const d of details) {
-          if (d && typeof d === "object" && typeof d.retryDelay === "string") {
-            const delayStr = d.retryDelay.replace(/s$/i, "");
-            const val = parseFloat(delayStr);
-            if (!isNaN(val) && val > 0) {
-              return val;
-            }
-          }
-        }
-      }
-      if (typeof error.retry_after === "number" || typeof error.retry_after === "string") {
-        const val = parseFloat(String(error.retry_after));
-        if (!isNaN(val) && val > 0) {
-          return val;
-        }
-      }
-      const msg = String(error.message || "");
-      const match = msg.match(/retry after\s+([0-9.]+)\s*s?/i);
-      if (match && match[1]) {
-        const val = parseFloat(match[1]);
-        if (!isNaN(val) && val > 0) {
-          return val;
-        }
-      }
-    }
-  }
-
-  return defaultCooldown;
-}
 
 export class ZeroGatewayRouter {
   public registry: RegistryManager;

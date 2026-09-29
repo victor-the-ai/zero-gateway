@@ -54,6 +54,8 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
   </style>
+  <!-- ZeroGateway JavaScript SDK Browser Bundle -->
+  <script src="zerogateway.browser.global.js"></script>
 </head>
 <body class="min-h-screen selection:bg-brand-500 selection:text-black">
   <!-- Grid Background -->
@@ -75,13 +77,21 @@
 
 
       <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="#playground" class="text-emerald-400 hover:text-emerald-300 font-semibold transition flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Playground
+        </a>
         <a href="#features" class="hover:text-white transition">Features</a>
         <a href="#providers" class="hover:text-white transition">Free Providers</a>
         <a href="#quickstart" class="hover:text-white transition">Quickstart</a>
         <a href="#key-swapping" class="hover:text-white transition">Key Swapping</a>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="https://www.npmjs.com/package/zerogateway" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition">
+          <span class="font-bold text-red-400">npm</span>
+          Package
+        </a>
         <a href="https://pypi.org/project/zerogateway/" target="_blank" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition">
           <svg class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -113,11 +123,11 @@
       A unified router and drop-in OpenAI-compatible proxy for free LLMs. Auto-cascades across free providers, swaps rate-limited API keys, and tracks quota reset windows seamlessly.
     </p>
 
-    <!-- Copy Command Box -->
+    <!-- Copy Command Box & CTA Buttons -->
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
       <div class="relative flex items-center bg-[#0e1626] border border-brand-500/30 rounded-xl px-4 py-3 shadow-xl glow-glow group">
         <span class="text-emerald-400 font-mono text-sm mr-2">$</span>
-        <code id="pip-command" class="text-slate-200 font-mono text-sm mr-4 select-all">pip install zerogateway</code>
+        <code id="pip-command" class="text-slate-200 font-mono text-sm mr-4 select-all">npm i zerogateway</code>
         <button onclick="copyCommand()" class="text-xs bg-brand-500/20 hover:bg-brand-500/30 text-brand-500 font-semibold px-2.5 py-1 rounded-md transition flex items-center gap-1">
           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -126,8 +136,16 @@
         </button>
       </div>
 
+      <a href="#playground" class="px-5 py-3 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-400 hover:from-brand-600 hover:to-emerald-500 text-black font-bold text-sm transition flex items-center gap-2 shadow-lg shadow-brand-500/20">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Open Playground</span>
+      </a>
+
       <a href="#quickstart" class="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm font-semibold text-white transition flex items-center gap-2">
-        <span>Launch Local Proxy</span>
+        <span>Local Proxy (:8080)</span>
         <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
@@ -185,6 +203,302 @@
           <h4 class="font-semibold text-white text-sm">Success (HTTP 200)</h4>
           <p class="text-xs text-slate-400 mt-1">Stream returned to IDE without interruption!</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive In-Browser Playground Section -->
+  <section id="playground" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 z-10 relative">
+    <div class="glass-panel rounded-3xl p-6 sm:p-10 border border-emerald-500/30 relative overflow-hidden glow-glow">
+      <!-- Ambient Glows -->
+      <div class="absolute -right-20 -top-20 w-80 h-80 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-20 -bottom-20 w-80 h-80 bg-accent-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Playground Header Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-white/10 gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-400 mb-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            LIVE IN-BROWSER DEMO • JS SDK
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Interactive Browser Playground</h2>
+          <p class="text-sm text-slate-400 mt-1 max-w-2xl">
+            Execute real LLM completions directly inside your browser using the <code class="text-emerald-400 font-mono">zerogateway</code> JavaScript library. Zero backend required for instant testing with Pollinations AI, or configure custom keys for Google AI Studio, Groq, Cerebras, and more.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <div id="sdk-status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0b1120] border border-emerald-500/30 text-xs font-medium text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>JS SDK: <strong class="text-emerald-400">Ready</strong></span>
+          </div>
+          <button onclick="resetPlayground()" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-slate-400 hover:text-white transition">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Playground Main Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Controls (5 Cols) -->
+        <div class="lg:col-span-5 space-y-5 flex flex-col justify-between">
+          <div class="space-y-4">
+            
+            <!-- Execution Mode Switcher -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1.5">Execution Mode</label>
+              <div class="bg-[#0b1120] p-1.5 rounded-xl border border-white/10 flex text-xs font-medium gap-1">
+                <button id="mode-browser-btn" onclick="setPlaygroundMode('browser')" class="flex-1 py-2 px-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold transition flex items-center justify-center gap-1.5 text-center">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Direct Browser</span>
+                </button>
+                <button id="mode-proxy-btn" onclick="setPlaygroundMode('proxy')" class="flex-1 py-2 px-3 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center justify-center gap-1.5 text-center">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+                  </svg>
+                  <span>Local Proxy (:8080)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Proxy URL Input (Only visible in proxy mode) -->
+            <div id="proxy-url-container" class="hidden">
+              <label class="block text-xs font-medium text-slate-300 mb-1">Local Proxy URL</label>
+              <input id="playground-proxy-url" type="text" value="http://localhost:8080/v1" oninput="updatePlaygroundJsCode()" class="w-full bg-[#070b13] border border-white/10 rounded-xl px-3 py-2 text-xs font-mono text-emerald-300 focus:outline-none focus:border-brand-500" />
+            </div>
+
+            <!-- Model Selection Dropdown -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="playground-model" class="text-xs font-semibold text-slate-200">Select Model</label>
+                <span id="model-auth-pill" class="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Zero-Auth Required</span>
+              </div>
+              <select id="playground-model" onchange="onModelChange()" class="w-full bg-[#0b1120] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500 font-mono">
+                <optgroup label="Free Web APIs (Zero-Auth / Instant)">
+                  <option value="openai" selected>openai (Pollinations — Zero Auth, Fast)</option>
+                  <option value="mistral">mistral (Pollinations — Zero Auth, Smart)</option>
+                </optgroup>
+                <optgroup label="Multi-Provider Cascading & BYOK">
+                  <option value="auto">auto (Smart failover across configured providers)</option>
+                  <option value="llama-3.3-70b">llama-3.3-70b (Cerebras / Groq / SambaNova)</option>
+                  <option value="gemini-2.0-flash">gemini-2.0-flash (Google AI Studio)</option>
+                  <option value="gpt-4o-mini">gpt-4o-mini (GitHub Models)</option>
+                  <option value="deepseek-r1:free">deepseek-r1:free (OpenRouter Free)</option>
+                </optgroup>
+              </select>
+              <p id="model-hint" class="text-[11px] text-slate-400 mt-1">
+                ✨ Ready to execute immediately. No API key needed.
+              </p>
+            </div>
+
+            <!-- Collapsible Custom API Keys (BYOK & Multi-Key) -->
+            <div class="border border-white/10 rounded-xl bg-[#0b1120]/60 overflow-hidden">
+              <button type="button" onclick="toggleApiKeysDrawer()" class="w-full px-3.5 py-2.5 flex items-center justify-between text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  <span>Custom API Keys & Multi-Key Swapping</span>
+                  <span id="configured-keys-count" class="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300">Optional</span>
+                </div>
+                <svg id="keys-drawer-chevron" class="w-3.5 h-3.5 text-slate-400 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <div id="keys-drawer-content" class="hidden p-3.5 border-t border-white/10 space-y-3 bg-[#070b13]/80">
+                <p class="text-[11px] text-slate-400 leading-relaxed">
+                  Provide multiple comma-separated keys to test <strong>auto-swapping</strong> on 429 quota exhaustion. Keys are kept purely in your browser's localStorage.
+                </p>
+
+                <!-- Gemini Keys -->
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">Google AI Studio (Gemini)</label>
+                  <input id="key-gemini" type="password" placeholder="AIzaSy1..., AIzaSy2... (comma-separated)" oninput="savePlaygroundKeys()" class="w-full bg-[#0b1120] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-brand-500" />
+                </div>
+
+                <!-- Groq Key -->
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">Groq API Key</label>
+                  <input id="key-groq" type="password" placeholder="gsk_..." oninput="savePlaygroundKeys()" class="w-full bg-[#0b1120] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-brand-500" />
+                </div>
+
+                <!-- Cerebras Key -->
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">Cerebras API Key</label>
+                  <input id="key-cerebras" type="password" placeholder="csk_..." oninput="savePlaygroundKeys()" class="w-full bg-[#0b1120] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-brand-500" />
+                </div>
+
+                <!-- OpenRouter Key -->
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-300 mb-1">OpenRouter Key</label>
+                  <input id="key-openrouter" type="password" placeholder="sk-or-..." oninput="savePlaygroundKeys()" class="w-full bg-[#0b1120] border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-brand-500" />
+                </div>
+
+                <div class="flex justify-between items-center pt-1 text-[11px]">
+                  <span class="text-slate-500">Auto-saved to localStorage</span>
+                  <button type="button" onclick="clearPlaygroundKeys()" class="text-rose-400 hover:text-rose-300 underline">Clear Keys</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Toggles (Key Rotation, Provider Rotation, Streaming) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              <label class="flex items-center gap-2 bg-[#0b1120] border border-white/5 rounded-xl px-2.5 py-2 cursor-pointer hover:border-white/10 transition">
+                <input id="toggle-key-rot" type="checkbox" checked onchange="updatePlaygroundJsCode()" class="w-3.5 h-3.5 accent-brand-500 rounded" />
+                <span class="text-[11px] font-medium text-slate-300">Key Swap</span>
+              </label>
+
+              <label class="flex items-center gap-2 bg-[#0b1120] border border-white/5 rounded-xl px-2.5 py-2 cursor-pointer hover:border-white/10 transition">
+                <input id="toggle-prov-rot" type="checkbox" checked onchange="updatePlaygroundJsCode()" class="w-3.5 h-3.5 accent-brand-500 rounded" />
+                <span class="text-[11px] font-medium text-slate-300">Provider Cascade</span>
+              </label>
+
+              <label class="flex items-center gap-2 bg-[#0b1120] border border-white/5 rounded-xl px-2.5 py-2 cursor-pointer hover:border-white/10 transition">
+                <input id="toggle-stream" type="checkbox" checked onchange="updatePlaygroundJsCode()" class="w-3.5 h-3.5 accent-brand-500 rounded" />
+                <span class="text-[11px] font-medium text-slate-300">Stream SSE</span>
+              </label>
+            </div>
+
+            <!-- Quick Prompt Suggestions Chips -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] font-semibold text-slate-400">Quick Prompt Chips:</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="setQuickPrompt('Explain quantum computing in 15 words.')" class="text-[11px] bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white px-2.5 py-1 rounded-lg border border-white/5 transition">
+                  Quantum in 15 words
+                </button>
+                <button type="button" onclick="setQuickPrompt('Write a clean Python Fibonacci generator with type hints.')" class="text-[11px] bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white px-2.5 py-1 rounded-lg border border-white/5 transition">
+                  Python Fibonacci
+                </button>
+                <button type="button" onclick="setQuickPrompt('What causes an HTTP 429 rate limit and how does key swapping solve it?')" class="text-[11px] bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white px-2.5 py-1 rounded-lg border border-white/5 transition">
+                  Why 429 happens
+                </button>
+              </div>
+            </div>
+
+            <!-- User Prompt Textarea -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="playground-prompt" class="text-xs font-semibold text-slate-200">User Prompt</label>
+                <span class="text-[10px] text-slate-500 font-mono">Ctrl+Enter to run</span>
+              </div>
+              <textarea id="playground-prompt" rows="3" oninput="updatePlaygroundJsCode()" onkeydown="handlePromptKeydown(event)" class="w-full bg-[#070b13] border border-white/10 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-brand-500 resize-y" placeholder="Enter your prompt here...">Explain quantum computing in 15 words.</textarea>
+            </div>
+
+          </div>
+
+          <!-- Run & Action Buttons -->
+          <div class="pt-2 flex items-center gap-3">
+            <button id="playground-run-btn" onclick="runPlaygroundRequest()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-brand-500 to-emerald-400 hover:from-brand-600 hover:to-emerald-500 text-black font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 active:scale-[0.98]">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              <span>Run Request</span>
+            </button>
+
+            <button id="playground-stop-btn" onclick="stopPlaygroundRequest()" class="hidden py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 6h12v12H6z"/>
+              </svg>
+              <span>Stop</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Inspector & Response Stream (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col bg-[#070b13] border border-white/10 rounded-2xl overflow-hidden min-h-[460px]">
+          
+          <!-- Inspector Tabs & Meta Header -->
+          <div class="border-b border-white/10 bg-[#090d16] px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+            <!-- Tabs -->
+            <div class="flex items-center gap-1 text-xs">
+              <button id="tab-btn-output" onclick="switchPlaygroundTab('output')" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">
+                Live Output
+              </button>
+              <button id="tab-btn-raw" onclick="switchPlaygroundTab('raw')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium">
+                SSE / Raw Inspector
+              </button>
+              <button id="tab-btn-code" onclick="switchPlaygroundTab('code')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium">
+                JavaScript SDK Code
+              </button>
+            </div>
+
+            <!-- Meta Badges -->
+            <div class="flex items-center gap-2 text-[11px] font-mono">
+              <span id="playground-status-pill" class="px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/5 flex items-center gap-1.5">
+                <span id="playground-status-dot" class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span id="playground-status-text">IDLE</span>
+              </span>
+              <span id="playground-latency-pill" class="hidden sm:inline-block px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/5">
+                TTFT: -
+              </span>
+              <span id="playground-provider-pill" class="px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/5">
+                Provider: -
+              </span>
+            </div>
+          </div>
+
+          <!-- Inspector Content Area -->
+          <div class="flex-1 p-4 relative flex flex-col font-mono text-xs overflow-hidden">
+
+            <!-- Tab 1: Formatted Output -->
+            <div id="inspector-output-pane" class="flex-1 flex flex-col">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] text-slate-500">Live response tokens:</span>
+                <button onclick="copyPlaygroundOutput()" class="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <span id="copy-output-btn-text">Copy Output</span>
+                </button>
+              </div>
+              <div id="playground-output" class="flex-1 bg-[#04070e] border border-white/5 rounded-xl p-4 overflow-y-auto whitespace-pre-wrap text-slate-200 leading-relaxed max-h-[380px] font-mono selection:bg-brand-500 selection:text-black">
+Click "Run Request" to execute an LLM call directly inside your browser!
+              </div>
+            </div>
+
+            <!-- Tab 2: Raw SSE / JSON Inspector -->
+            <div id="inspector-raw-pane" class="hidden flex-1 flex flex-col">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] text-slate-500">Raw Server-Sent Events / JSON payload:</span>
+                <span id="chunk-count-badge" class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">0 chunks</span>
+              </div>
+              <div id="playground-raw-output" class="flex-1 bg-[#04070e] border border-white/5 rounded-xl p-4 overflow-y-auto whitespace-pre text-emerald-300 font-mono text-[11px] leading-relaxed max-h-[380px]">
+// Raw chunk stream inspector will display live SSE data: lines here...
+              </div>
+            </div>
+
+            <!-- Tab 3: Generated JavaScript SDK Code -->
+            <div id="inspector-code-pane" class="hidden flex-1 flex flex-col">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] text-slate-500">Drop-in JavaScript / TypeScript code for this configuration:</span>
+                <button onclick="copyPlaygroundCode()" class="text-[11px] text-slate-400 hover:text-emerald-400 flex items-center gap-1 transition">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                  <span id="copy-code-btn-text">Copy Code</span>
+                </button>
+              </div>
+              <pre id="playground-code-snippet" class="flex-1 bg-[#04070e] border border-white/5 rounded-xl p-4 overflow-y-auto text-slate-300 font-mono text-xs leading-relaxed max-h-[380px]"></pre>
+            </div>
+
+          </div>
+
+          <!-- Bottom Footer Bar -->
+          <div class="border-t border-white/5 bg-[#090d16]/90 px-4 py-2 flex items-center justify-between text-[11px] text-slate-400">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span>Client: <code class="text-emerald-400 font-mono">ZeroGateway.ZeroGatewayClient</code></span>
+            </div>
+            <div id="stream-token-count" class="font-mono text-slate-500">0 characters</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -414,6 +728,7 @@
       <!-- Tabs -->
       <div class="flex border-b border-white/10 bg-[#070b13] px-4 pt-3 gap-2 overflow-x-auto">
         <button onclick="switchTab('tab-python')" id="btn-tab-python" class="px-4 py-2 text-xs font-semibold rounded-t-lg bg-[#0e1626] text-emerald-400 border-t border-x border-white/10">Python SDK</button>
+        <button onclick="switchTab('tab-ts')" id="btn-tab-ts" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">JavaScript / TS SDK</button>
         <button onclick="switchTab('tab-proxy')" id="btn-tab-proxy" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">Cursor / Cline Proxy</button>
         <button onclick="switchTab('tab-curl')" id="btn-tab-curl" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">cURL API</button>
         <button onclick="switchTab('tab-keys')" id="btn-tab-keys" class="px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white">Multi-Key Config</button>
@@ -423,7 +738,7 @@
       <div class="p-6 font-mono text-xs text-slate-300 bg-[#090d16]">
         <!-- Python -->
         <div id="tab-python" class="tab-pane">
-<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500"># 1. Install</span>
+<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500"># 1. Install via pip</span>
 <span class="text-emerald-400">pip</span> install zerogateway
 
 <span class="text-slate-500"># 2. Run with smart fallback</span>
@@ -432,12 +747,35 @@
 client = ZeroGatewayClient(enable_key_rotation=<span class="text-amber-400">True</span>)
 
 response = client.chat.completions.create(
-    model=<span class="text-emerald-300">"llama-3.3-70b"</span>, <span class="text-slate-500"># or "gemini-flash", "fast-smart", "auto"</span>
+    model=<span class="text-emerald-300">"llama-3.3-70b"</span>, <span class="text-slate-500"># or "gemini-flash", "openai", "auto"</span>
     messages=[{<span class="text-emerald-300">"role"</span>: <span class="text-emerald-300">"user"</span>, <span class="text-emerald-300">"content"</span>: <span class="text-emerald-300">"Explain async in Python in 1 line."</span>}]
 )
 
 <span class="text-blue-400">print</span>(response.choices[0].message.content)
 <span class="text-blue-400">print</span>(<span class="text-emerald-300">f"Served by: {response.provider_id}"</span>)
+</pre>
+        </div>
+
+        <!-- JavaScript / TypeScript -->
+        <div id="tab-ts" class="tab-pane hidden">
+<pre class="overflow-x-auto leading-relaxed"><span class="text-slate-500">// 1. Install via npm or load directly in HTML (&lt;script src="zerogateway.browser.global.js"&gt;&lt;/script&gt;)</span>
+<span class="text-emerald-400">npm</span> install zerogateway
+
+<span class="text-slate-500">// 2. Run in Node.js or directly in browser with multi-key rotation</span>
+<span class="text-purple-400">import</span> { ZeroGatewayClient } <span class="text-purple-400">from</span> <span class="text-emerald-300">"zerogateway"</span>;
+
+<span class="text-purple-400">const</span> client = <span class="text-purple-400">new</span> ZeroGatewayClient({
+  enableKeyRotation: <span class="text-amber-400">true</span>,
+  enableProviderRotation: <span class="text-amber-400">true</span>,
+});
+
+<span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> client.chat.completions.create({
+  model: <span class="text-emerald-300">"llama-3.3-70b"</span>, <span class="text-slate-500">// or "openai", "gemini-2.0-flash", "auto"</span>
+  messages: [{ role: <span class="text-emerald-300">"user"</span>, content: <span class="text-emerald-300">"Explain async in TypeScript in 1 line."</span> }]
+});
+
+console.log(response.choices[0].message.content);
+console.log(<span class="text-emerald-300">`Served by: ${response._zerogateway_meta.provider_name}`</span>);
 </pre>
         </div>
 
@@ -530,13 +868,15 @@ response = client.chat.completions.create(
       document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
       document.getElementById(tabId).classList.remove('hidden');
 
-      const tabs = ['tab-python', 'tab-proxy', 'tab-curl', 'tab-keys'];
+      const tabs = ['tab-python', 'tab-ts', 'tab-proxy', 'tab-curl', 'tab-keys'];
       tabs.forEach(t => {
         const btn = document.getElementById('btn-' + t);
-        if (t === tabId) {
-          btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg bg-[#0e1626] text-emerald-400 border-t border-x border-white/10';
-        } else {
-          btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white';
+        if (btn) {
+          if (t === tabId) {
+            btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg bg-[#0e1626] text-emerald-400 border-t border-x border-white/10';
+          } else {
+            btn.className = 'px-4 py-2 text-xs font-semibold rounded-t-lg text-slate-400 hover:text-white';
+          }
         }
       });
     }
@@ -553,6 +893,449 @@ response = client.chat.completions.create(
         }
       });
     }
+
+    // --- Playground State & Controllers ---
+    let playgroundMode = 'browser'; // 'browser' or 'proxy'
+    let currentAbortController = null;
+    let isRequestRunning = false;
+
+    function initPlayground() {
+      if (typeof window.ZeroGateway !== 'undefined') {
+        const badge = document.getElementById('sdk-status-badge');
+        if (badge) {
+          badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>JS SDK: <strong class="text-emerald-400">Ready</strong></span>';
+        }
+      }
+      loadPlaygroundKeys();
+      onModelChange();
+      updatePlaygroundJsCode();
+    }
+
+    function setPlaygroundMode(mode) {
+      playgroundMode = mode;
+      const browserBtn = document.getElementById('mode-browser-btn');
+      const proxyBtn = document.getElementById('mode-proxy-btn');
+      const proxyContainer = document.getElementById('proxy-url-container');
+
+      if (mode === 'browser') {
+        browserBtn.className = 'flex-1 py-2 px-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold transition flex items-center justify-center gap-1.5 text-center';
+        proxyBtn.className = 'flex-1 py-2 px-3 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center justify-center gap-1.5 text-center';
+        proxyContainer.classList.add('hidden');
+      } else {
+        proxyBtn.className = 'flex-1 py-2 px-3 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold transition flex items-center justify-center gap-1.5 text-center';
+        browserBtn.className = 'flex-1 py-2 px-3 rounded-lg text-slate-400 hover:text-slate-200 transition flex items-center justify-center gap-1.5 text-center';
+        proxyContainer.classList.remove('hidden');
+      }
+      updatePlaygroundJsCode();
+    }
+
+    function onModelChange() {
+      const model = document.getElementById('playground-model').value;
+      const authPill = document.getElementById('model-auth-pill');
+      const hint = document.getElementById('model-hint');
+
+      if (model === 'openai' || model === 'mistral') {
+        authPill.innerText = 'Zero-Auth Required';
+        authPill.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        hint.innerHTML = '✨ Ready to execute immediately via Pollinations AI. No API key needed.';
+      } else if (model === 'auto') {
+        authPill.innerText = 'Cascading Auto-Route';
+        authPill.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-brand-500/10 text-brand-400 border border-brand-500/20';
+        hint.innerHTML = '🔄 Automatically cascades across all available providers and fallback endpoints.';
+      } else {
+        authPill.innerText = 'Free Tier Key';
+        authPill.className = 'text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        hint.innerHTML = '🔑 Requires a free provider key (or Local Proxy mode). Configure below.';
+      }
+      updatePlaygroundJsCode();
+    }
+
+    function toggleApiKeysDrawer() {
+      const content = document.getElementById('keys-drawer-content');
+      const chevron = document.getElementById('keys-drawer-chevron');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function getCollectedKeys() {
+      const keys = {};
+      const gemini = document.getElementById('key-gemini')?.value.trim();
+      const groq = document.getElementById('key-groq')?.value.trim();
+      const cerebras = document.getElementById('key-cerebras')?.value.trim();
+      const openrouter = document.getElementById('key-openrouter')?.value.trim();
+
+      if (gemini) {
+        keys.google_ai_studio = gemini.split(',').map(s => s.trim()).filter(Boolean);
+        keys.gemini = keys.google_ai_studio;
+      }
+      if (groq) {
+        keys.groq = groq.split(',').map(s => s.trim()).filter(Boolean);
+      }
+      if (cerebras) {
+        keys.cerebras = cerebras.split(',').map(s => s.trim()).filter(Boolean);
+      }
+      if (openrouter) {
+        keys.openrouter = openrouter.split(',').map(s => s.trim()).filter(Boolean);
+      }
+      return keys;
+    }
+
+    function savePlaygroundKeys() {
+      const gemini = document.getElementById('key-gemini')?.value || '';
+      const groq = document.getElementById('key-groq')?.value || '';
+      const cerebras = document.getElementById('key-cerebras')?.value || '';
+      const openrouter = document.getElementById('key-openrouter')?.value || '';
+
+      const data = { gemini, groq, cerebras, openrouter };
+      try {
+        localStorage.setItem('zerogateway_playground_keys', JSON.stringify(data));
+      } catch (e) {}
+
+      updateConfiguredKeysBadge();
+      updatePlaygroundJsCode();
+    }
+
+    function loadPlaygroundKeys() {
+      try {
+        const stored = localStorage.getItem('zerogateway_playground_keys');
+        if (stored) {
+          const data = JSON.parse(stored);
+          if (data.gemini && document.getElementById('key-gemini')) document.getElementById('key-gemini').value = data.gemini;
+          if (data.groq && document.getElementById('key-groq')) document.getElementById('key-groq').value = data.groq;
+          if (data.cerebras && document.getElementById('key-cerebras')) document.getElementById('key-cerebras').value = data.cerebras;
+          if (data.openrouter && document.getElementById('key-openrouter')) document.getElementById('key-openrouter').value = data.openrouter;
+        }
+      } catch (e) {}
+      updateConfiguredKeysBadge();
+    }
+
+    function clearPlaygroundKeys() {
+      try {
+        localStorage.removeItem('zerogateway_playground_keys');
+      } catch (e) {}
+      if (document.getElementById('key-gemini')) document.getElementById('key-gemini').value = '';
+      if (document.getElementById('key-groq')) document.getElementById('key-groq').value = '';
+      if (document.getElementById('key-cerebras')) document.getElementById('key-cerebras').value = '';
+      if (document.getElementById('key-openrouter')) document.getElementById('key-openrouter').value = '';
+      updateConfiguredKeysBadge();
+      updatePlaygroundJsCode();
+    }
+
+    function updateConfiguredKeysBadge() {
+      const keys = getCollectedKeys();
+      const totalCount = Object.keys(keys).filter(k => k !== 'gemini').length;
+      const badge = document.getElementById('configured-keys-count');
+      if (badge) {
+        if (totalCount > 0) {
+          badge.innerText = `${totalCount} Configured`;
+          badge.className = 'text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30';
+        } else {
+          badge.innerText = 'Optional';
+          badge.className = 'text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300';
+        }
+      }
+    }
+
+    function setQuickPrompt(promptText) {
+      const promptEl = document.getElementById('playground-prompt');
+      if (promptEl) {
+        promptEl.value = promptText;
+        updatePlaygroundJsCode();
+      }
+    }
+
+    function handlePromptKeydown(event) {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        event.preventDefault();
+        runPlaygroundRequest();
+      }
+    }
+
+    function switchPlaygroundTab(tabId) {
+      const tabs = ['output', 'raw', 'code'];
+      tabs.forEach(t => {
+        const pane = document.getElementById(`inspector-${t}-pane`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabId) {
+          pane?.classList.remove('hidden');
+          if (btn) btn.className = 'px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30';
+        } else {
+          pane?.classList.add('hidden');
+          if (btn) btn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-medium';
+        }
+      });
+    }
+
+    function updatePlaygroundJsCode() {
+      const model = document.getElementById('playground-model')?.value || 'openai';
+      const prompt = document.getElementById('playground-prompt')?.value || 'Hello';
+      const isKeyRot = document.getElementById('toggle-key-rot')?.checked ?? true;
+      const isProvRot = document.getElementById('toggle-prov-rot')?.checked ?? true;
+      const isStream = document.getElementById('toggle-stream')?.checked ?? true;
+      const proxyUrl = document.getElementById('playground-proxy-url')?.value || 'http://localhost:8080/v1';
+
+      const keys = getCollectedKeys();
+      const keysFormatted = Object.keys(keys).length > 0
+        ? `  apiKeys: ${JSON.stringify(keys, null, 2).replace(/\n/g, '\n  ')},\n`
+        : '';
+
+      const optsStr = playgroundMode === 'proxy'
+        ? `, { proxyUrl: "${proxyUrl}" }`
+        : '';
+
+      let snippet = `import { ZeroGatewayClient } from "zerogateway";\n\n`;
+      snippet += `// Initialize browser client\nconst client = new ZeroGatewayClient({\n`;
+      snippet += `  enableKeyRotation: ${isKeyRot},\n`;
+      snippet += `  enableProviderRotation: ${isProvRot},\n`;
+      if (keysFormatted) snippet += keysFormatted;
+      snippet += `});\n\n`;
+
+      if (isStream) {
+        snippet += `// Stream tokens via SSE\n`;
+        snippet += `const stream = await client.chat.completions.create({\n`;
+        snippet += `  model: "${model}",\n`;
+        snippet += `  messages: [{ role: "user", content: ${JSON.stringify(prompt)} }],\n`;
+        snippet += `  stream: true\n`;
+        snippet += `}${optsStr});\n\n`;
+        snippet += `for await (const chunk of stream) {\n`;
+        snippet += `  process.stdout.write(chunk);\n`;
+        snippet += `}\n`;
+      } else {
+        snippet += `// Create completion\n`;
+        snippet += `const response = await client.chat.completions.create({\n`;
+        snippet += `  model: "${model}",\n`;
+        snippet += `  messages: [{ role: "user", content: ${JSON.stringify(prompt)} }],\n`;
+        snippet += `  stream: false\n`;
+        snippet += `}${optsStr});\n\n`;
+        snippet += `console.log(response.choices[0].message.content);\n`;
+        snippet += `console.log("Served by:", response._zerogateway_meta?.provider_name);\n`;
+      }
+
+      const codeEl = document.getElementById('playground-code-snippet');
+      if (codeEl) codeEl.innerText = snippet;
+    }
+
+    function setStatus(state, text) {
+      const pill = document.getElementById('playground-status-pill');
+      const dot = document.getElementById('playground-status-dot');
+      const textEl = document.getElementById('playground-status-text');
+
+      if (textEl) textEl.innerText = text;
+
+      if (state === 'idle') {
+        pill.className = 'px-2 py-0.5 rounded-md bg-white/5 text-slate-400 border border-white/5 flex items-center gap-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-slate-400';
+      } else if (state === 'connecting') {
+        pill.className = 'px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping';
+      } else if (state === 'streaming') {
+        pill.className = 'px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-500/30 flex items-center gap-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse';
+      } else if (state === 'completed') {
+        pill.className = 'px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+      } else if (state === 'error') {
+        pill.className = 'px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/30 flex items-center gap-1.5';
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-rose-400';
+      }
+    }
+
+    async function runPlaygroundRequest() {
+      if (isRequestRunning) return;
+
+      const model = document.getElementById('playground-model').value;
+      const prompt = document.getElementById('playground-prompt').value.trim();
+      const isKeyRot = document.getElementById('toggle-key-rot').checked;
+      const isProvRot = document.getElementById('toggle-prov-rot').checked;
+      const isStream = document.getElementById('toggle-stream').checked;
+      const proxyUrl = playgroundMode === 'proxy'
+        ? (document.getElementById('playground-proxy-url').value.trim() || 'http://localhost:8080/v1')
+        : undefined;
+
+      if (!prompt) {
+        alert('Please enter a prompt.');
+        return;
+      }
+
+      if (typeof window.ZeroGateway === 'undefined') {
+        alert('ZeroGateway JavaScript library not found. Please check bundle.');
+        return;
+      }
+
+      // UI state setup
+      isRequestRunning = true;
+      document.getElementById('playground-run-btn').classList.add('hidden');
+      document.getElementById('playground-stop-btn').classList.remove('hidden');
+
+      const outputEl = document.getElementById('playground-output');
+      const rawOutputEl = document.getElementById('playground-raw-output');
+      const chunkCountBadge = document.getElementById('chunk-count-badge');
+      const latencyPill = document.getElementById('playground-latency-pill');
+      const providerPill = document.getElementById('playground-provider-pill');
+      const tokenCountEl = document.getElementById('stream-token-count');
+
+      outputEl.innerText = '';
+      rawOutputEl.innerText = '';
+      chunkCountBadge.innerText = '0 chunks';
+      latencyPill.innerText = 'TTFT: ...';
+      providerPill.innerText = 'Provider: routing...';
+      tokenCountEl.innerText = '0 characters';
+      setStatus('connecting', 'ROUTING...');
+
+      const startTime = performance.now();
+      let ttftRecorded = false;
+      let chunkCount = 0;
+      let totalText = '';
+
+      currentAbortController = new AbortController();
+
+      try {
+        const keys = getCollectedKeys();
+        const client = new window.ZeroGateway.ZeroGatewayClient({
+          enableKeyRotation: isKeyRot,
+          enableProviderRotation: isProvRot,
+          apiKeys: keys
+        });
+
+        if (isStream) {
+          const stream = await client.chat.completions.create(
+            {
+              model,
+              messages: [{ role: 'user', content: prompt }],
+              stream: true
+            },
+            { proxyUrl }
+          );
+
+          setStatus('streaming', 'STREAMING...');
+
+          for await (const chunk of stream) {
+            if (!isRequestRunning) break; // cancelled
+
+            chunkCount++;
+            rawOutputEl.innerText += chunk;
+            chunkCountBadge.innerText = `${chunkCount} chunks`;
+
+            // Parse chunk lines
+            const lines = chunk.split('\n');
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.startsWith('data: ') && !trimmed.includes('[DONE]')) {
+                try {
+                  const data = JSON.parse(trimmed.slice(6));
+                  const delta = data.choices?.[0]?.delta?.content || data.choices?.[0]?.text || '';
+                  if (delta) {
+                    if (!ttftRecorded) {
+                      const ttftMs = Math.round(performance.now() - startTime);
+                      latencyPill.innerText = `TTFT: ${ttftMs}ms`;
+                      ttftRecorded = true;
+                    }
+                    totalText += delta;
+                    outputEl.innerText = totalText;
+                    tokenCountEl.innerText = `${totalText.length} chars (~${Math.round(totalText.length / 4)} tokens)`;
+                    outputEl.scrollTop = outputEl.scrollHeight;
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+
+          const totalMs = Math.round(performance.now() - startTime);
+          latencyPill.innerText = `TTFT: ${ttftRecorded ? latencyPill.innerText.replace('TTFT: ', '') : totalMs + 'ms'} • Total: ${totalMs}ms`;
+          setStatus('completed', 'COMPLETED');
+
+          // Infer provider based on model & mode
+          let servedProvider = 'Pollinations AI';
+          if (model.includes('llama') && keys.cerebras) servedProvider = 'Cerebras Inference';
+          else if (model.includes('gemini') || model.includes('google')) servedProvider = 'Google AI Studio';
+          else if (playgroundMode === 'proxy') servedProvider = 'Local Proxy (:8080)';
+          providerPill.innerText = `Served by: ${servedProvider}`;
+
+        } else {
+          // Non-streaming one-shot
+          const res = await client.chat.completions.create(
+            {
+              model,
+              messages: [{ role: 'user', content: prompt }],
+              stream: false
+            },
+            { proxyUrl }
+          );
+
+          const totalMs = Math.round(performance.now() - startTime);
+          latencyPill.innerText = `Latency: ${totalMs}ms`;
+
+          const content = res.choices?.[0]?.message?.content || JSON.stringify(res, null, 2);
+          outputEl.innerText = content;
+          rawOutputEl.innerText = JSON.stringify(res, null, 2);
+          tokenCountEl.innerText = `${content.length} chars`;
+
+          const prov = res._zerogateway_meta?.provider_name || res.provider_name || 'Pollinations AI';
+          providerPill.innerText = `Served by: ${prov}`;
+          setStatus('completed', 'COMPLETED');
+        }
+
+      } catch (err) {
+        console.error('Playground error:', err);
+        setStatus('error', 'FAILED');
+        const errMsg = String(err.message || err);
+        outputEl.innerHTML = `<span class="text-rose-400 font-bold">Error:</span> ${errMsg}\n\n` +
+          `<span class="text-slate-400">💡 Tip: For zero-auth testing in the browser, select <strong>"openai"</strong> or <strong>"mistral"</strong> (via Pollinations AI). If using custom keys for Groq/Cerebras directly, browser CORS may require launching the local proxy via <code>zerogateway serve</code>.</span>`;
+        rawOutputEl.innerText = `// Error detail:\n${errMsg}\n\nStack: ${err.stack || ''}`;
+      } finally {
+        isRequestRunning = false;
+        document.getElementById('playground-run-btn').classList.remove('hidden');
+        document.getElementById('playground-stop-btn').classList.add('hidden');
+      }
+    }
+
+    function stopPlaygroundRequest() {
+      if (!isRequestRunning) return;
+      isRequestRunning = false;
+      if (currentAbortController) {
+        currentAbortController.abort();
+      }
+      setStatus('idle', 'STOPPED');
+      document.getElementById('playground-run-btn').classList.remove('hidden');
+      document.getElementById('playground-stop-btn').classList.add('hidden');
+    }
+
+    function resetPlayground() {
+      stopPlaygroundRequest();
+      document.getElementById('playground-output').innerText = 'Click "Run Request" to execute an LLM call directly inside your browser!';
+      document.getElementById('playground-raw-output').innerText = '// Raw chunk stream inspector will display live SSE data: lines here...';
+      document.getElementById('chunk-count-badge').innerText = '0 chunks';
+      document.getElementById('playground-latency-pill').innerText = 'TTFT: -';
+      document.getElementById('playground-provider-pill').innerText = 'Provider: -';
+      document.getElementById('stream-token-count').innerText = '0 characters';
+      setStatus('idle', 'IDLE');
+    }
+
+    function copyPlaygroundOutput() {
+      const text = document.getElementById('playground-output').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copy-output-btn-text');
+        btnText.innerText = 'Copied!';
+        setTimeout(() => { btnText.innerText = 'Copy Output'; }, 2000);
+      });
+    }
+
+    function copyPlaygroundCode() {
+      const text = document.getElementById('playground-code-snippet').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btnText = document.getElementById('copy-code-btn-text');
+        btnText.innerText = 'Copied!';
+        setTimeout(() => { btnText.innerText = 'Copy Code'; }, 2000);
+      });
+    }
+
+    // Initialize on DOM load
+    document.addEventListener('DOMContentLoaded', initPlayground);
   </script>
 </body>
 </html>

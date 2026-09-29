@@ -43,6 +43,24 @@ def index(request: Request):
         "active_providers": [p.name for p in router_instance.get_configured_providers()]
     }
 
+@app.get("/zerogateway.browser.global.js")
+def browser_bundle():
+    bundle_file = Path(__file__).resolve().parent.parent / "data" / "zerogateway.browser.global.js"
+    if not bundle_file.exists():
+        bundle_file = Path(__file__).resolve().parents[4] / "docs" / "zerogateway.browser.global.js"
+    if bundle_file.exists():
+        return Response(content=bundle_file.read_bytes(), media_type="application/javascript")
+    raise HTTPException(status_code=404, detail="Browser bundle not found")
+
+@app.get("/index.html")
+def landing_html():
+    landing_file = Path(__file__).resolve().parent.parent / "data" / "index.html"
+    if not landing_file.exists():
+        landing_file = Path(__file__).resolve().parents[4] / "docs" / "index.html"
+    if landing_file.exists():
+        return HTMLResponse(content=landing_file.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="Landing page not found")
+
 
 
 @app.get("/health")
