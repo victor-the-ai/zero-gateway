@@ -10,8 +10,9 @@ from ..router import ZeroGatewayRouter
 app = FastAPI(
     title="Zerogateway Proxy",
     description="Drop-in OpenAI-compatible proxy with automatic fallback across free LLM providers",
-    version="0.1.0"
+    version="0.1.1"
 )
+
 
 app.add_middleware(
     CORSMiddleware,

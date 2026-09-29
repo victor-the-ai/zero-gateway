@@ -10,7 +10,8 @@ const program = new Command();
 program
   .name("zerogateway")
   .description("Zerogateway CLI - Manage and route across free LLM providers.")
-  .version("0.1.0");
+  .version("0.1.1");
+
 
 program
   .command("status")

@@ -1,7 +1,8 @@
 {
   "name": "zerogateway",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
+
   "description": "Unified router and client for 100% free LLM providers with automatic rate-limit failover and key swapping",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

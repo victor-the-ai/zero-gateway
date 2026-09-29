@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zerogateway"
-version = "0.1.0"
+version = "0.1.1"
+
 description = "A unified router and client for free LLM providers with automatic rate-limit failover"
 readme = "README.md"
 requires-python = ">=3.9"
