@@ -215,6 +215,10 @@
         </a>
         <a href="#features" class="hover:text-white transition">Features</a>
         <a href="#providers" class="hover:text-white transition">Free Providers</a>
+        <a href="visual-guide.html" class="text-emerald-400 hover:text-emerald-300 font-semibold transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Visual Guide
+        </a>
         <a href="#quickstart" class="hover:text-white transition">Quickstart</a>
         <a href="#faq" class="hover:text-white transition">FAQ</a>
       </div>
@@ -285,6 +289,18 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
       </a>
+
+      <!-- Visual Guide Demo -->
+      <a href="visual-guide.html" class="group relative px-5 py-3 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-sm font-bold transition flex items-center gap-2.5 overflow-hidden">
+        <span class="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition pointer-events-none" style="box-shadow:0 0 30px -6px rgba(16,185,129,.55)"></span>
+        <span class="w-7 h-7 rounded-full bg-emerald-500/25 border border-emerald-400/50 flex items-center justify-center flex-none group-hover:bg-emerald-500/40 transition">
+          <svg class="w-3 h-3 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span class="text-left leading-tight flex flex-col">
+          <span>Visual Guide Demo</span>
+          <span class="text-[10px] font-medium text-emerald-400/70 tracking-wider">24s motion explainer</span>
+        </span>
+      </a>
     </div>
 
     <!-- Integrations Badges -->
@@ -296,6 +312,67 @@
       <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">LibreChat</span>
       <span class="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-md border border-white/5">Open WebUI</span>
     </div>
+  </section>
+
+  <!-- Visual Guide Promo Band -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 z-10 relative">
+    <a href="visual-guide.html" class="group glass-panel rounded-2xl p-6 sm:p-8 border border-emerald-500/25 hover:border-emerald-500/60 transition flex flex-col sm:flex-row sm:items-center gap-6 overflow-hidden relative">
+      <div class="absolute -left-10 -top-10 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/20 transition"></div>
+
+      <div class="relative flex-none w-full sm:w-56 aspect-video rounded-xl overflow-hidden border border-white/10 bg-[#04070e]">
+        <!-- static preview of the guide: the topology the film animates -->
+        <svg viewBox="0 0 224 126" class="w-full h-full" aria-hidden="true">
+          <line x1="112" y1="63" x2="112" y2="14" stroke="#10b981" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="58"  y2="34" stroke="#10b981" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="166" y2="34" stroke="#22d3ee" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="30"  y2="63" stroke="#10b981" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="194" y2="63" stroke="#22d3ee" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="58"  y2="92" stroke="#10b981" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="166" y2="92" stroke="#10b981" stroke-width="1" opacity=".7"/>
+          <line x1="112" y1="63" x2="112" y2="112" stroke="#f59e0b" stroke-width="1.4"/>
+          <circle cx="112" cy="63" r="11" fill="none" stroke="#34d399" stroke-width="1.6"/>
+          <circle cx="112" cy="14" r="5" fill="none" stroke="#10b981"/><circle cx="58" cy="34" r="5" fill="none" stroke="#10b981"/>
+          <circle cx="166" cy="34" r="5" fill="none" stroke="#22d3ee"/><circle cx="30" cy="63" r="5" fill="none" stroke="#10b981"/>
+          <circle cx="194" cy="63" r="5" fill="none" stroke="#22d3ee"/><circle cx="58" cy="92" r="5" fill="none" stroke="#10b981"/>
+          <circle cx="166" cy="92" r="5" fill="none" stroke="#10b981"/>
+          <circle cx="112" cy="112" r="6" fill="none" stroke="#f59e0b" stroke-dasharray="3 3"/>
+          <text x="112" y="119" text-anchor="middle" fill="#f59e0b" font-size="7" font-family="monospace">429</text>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="w-12 h-12 rounded-full bg-emerald-500/25 border border-emerald-400/60 backdrop-blur flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500/40 transition">
+            <svg class="w-4 h-4 translate-x-[1px] text-emerald-200" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="relative flex-1 text-left">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <h2 class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Visual Guide Demo</h2>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10">24 seconds</span>
+        </div>
+        <h3 class="text-xl sm:text-2xl font-extrabold text-white">Watch the 429 happen — and never reach you.</h3>
+        <p class="text-sm text-slate-400 mt-2 leading-relaxed max-w-xl">
+          A motion walkthrough of the real routing path: one model alias fans out across all 8 free providers,
+          a rate limit is caught mid-flight, keys and providers swap, and the stream lands on a single
+          OpenAI-compatible endpoint. 8 chapters, click to seek.
+        </p>
+        <div class="flex flex-wrap gap-2 mt-4 text-[11px] text-slate-400">
+          <span class="px-2 py-1 rounded-md bg-white/5 border border-white/5 font-mono">8 providers</span>
+          <span class="px-2 py-1 rounded-md bg-white/5 border border-white/5 font-mono">21 models</span>
+          <span class="px-2 py-1 rounded-md bg-white/5 border border-white/5 font-mono">25 aliases</span>
+          <span class="px-2 py-1 rounded-md bg-white/5 border border-white/5 font-mono">:8080 OpenAI-compatible</span>
+        </div>
+      </div>
+
+      <div class="relative flex-none flex sm:flex-col items-center sm:items-end gap-3">
+        <span class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-emerald-500 text-black font-bold text-sm shadow-lg shadow-emerald-500/20 group-hover:bg-emerald-400 transition">
+          Play the guide
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </span>
+        <span class="text-[10px] text-slate-500 font-mono">visual-guide.html</span>
+      </div>
+    </a>
   </section>
 
   <!-- Interactive Flow / Architecture Visual -->
