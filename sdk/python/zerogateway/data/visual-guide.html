@@ -2,31 +2,32 @@
 <html lang="en" class="scroll-smooth dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zerogateway — Visual Guide | See the 429 failover in motion</title>
-<meta name="description" content="A 24-second motion guide to Zerogateway: one alias fans out to 8 free LLM providers, an HTTP 429 is caught mid-flight and seamlessly rerouted, keys auto-swap, and everything lands on one OpenAI-compatible endpoint.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zerogateway — Interactive Visual Guide</title>
+<meta name="description" content="Explore how Zerogateway routes requests across 8 free LLM providers. Interactive diagrams you can touch: alias fan-out, HTTP 429 failover, intra-provider key rotation and the OpenAI-compatible endpoint.">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="theme-color" content="#090d16">
 <link rel="canonical" href="https://victor-the-ai.github.io/zero-gateway/visual-guide.html">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://victor-the-ai.github.io/zero-gateway/visual-guide.html">
-<meta property="og:title" content="Zerogateway — Visual Guide">
-<meta property="og:description" content="Watch one request fan out to 8 free providers, hit a 429, and reroute in milliseconds. A 24-second motion guide.">
+<meta property="og:title" content="Zerogateway — Interactive Visual Guide">
+<meta property="og:description" content="Touch the routing layer: watch an alias fan out to 8 free providers, trip a 429, and see the failover reroute in real time.">
 <meta property="og:image" content="https://victor-the-ai.github.io/zero-gateway/og-image.svg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Zerogateway — Visual Guide">
-<meta name="twitter:description" content="One endpoint. 8 providers. Zero 429s — explained in 24 seconds.">
+<meta name="twitter:title" content="Zerogateway — Interactive Visual Guide">
+<meta name="twitter:description" content="One endpoint. 8 providers. Zero 429s — explore it by hand.">
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  "name": "Zerogateway — Visual Guide",
-  "description": "A 24-second motion guide to the Zerogateway OpenAI-compatible failover router: alias fan-out across 8 free providers, HTTP 429 detection and cascading, intra-provider multi-key swapping, and a single local OpenAI-compatible endpoint.",
-  "uploadDate": "2026-09-30",
-  "contentUrl": "https://victor-the-ai.github.io/zero-gateway/visual-guide.html",
-  "thumbnailUrl": "https://victor-the-ai.github.io/zero-gateway/og-image.svg",
-  "publisher": { "@type": "Organization", "name": "victor-the-ai", "url": "https://github.com/victor-the-ai" }
+  "@context":"https://schema.org",
+  "@type":"WebApplication",
+  "name":"Zerogateway Interactive Visual Guide",
+  "applicationCategory":"DeveloperApplication",
+  "url":"https://victor-the-ai.github.io/zero-gateway/visual-guide.html",
+  "operatingSystem":"Any browser",
+  "isAccessibleForFree":true,
+  "description":"Interactive diagrams of the Zerogateway OpenAI-compatible failover router: alias fan-out across 8 free providers, HTTP 429 detection and cascading, intra-provider multi-key swapping, and a single local OpenAI-compatible endpoint.",
+  "publisher":{"@type":"Organization","name":"victor-the-ai","url":"https://github.com/victor-the-ai"}
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,1726 +35,1331 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'], mono: ['JetBrains Mono','monospace'] },
-        colors: { brand: { 50:'#f0fdf4', 500:'#10b981', 600:'#059669', 700:'#047857' }, accent: { 500:'#6366f1', 600:'#4f46e5' } }
-      }
-    }
-  }
+  tailwind.config={darkMode:'class',theme:{extend:{
+    fontFamily:{sans:['Plus Jakarta Sans','sans-serif'],mono:['JetBrains Mono','monospace']},
+    colors:{brand:{50:'#f0fdf4',500:'#10b981',600:'#059669',700:'#047857'},accent:{500:'#6366f1',600:'#4f46e5'}}
+  }}};
 </script>
 <style>
-:root{
-  --bg:#090d16; --panel:#0e1626; --ink:#e2e8f0; --dim:#94a3b8;
-  --brand:#10b981; --brand2:#34d399; --accent:#6366f1; --warn:#f59e0b; --bad:#ef4444;
-  --line:rgba(255,255,255,.09);
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif}
-body{overflow-x:hidden}
-a{color:inherit}
-.grid-pattern{background-size:40px 40px;background-image:linear-gradient(to right,rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.03) 1px,transparent 1px)}
+:root{--bg:#090d16;--ink:#e2e8f0;--dim:#94a3b8;--brand:#10b981;--brand2:#34d399;
+      --accent:#6366f1;--warn:#f59e0b;--cyan:#22d3ee;--line:rgba(255,255,255,.09)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);overflow-x:hidden}
+::selection{background:rgba(16,185,129,.3)}
 .mono{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace}
-.glass{background:rgba(15,23,42,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08)}
-.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
-.gbtn{display:inline-flex;align-items:center;gap:.6rem;padding:.7rem 1.1rem;border-radius:12px;font-weight:700;font-size:.875rem;transition:.18s;border:1px solid transparent;cursor:pointer;text-decoration:none}
-.gbtn-primary{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#04140d;box-shadow:0 10px 30px -8px rgba(16,185,129,.55)}
-.gbtn-primary:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.gbtn-ghost{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:#fff}
-.gbtn-ghost:hover{background:rgba(255,255,255,.1)}
-.gbtn-pulse{position:relative}
-.gbtn-pulse::after{content:"";position:absolute;inset:-3px;border-radius:15px;border:1.5px solid var(--brand);opacity:0;animation:ping 2.6s ease-out infinite}
-@keyframes ping{0%{opacity:.7;transform:scale(1)}70%{opacity:0;transform:scale(1.13)}100%{opacity:0}}
-.chip{display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .7rem;border-radius:999px;font-size:.72rem;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#cbd5e1}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--brand)}
-.chapter{display:flex;gap:.9rem;align-items:flex-start;padding:.85rem 1rem;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.025);cursor:pointer;transition:.16s;text-align:left;width:100%}
-.chapter:hover{background:rgba(16,185,129,.09);border-color:rgba(16,185,129,.35);transform:translateX(3px)}
-.chapter .n{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--brand);padding-top:.15rem;min-width:2.1rem}
-.chapter .t{font-weight:700;color:#fff;font-size:.9rem}
-.chapter .d{color:var(--dim);font-size:.76rem;line-height:1.5;margin-top:.15rem}
+.gridbg{background-size:44px 44px;background-image:linear-gradient(to right,rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.028) 1px,transparent 1px)}
+.panel{background:rgba(12,18,32,.72);backdrop-filter:blur(14px);border:1px solid var(--line)}
 
-/* ============ PLAYER OVERLAY ============ */
-#player{position:fixed;inset:0;z-index:100;display:none;place-items:center;background:rgba(2,4,9,.94);backdrop-filter:blur(10px)}
-#player.on{display:grid}
-#frame{position:relative;overflow:hidden;background:#05070d;cursor:pointer;box-shadow:0 60px 180px -30px rgba(0,0,0,.95),0 0 0 1px rgba(255,255,255,.07)}
-#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
-#gfx{position:absolute;left:0;top:0;width:1920px;height:1080px;display:block}
-#type{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none;overflow:hidden}
-.blk{position:absolute;left:0;top:0;width:1920px;height:1080px;display:none;pointer-events:none}
-.blk.on{display:block}
-.l{display:inline-block;white-space:pre;transform-origin:50% 100%}
-#b1 .l,#b8 .l{text-shadow:calc(var(--ab,0px) * -1) 0 rgba(245,158,11,.95),var(--ab,0px) 0 rgba(16,185,129,.95)}
-.display{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-weight:800;text-transform:uppercase;line-height:.86;letter-spacing:-.03em}
-.monoT{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-weight:500;text-transform:uppercase;letter-spacing:.3em}
-.codeT{font-family:'JetBrains Mono',ui-monospace,Menlo,monospace;font-weight:500;text-transform:none;letter-spacing:0}
+/* ---- scroll reveal ---- */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .75s cubic-bezier(.2,.7,.3,1),transform .75s cubic-bezier(.2,.7,.3,1);transition-delay:var(--d,0ms)}
+.in .rv{opacity:1;transform:none}
 
-#hud{transition:opacity .5s ease;pointer-events:none}
-#hud.off{opacity:0}
-#hud .tl{position:absolute;left:112px;top:52px;font-size:15px;color:rgba(226,232,240,.6)}
-#hud .tr{position:absolute;right:112px;top:52px;font-size:15px;text-align:right;color:rgba(226,232,240,.6)}
-#hud .tr b{color:#fff;font-weight:500}
-#hud .bl{position:absolute;left:112px;bottom:106px;font-size:15px;color:rgba(226,232,240,.6)}
-#hud .br{position:absolute;right:112px;bottom:106px;font-size:15px;color:rgba(226,232,240,.6)}
-#hud .prog{position:absolute;left:0;top:0;height:3px;width:100%;background:rgba(255,255,255,.08)}
-#hud .prog b{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+/* ---- canvas shell ---- */
+.cwrap{position:relative;width:100%;border-radius:20px;overflow:hidden;border:1px solid var(--line);
+      background:linear-gradient(180deg,#080c15,#05070d);box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
+.cwrap::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:20px;
+      box-shadow:inset 0 0 90px -20px rgba(0,0,0,.9)}
+.cwrap canvas{display:block;width:100%;height:100%;touch-action:manipulation;cursor:crosshair}
+.cwrap[data-hint] canvas{cursor:pointer}
+.chipbar{position:absolute;left:14px;top:12px;z-index:3;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.chipbar>*{pointer-events:auto}
+.pill{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+      padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(6,10,18,.72);
+      color:#cbd5e1;backdrop-filter:blur(6px);white-space:nowrap}
+.hintline{position:absolute;right:14px;top:12px;z-index:3;pointer-events:none;font-size:11px;
+      letter-spacing:.16em;text-transform:uppercase;color:rgba(148,163,184,.7);font-family:'JetBrains Mono',monospace}
 
-#start{position:absolute;inset:0;z-index:30;display:grid;place-items:center;cursor:pointer;
-  background:radial-gradient(58% 58% at 50% 50%,rgba(9,13,22,.5),rgba(3,5,10,.94));transition:opacity .5s ease,visibility .5s}
-#start.hide{opacity:0;visibility:hidden}
-#start .pulse{position:absolute;width:230px;height:230px;border-radius:50%;border:1.5px solid rgba(16,185,129,.55);animation:pl 2.8s cubic-bezier(.2,.7,.3,1) infinite}
-#start .pulse.b{animation-delay:1.4s}
-@keyframes pl{0%{transform:scale(.5);opacity:0}20%{opacity:.8}100%{transform:scale(1.85);opacity:0}}
-#start .lab{text-align:center}
-#start .lab .a{font-family:'Plus Jakarta Sans',sans-serif;font-size:68px;font-weight:800;letter-spacing:-.035em;text-transform:uppercase}
-#start .lab .b{margin-top:22px;font-size:13px;color:rgba(226,232,240,.6);letter-spacing:.3em}
-#start .lab .c{margin-top:8px;font-size:12px;color:rgba(226,232,240,.34);letter-spacing:.2em}
+/* ---- touch targets ---- */
+.tbtn{position:relative;display:inline-flex;align-items:center;gap:.5rem;padding:.62rem .95rem;border-radius:12px;
+      font-size:13px;font-weight:700;border:1px solid rgba(16,185,129,.32);background:rgba(16,185,129,.1);
+      color:#6ee7b7;transition:transform .12s ease,background .18s,border-color .18s,box-shadow .18s;cursor:pointer;
+      user-select:none;touch-action:manipulation}
+.tbtn:hover{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.6);color:#a7f3d0}
+.tbtn:active{transform:scale(.955)}
+.tbtn:focus-visible{outline:2px solid #34d399;outline-offset:2px}
+.tbtn.on{background:#10b981;color:#04140d;border-color:#34d399;box-shadow:0 0 24px -6px rgba(16,185,129,.7)}
+.tbtn.ghost{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#cbd5e1}
+.tbtn.ghost:hover{border-color:rgba(255,255,255,.34);color:#fff}
+.tbtn.amber{border-color:rgba(245,158,11,.36);background:rgba(245,158,11,.1);color:#fcd34d}
+.tbtn.amber:hover{background:rgba(245,158,11,.2);border-color:rgba(245,158,11,.6);color:#fde68a}
+.tbtn[disabled]{opacity:.4;pointer-events:none}
 
-#ui{position:absolute;left:0;right:0;bottom:0;height:84px;z-index:20;display:flex;align-items:center;gap:20px;
-  padding:0 34px;transition:opacity .4s ease;font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(226,232,240,.75);background:linear-gradient(to top,rgba(3,5,10,.86),rgba(3,5,10,0))}
-#ui.off{opacity:0;pointer-events:none}
-#ui .tc{min-width:130px;font-family:'JetBrains Mono',monospace;letter-spacing:.08em}
-#track{position:relative;flex:1;height:28px;cursor:pointer}
-#track .bg{position:absolute;left:0;right:0;height:2px;background:rgba(255,255,255,.16)}
-#track .fg{position:absolute;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2))}
-#track .kn{position:absolute;left:0;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(16,185,129,.22)}
-#track .mk{position:absolute;top:-3px;width:2px;height:8px;background:rgba(255,255,255,.3)}
-#ui .sc{font-family:'JetBrains Mono',monospace;letter-spacing:.12em;min-width:210px;text-align:right;color:rgba(226,232,240,.5)}
-.iconbtn{width:36px;height:36px;border:1px solid rgba(255,255,255,.2);border-radius:50%;display:grid;place-items:center;cursor:pointer;flex:none;background:none;transition:.18s}
-.iconbtn:hover{border-color:var(--brand2);background:rgba(16,185,129,.14)}
-.iconbtn svg{width:14px;height:14px;fill:#e2e8f0}
-#closebtn{position:absolute;top:-46px;right:0;display:inline-flex;align-items:center;gap:.5rem;font-size:12px;letter-spacing:.18em;
-  text-transform:uppercase;color:#94a3b8;cursor:pointer;background:none;border:0;padding:0}
-#closebtn:hover{color:#fff}
+/* read-out panel under a canvas */
+.readout{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;min-height:34px;
+        font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#94a3b8;letter-spacing:.04em}
+.readout b{color:#e2e8f0;font-weight:500}
+.readout .ok{color:#34d399}
+.readout .warn{color:#fbbf24}
+.readout .bad{color:#f87171}
+.readout .acc{color:#a5b4fc}
+
+/* numbered section chrome */
+.secno{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.28em;color:#10b981;
+       display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.secno::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(16,185,129,.4),transparent)}
+.scrollcue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;
+           align-items:center;gap:7px;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(148,163,184,.6);
+           font-family:'JetBrains Mono',monospace;pointer-events:none}
+.scrollcue i{display:block;width:1px;height:34px;background:linear-gradient(180deg,rgba(16,185,129,.9),transparent);animation:cue 2.1s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleY(.35);opacity:.35;transform-origin:top}50%{transform:scaleY(1);opacity:1;transform-origin:top}}
+@media (prefers-reduced-motion:reduce){.scrollcue i{animation:none}.rv{transition:none;opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<div class="fixed inset-0 gridbg pointer-events-none z-0"></div>
+<div class="fixed top-0 left-1/2 -translate-x-1/2 w-[900px] h-[380px] bg-gradient-to-b from-emerald-500/10 to-transparent blur-3xl pointer-events-none"></div>
 
-<nav class="sticky top-0 z-50 border-b border-white/5 bg-[#090d16]/85 backdrop-blur-md">
-  <div class="wrap h-16 flex items-center justify-between">
-    <a href="index.html" class="flex items-center gap-3">
+<nav class="sticky top-0 z-50 border-b border-white/5 bg-[#090d16]/80 backdrop-blur-md">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-3 group">
       <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-        <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-        </svg>
+        <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       </div>
-      <span class="text-xl font-bold tracking-tight text-white">Zerogateway</span>
-      <span class="hidden sm:inline px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Visual Guide</span>
+      <span class="text-lg font-bold tracking-tight text-white">Zerogateway</span>
+      <span class="hidden sm:inline px-2 py-0.5 text-[11px] font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Visual Guide</span>
     </a>
-    <div class="flex items-center gap-2 sm:gap-3">
-      <a href="index.html#playground" class="hidden md:inline-flex text-sm font-medium text-slate-300 hover:text-white transition">Playground</a>
-      <a href="index.html" class="gbtn gbtn-primary !py-2 !px-4 !text-xs">Back to site</a>
-    </div>
+    <a href="index.html" class="tbtn">← Back to site</a>
   </div>
 </nav>
 
-<div class="fixed inset-0 grid-pattern pointer-events-none z-0"></div>
-<div class="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[420px] bg-gradient-to-b from-emerald-500/10 via-indigo-500/5 to-transparent blur-3xl pointer-events-none"></div>
-
 <main class="relative z-10">
 
-  <!-- HERO -->
-  <section class="wrap pt-16 pb-10 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-emerald-400 mb-7">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      24 seconds · 8 chapters · 60fps · zero assets
+<!-- ============ 1 · TOPOLOGY ============ -->
+<section class="relative max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-20" data-sec="1">
+  <div class="text-center max-w-3xl mx-auto">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-medium text-emerald-400 mb-6 rv">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> interactive · tap anything · no video
     </div>
-    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.05]">
-      Watch a <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">429</span> happen — and never reach you.
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-[1.06] rv" style="--d:60ms">
+      Touch the <span class="bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">routing layer</span>.
     </h1>
-    <p class="mt-6 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-      A motion walkthrough of the real routing path: one model alias fans out across every free provider that hosts it,
-      a rate limit is caught in flight, keys and providers swap, and the stream lands on a single OpenAI-compatible endpoint.
-      Every number below is pulled straight from the repository's registry.
+    <p class="mt-5 text-slate-400 text-lg leading-relaxed rv" style="--d:120ms">
+      Eight live pieces, one per idea. Move your cursor or tap to poke each one —
+      fan out an alias, trip a 429, drain a key. Everything below is drawn from
+      <code class="text-emerald-400 font-mono text-[.95em]">registry/index.json</code>.
     </p>
+  </div>
 
-    <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
-      <button onclick="openPlayer(0)" class="gbtn gbtn-primary gbtn-pulse !px-7 !py-4 !text-base">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        Play Visual Guide
-      </button>
-      <button onclick="openPlayer(9.0)" class="gbtn gbtn-ghost !px-6 !py-4">
-        Jump to the 429 failover
-      </button>
+  <div class="mt-9 rv" style="--d:180ms">
+    <div class="cwrap aspect-[4/3] sm:aspect-[16/8]" data-hint>
+      <canvas id="c1"></canvas>
+      <div class="chipbar">
+        <span class="pill">01 / live topology</span>
+        <span class="pill" id="c1ro">8 / 8 online</span>
+      </div>
+      <div class="hintline">move to disturb · tap a node to pin</div>
     </div>
+    <div class="readout" id="c1out"></div>
+  </div>
 
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
-      <span class="chip"><span class="dot"></span>8 providers</span>
-      <span class="chip">21 models</span>
-      <span class="chip">25 aliases</span>
-      <span class="chip">no credit card anywhere</span>
-      <span class="chip">MIT</span>
+  <div class="scrollcue"><span>scroll</span><i></i></div>
+</section>
+
+<!-- ============ 2 · REGISTRY ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="2">
+  <div class="secno rv">02 / the registry</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Eight providers, indexed from YAML</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    A Git-synced catalog of free tiers. No credit card anywhere.
+    <span class="text-slate-300">Tap a card to inspect it.</span>
+  </p>
+  <div class="mt-7 rv" style="--d:130ms">
+    <div class="cwrap aspect-[4/5] sm:aspect-[16/7]" data-hint>
+      <canvas id="c2"></canvas>
+      <div class="chipbar"><span class="pill">registry/index.json</span><span class="pill" id="c2ro">8 providers · 21 models</span></div>
+      <div class="hintline">tap to select</div>
     </div>
-  </section>
+    <div class="readout" id="c2out"></div>
+  </div>
+</section>
 
-  <!-- PLAYER PREVIEW CARD -->
-  <section class="wrap pb-14">
-    <div class="glass rounded-2xl overflow-hidden">
-      <button onclick="openPlayer(0)" class="block w-full relative group aspect-video cursor-pointer" aria-label="Play the Zerogateway visual guide">
-        <canvas id="poster" class="absolute inset-0 w-full h-full"></canvas>
-        <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 transition group-hover:bg-emerald-500/5">
-          <div class="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-400/50 backdrop-blur flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500/30 transition">
-            <svg class="w-8 h-8 translate-x-[2px] text-emerald-300" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </div>
-          <div class="text-sm font-semibold text-emerald-300 tracking-widest uppercase">Play Visual Guide</div>
-        </div>
-        <div class="absolute left-0 right-0 bottom-0 h-1 bg-white/10">
-          <div class="h-full w-[38%] bg-gradient-to-r from-emerald-500 to-emerald-300"></div>
-        </div>
-      </button>
-      <div class="px-5 py-3 flex items-center justify-between text-xs text-slate-500 border-t border-white/5">
-        <span class="mono">visual-guide.html — chapters below are click-to-seek</span>
-        <span class="mono text-emerald-400/80">00:00 — 00:24</span>
+<!-- ============ 3 · ALIAS FAN-OUT ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="3">
+  <div class="secno rv">03 / alias fan-out</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">One name, every provider that can serve it</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    Aliases are the router's public surface. Pick one and watch the fan-out
+    resolve against the live routing table.
+  </p>
+  <div class="mt-6 flex flex-wrap gap-3 rv" style="--d:130ms" id="aliasBtns"></div>
+  <div class="mt-4 rv" style="--d:170ms">
+    <div class="cwrap aspect-[4/3] sm:aspect-[16/8]" data-hint>
+      <canvas id="c3"></canvas>
+      <div class="chipbar"><span class="pill" id="c3alias">fast-smart</span><span class="pill" id="c3ro">8 candidates</span></div>
+      <div class="hintline">tap a node to send the request there</div>
+    </div>
+    <div class="readout" id="c3out"></div>
+  </div>
+</section>
+
+<!-- ============ 4 · THE 429 ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="4">
+  <div class="secno rv">04 / the failover</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Now break it yourself</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    A request is in flight on <code class="text-emerald-400 font-mono">llama-3.3-70b</code>.
+    <span class="text-slate-300">Tap any provider to return an HTTP 429</span> and watch the router
+    parse the reset window, cool the node down, and reroute — the call never fails.
+  </p>
+  <div class="mt-6 flex flex-wrap gap-3 rv" style="--d:130ms">
+    <button class="tbtn amber" id="b429auto">▶ Run the 429 sequence</button>
+    <button class="tbtn ghost" id="b429reset">↺ Reset</button>
+    <span class="pill self-center" id="b429state">all 5 candidates healthy</span>
+  </div>
+  <div class="mt-4 rv" style="--d:170ms">
+    <div class="cwrap aspect-square sm:aspect-[16/8]" data-hint>
+      <canvas id="c4"></canvas>
+      <div class="chipbar"><span class="pill">llama-3.3-70b</span><span class="pill" id="c4ro">attempt 1</span></div>
+      <div class="hintline">tap a provider to 429 it</div>
+    </div>
+    <div class="readout" id="c4out"></div>
+  </div>
+</section>
+
+<!-- ============ 5 · MULTI-KEY ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="5">
+  <div class="secno rv">05 / intra-provider keys</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Drain a key before it ever escalates</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    Comma-separated keys rotate inside a single provider first.
+    <span class="text-slate-300">Tap a key to exhaust its quota</span> — the request line never breaks.
+  </p>
+  <div class="mt-6 flex flex-wrap gap-3 rv" style="--d:130ms">
+    <button class="tbtn ghost" id="b5reset">↺ Refill all keys</button>
+    <span class="pill self-center mono" id="b5state">key 1 serving</span>
+  </div>
+  <div class="mt-4 rv" style="--d:170ms">
+    <div class="cwrap aspect-[4/3] sm:aspect-[16/8]" data-hint>
+      <canvas id="c5"></canvas>
+      <div class="chipbar"><span class="pill">GEMINI_API_KEY="key1,key2,key3"</span><span class="pill" id="c5ro">0 failed requests</span></div>
+      <div class="hintline">tap a key slot</div>
+    </div>
+    <div class="readout" id="c5out"></div>
+  </div>
+</section>
+
+<!-- ============ 6 · ENDPOINT ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="6">
+  <div class="secno rv">06 / one endpoint</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Point any OpenAI client at localhost</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    A drop-in proxy with streaming.
+    <span class="text-slate-300">Tap a client to connect it, or type a model name and hit run.</span>
+  </p>
+  <div class="mt-6 flex flex-wrap gap-3 rv" style="--d:130ms">
+    <input id="c6input" class="mono bg-[#0b1120] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-emerald-300 w-full sm:w-72 focus:outline-none focus:border-emerald-500 transition" value="llama-3.3-70b" aria-label="Model name">
+    <button class="tbtn" id="b6run">▶ Send request</button>
+    <button class="tbtn ghost" id="b6clear">Clear</button>
+  </div>
+  <div class="mt-4 rv" style="--d:170ms">
+    <div class="cwrap aspect-[4/3] sm:aspect-[16/8]">
+      <canvas id="c6"></canvas>
+      <div class="chipbar"><span class="pill">zerogateway — proxy :8080</span><span class="pill" id="c6ro">idle</span></div>
+      <div class="hintline">tap a client chip below</div>
+    </div>
+    <div class="flex flex-wrap gap-2 mt-4 rv" id="clientBtns"></div>
+    <div class="readout" id="c6out"></div>
+  </div>
+</section>
+
+<!-- ============ 7 · FREE TIERS ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-20" data-sec="7">
+  <div class="secno rv">07 / what the free tiers give</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Real ceilings, drawn to scale</h2>
+  <p class="text-slate-400 mt-3 max-w-2xl rv" style="--d:90ms">
+    Requests per minute, straight from the registry.
+    <span class="text-slate-300">Tap a bar for the exact numbers.</span>
+  </p>
+  <div class="mt-4 rv" style="--d:130ms">
+    <div class="cwrap aspect-[4/5] sm:aspect-[16/9]" data-hint>
+      <canvas id="c7"></canvas>
+      <div class="chipbar"><span class="pill">requests / minute</span><span class="pill" id="c7ro">max 60</span></div>
+      <div class="hintline">tap a bar</div>
+    </div>
+    <div class="readout" id="c7out"></div>
+  </div>
+</section>
+
+<!-- ============ 8 · SHIP ============ -->
+<section class="max-w-6xl mx-auto px-4 sm:px-6 py-24" data-sec="8">
+  <div class="secno rv">08 / ship it</div>
+  <h2 class="text-3xl sm:text-4xl font-extrabold text-white rv" style="--d:50ms">Free forever. MIT licensed.</h2>
+  <div class="mt-7 grid lg:grid-cols-2 gap-5">
+    <div class="rv" style="--d:90ms">
+      <div class="cwrap aspect-[16/10]" data-hint>
+        <canvas id="c8"></canvas>
+        <div class="chipbar"><span class="pill">zerogateway</span></div>
+        <div class="hintline">tap the mark</div>
       </div>
     </div>
-  </section>
-
-  <!-- CHAPTERS -->
-  <section class="wrap pb-20">
-    <h2 class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-2">Chapters</h2>
-    <h3 class="text-3xl font-extrabold text-white mb-8">Eight cuts, one story</h3>
-    <div class="grid sm:grid-cols-2 gap-4">
-      <button class="chapter" onclick="openPlayer(0)"><span class="n">00:00</span><span><span class="t">The promise</span><span class="d">One endpoint. Eight providers. Zero 429s.</span></span></button>
-      <button class="chapter" onclick="openPlayer(2.8)"><span class="n">00:02</span><span><span class="t">The registry</span><span class="d">Eight provider records, 21 models and 25 aliases, compiled from the YAML in <code class="text-emerald-400">registry/providers</code>.</span></span></button>
-      <button class="chapter" onclick="openPlayer(5.6)"><span class="n">00:05</span><span><span class="t">Alias fan-out</span><span class="d"><code class="text-emerald-400">fast-smart</code> resolves to all eight providers. <code class="text-emerald-400">llama-3.3-70b</code> resolves to five.</span></span></button>
-      <button class="chapter" onclick="openPlayer(9.0)"><span class="n">00:09</span><span><span class="t">Catching a 429</span><span class="d">The cooldown length is parsed out of <code class="text-emerald-400">Retry-After</code> or a provider's <code class="text-emerald-400">retryDelay</code> payload, then the link reroutes mid-request.</span></span></button>
-      <button class="chapter" onclick="openPlayer(12.4)"><span class="n">00:12</span><span><span class="t">Multi-key swapping</span><span class="d">Comma-separated keys rotate inside one provider before it ever cascades outward.</span></span></button>
-      <button class="chapter" onclick="openPlayer(15.2)"><span class="n">00:15</span><span><span class="t">One OpenAI endpoint</span><span class="d"><code class="text-emerald-400">http://localhost:8080/v1</code> — drop it into Cursor, Cline, Continue.dev, LibreChat or Open WebUI.</span></span></button>
-      <button class="chapter" onclick="openPlayer(18.0)"><span class="n">00:18</span><span><span class="t">What the free tiers give you</span><span class="d">Up to 60 requests/minute, uncapped daily Mistral tiers, 1M tokens/minute and a 1,048,576-token context window.</span></span></button>
-      <button class="chapter" onclick="openPlayer(21.0)"><span class="n">00:21</span><span><span class="t">Ship it</span><span class="d"><code class="text-emerald-400">npm i zerogateway</code> or <code class="text-emerald-400">pip install zerogateway</code>. MIT licensed.</span></span></button>
-    </div>
-  </section>
-
-  <!-- FACT GRID -->
-  <section class="wrap pb-20">
-    <h2 class="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-2">Straight from the registry</h2>
-    <h3 class="text-3xl font-extrabold text-white mb-8">The eight tracked free providers</h3>
-    <div id="facts" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-    <p class="mt-6 text-xs text-slate-500 mono">
-      Source: <a class="text-emerald-400 hover:underline" href="https://github.com/victor-the-ai/zero-gateway/blob/main/registry/index.json" target="_blank">registry/index.json</a> ·
-      <a class="text-emerald-400 hover:underline" href="https://github.com/victor-the-ai/zero-gateway/blob/main/registry/providers" target="_blank">registry/providers/*.yaml</a>
-    </p>
-  </section>
-
-  <!-- CTA -->
-  <section class="wrap pb-24">
-    <div class="glass rounded-2xl p-10 text-center relative overflow-hidden">
-      <div class="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-3">Still reading? Watch it move.</h3>
-      <p class="text-slate-400 max-w-lg mx-auto mb-7">Everything above, animated — plus the failover moment that the docs describe but can't show you.</p>
-      <button onclick="openPlayer(0)" class="gbtn gbtn-primary !px-7 !py-3.5 !text-base">Play Visual Guide</button>
-    </div>
-  </section>
-
-  <footer class="border-t border-white/5 py-8">
-    <div class="wrap flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-      <span>Zerogateway · MIT licensed · <a class="text-emerald-400 hover:underline" href="https://github.com/victor-the-ai/zero-gateway" target="_blank">github.com/victor-the-ai/zero-gateway</a></span>
-      <span class="mono">llama-3.3-70b · fast-smart · gemini-flash · codestral · deepseek-r1 · zero-auth</span>
-    </div>
-  </footer>
-</main>
-
-<!-- ================= PLAYER OVERLAY ================= -->
-<div id="player">
-  <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:56px 20px 20px">
-    <button id="closebtn" onclick="closePlayer()">
-      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      Close (Esc)
-    </button>
-    <div id="frame">
-      <div id="stage">
-        <canvas id="gfx"></canvas>
-        <div id="type">
-          <div id="hud">
-            <div class="tl monoT">Zerogateway — Visual Guide</div>
-            <div class="tr monoT"><b id="scname">The promise</b></div>
-            <div class="bl monoT" id="scidx">01 / 08</div>
-            <div class="br monoT" id="hint">Click to pause</div>
-            <div class="prog"><b id="hprog"></b></div>
-          </div>
-          <div class="blk" id="b1"></div>
-          <div class="blk" id="b2"></div>
-          <div class="blk" id="b3"></div>
-          <div class="blk" id="b4"></div>
-          <div class="blk" id="b5"></div>
-          <div class="blk" id="b6"></div>
-          <div class="blk" id="b7"></div>
-          <div class="blk" id="b8"></div>
-        </div>
-        <div id="ui" class="off">
-          <div class="tc mono" id="tcode">00.00 / 24.00</div>
-          <div id="track"><div class="bg"></div><div class="fg" id="fg"></div><div class="kn" id="kn"></div></div>
-          <div class="sc" id="uisc">The promise</div>
-          <button class="iconbtn" id="bplay" title="Play / Pause (Space)"></button>
-          <button class="iconbtn" id="bmute" title="Mute (M)"></button>
-          <button class="iconbtn" id="brep" title="Replay (R)"></button>
-        </div>
-        <div id="start">
-          <div class="pulse"></div><div class="pulse b"></div>
-          <div class="lab">
-            <div class="a">Zerogateway</div>
-            <div class="b monoT">Visual guide · 24 seconds</div>
-            <div class="c monoT">Click to play — sound on</div>
-          </div>
+    <div class="rv flex flex-col justify-center" style="--d:140ms">
+      <div class="panel rounded-2xl p-6 sm:p-7">
+        <div class="mono text-sm text-slate-400"># one endpoint, eight providers, zero 429s</div>
+        <pre class="mono text-[13px] leading-relaxed text-slate-200 mt-4 overflow-x-auto"><code>npm i zerogateway
+pip install zerogateway
+zerogateway serve --port 8080</code></pre>
+        <div class="mono text-[13px] mt-4 text-emerald-300/90">base_url  http://localhost:8080/v1
+api_key   zerogateway</div>
+        <div class="flex flex-wrap gap-2.5 mt-6">
+          <a href="https://pypi.org/project/zerogateway/" target="_blank" rel="noopener" class="tbtn">PyPI</a>
+          <a href="https://www.npmjs.com/package/zerogateway" target="_blank" rel="noopener" class="tbtn">npm</a>
+          <a href="https://github.com/victor-the-ai/zero-gateway" target="_blank" rel="noopener" class="tbtn">GitHub</a>
+          <a href="index.html#playground" class="tbtn ghost">Playground</a>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+</main>
+
+<footer class="relative z-10 border-t border-white/5 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+    <span>Zerogateway · MIT · <a class="text-emerald-400 hover:underline" href="https://github.com/victor-the-ai/zero-gateway" target="_blank" rel="noopener">github.com/victor-the-ai/zero-gateway</a></span>
+    <span class="mono">fast-smart · llama-3.3-70b · gemini-flash · codestral · deepseek-r1 · zero-auth</span>
+  </div>
+</footer>
+</body>
+</html>
 <script>
 "use strict";
 /* ===========================================================================
-   ZEROGATEWAY — VISUAL GUIDE
-   A 24-second, single-file, zero-asset motion piece that explains what the
-   gateway actually does: alias fan-out -> 429 detection -> key/provider
-   swap -> one OpenAI-compatible endpoint.
-
-   Every number, provider name and rate limit is read from registry/index.json
-   in this repo. Change DATA below and the film updates with it.
-
-   CONTROLS   click / SPACE play-pause · R replay · M mute · arrows scrub
-               ESC closes the overlay · click the bar to seek
-   PARAMS     ?t=9.0 start at a timecode · ?t=9.0&paused=1 frozen frame
+   ZEROGATEWAY — INTERACTIVE VISUAL GUIDE
+   No audio. No timeline. Eight independent canvases, each an ambient
+   interactive diagram that reveals itself as you scroll into it.
+   Every number comes from registry/index.json.
    =========================================================================== */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const DATA = {
-  version:"1.0.0", providers:8, models:21, aliases:25,
-  proxy:"http://localhost:8080/v1", proxyKey:"zerogateway", install:"npm i zerogateway",
-  // id, label, rpm, rpd, tpm, ctx, tag   — mirrored from registry/index.json
+  proxy:"http://localhost:8080/v1", key:"zerogateway",
+  /* id, label, code, rpm, rpd, tpm, ctx, tag, model */
   P:[
-    {id:"cerebras",c:"CRB",        n:"Cerebras",        rpm:30, rpd:14400, tpm:60000,  ctx:8192,    tag:"1000+ tok/s"},
-    {id:"github_models",c:"GH",   n:"GitHub Models",   rpm:15, rpd:150,   tpm:8000,   ctx:128000,  tag:"vision"},
-    {id:"google_ai_studio",c:"GAI",n:"Google AI Studio",rpm:15, rpd:1500,  tpm:1000000,ctx:1048576, tag:"1M context"},
-    {id:"groq",c:"GRQ",            n:"Groq",            rpm:30, rpd:14400, tpm:6000,   ctx:128000,  tag:"LPU"},
-    {id:"mistral",c:"MST",         n:"Mistral",         rpm:60, rpd:null,  tpm:500000, ctx:256000,  tag:"no daily cap"},
-    {id:"openrouter",c:"OR",      n:"OpenRouter",      rpm:20, rpd:200,   tpm:null,   ctx:131072,  tag:":free models"},
-    {id:"pollinations",c:"POL",    n:"Pollinations",    rpm:10, rpd:500,   tpm:null,   ctx:32000,   tag:"zero-auth"},
-    {id:"sambanova",c:"SN",       n:"SambaNova",       rpm:20, rpd:1000,  tpm:10000,  ctx:8192,    tag:"70B + 405B"}
+    {id:"cerebras",         n:"Cerebras",          c:"CRB",rpm:30,rpd:14400,tpm:60000,  ctx:8192,   tag:"1000+ tok/s", m:"llama3.3-70b"},
+    {id:"github_models",    n:"GitHub Models",     c:"GH", rpm:15,rpd:150,  tpm:8000,   ctx:128000, tag:"vision",      m:"Meta-Llama-3.3-70B-Instruct"},
+    {id:"google_ai_studio", n:"Google AI Studio",  c:"GAI",rpm:15,rpd:1500, tpm:1000000,ctx:1048576,tag:"1M context",  m:"gemini-2.5-flash"},
+    {id:"groq",             n:"Groq",              c:"GRQ",rpm:30,rpd:14400,tpm:6000,   ctx:128000, tag:"LPU",         m:"llama-3.3-70b-versatile"},
+    {id:"mistral",          n:"Mistral",           c:"MST",rpm:60,rpd:null, tpm:500000, ctx:256000, tag:"no daily cap",m:"codestral-latest"},
+    {id:"openrouter",       n:"OpenRouter",        c:"OR", rpm:20,rpd:200,  tpm:null,   ctx:131072, tag:":free models",m:"deepseek/deepseek-r1:free"},
+    {id:"pollinations",     n:"Pollinations",      c:"POL",rpm:10,rpd:500,  tpm:null,   ctx:32000,  tag:"zero-auth",   m:"openai"},
+    {id:"sambanova",        n:"SambaNova",         c:"SN", rpm:20,rpd:1000, tpm:10000,  ctx:8192,   tag:"70B + 405B",  m:"Meta-Llama-3.3-70B-Instruct"}
   ],
-  // alias -> provider ids that can serve it (from alias_routing_table)
-  fanout:{
-    "llama-3.3-70b":["cerebras","github_models","groq","openrouter","sambanova"],
-    "fast-smart":["cerebras","github_models","google_ai_studio","groq","mistral","openrouter","pollinations","sambanova"]
+  /* from alias_routing_table */
+  aliases:{
+    "fast-smart":    ["cerebras","github_models","google_ai_studio","groq","mistral","openrouter","pollinations","sambanova"],
+    "llama-3.3-70b": ["cerebras","github_models","groq","openrouter","sambanova"],
+    "gemini-flash":  ["google_ai_studio"],
+    "zero-auth":     ["pollinations"]
   },
   clients:["Cursor","Cline","Continue.dev","LibreChat","Open WebUI"]
 };
-const C={ink:"#070b13",fg:"#E2E8F0",brand:"#10B981",brand2:"#34D399",accent:"#6366F1",
-         warn:"#F59E0B",bad:"#EF4444",dim:"#64748B",cyan:"#22D3EE"};
+const C={ink:"#070b13",panel:"#0b1120",fg:"#E2E8F0",dim:"#64748B",
+         brand:"#10B981",brand2:"#34D399",accent:"#6366F1",warn:"#F59E0B",bad:"#EF4444",cyan:"#22D3EE"};
 
-const DUR=24, W=1920, H=1080, CX=W/2, CY=H/2;
-
-/* ------------------------------- math ----------------------------------- */
+/* ------------------------------- math ------------------------------------ */
 const PI=Math.PI, TAU=PI*2;
-const clamp=(v,a,b)=>{ if(a==null)a=0; if(b==null)b=1; return v<a?a:v>b?b:v; };
-const lerp=(a,b,t)=>a+(b-a)*t;
-const seg=(t,a,b)=>clamp((t-a)/((b-a)||1e-6));
-const smooth=(a,b,x)=>{const u=seg(x,a,b);return u*u*(3-2*u);};
-const mtof=m=>440*Math.pow(2,(m-69)/12);
-const E={
-  lin:t=>t,
-  outQuad:t=>1-(1-t)*(1-t), inQuad:t=>t*t,
-  inOutQuad:t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,
-  outCubic:t=>1-Math.pow(1-t,3), inCubic:t=>t*t*t,
-  inOutCubic:t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,
-  outExpo:t=>t>=1?1:1-Math.pow(2,-10*t),
-  inExpo:t=>t<=0?0:Math.pow(2,10*t-10),
-  outBack:(t,s)=>{s=s==null?1.7:s;return 1+(s+1)*Math.pow(t-1,3)+s*Math.pow(t-1,2);},
-  outElastic:t=>t<=0?0:t>=1?1:Math.pow(2,-10*t)*Math.sin((t*10-.75)*(TAU/3))+1,
-  outCirc:t=>Math.sqrt(1-Math.pow(t-1,2)), outQuint:t=>1-Math.pow(1-t,5)
-};
-let _s=77021;
-const R=()=>((_s=(_s*1664525+1013904223)&0x7fffffff)/0x7fffffff);
-function mix(a,b,t){
-  const hx=c=>c.charAt(0)==="#"?[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)]:c.replace(/[^\d,]/g,"").split(",").map(Number);
-  const A=hx(a),B=hx(b);
-  return "rgb("+Math.round(lerp(A[0],B[0],t))+","+Math.round(lerp(A[1],B[1],t))+","+Math.round(lerp(A[2],B[2],t))+")";
-}
-const pulse=t=>Math.exp(-((t/.5)%1)*6.2);
-const outA=(t,t1)=>1-smooth(t1-.22,t1-.01,t);
+const cl=(v,a,b)=>v<a?a:v>b?b:v;
+const lp=(a,b,t)=>a+(b-a)*t;
+const sg=(t,a,b)=>{const u=cl((t-a)/((b-a)||1e-6));return u*u*(3-2*u);};
+const Eo=t=>t>=1?1:1-Math.pow(2,-10*t);
+const Ei=t=>t<=0?0:Math.pow(2,10*t-10);
+const Eoc=t=>1-Math.pow(1-t,3);
+const Eob=t=>1+(2.7)*Math.pow(t-1,3)+1.7*Math.pow(t-1,2);
+const T=(id,v)=>document.getElementById(id);
+const num=n=>n===null?"no daily cap":n.toLocaleString("en-US");
+const ro=(id,html)=>{const e=T(id); if(e) e.innerHTML=html;};
+const byId=id=>DATA.P.findIndex(p=>p.id===id);
 
-/* ------------------------------ stage ----------------------------------- */
-let playing=false, tVis=0, wallStart=0, started=false, dirty=true, lastMove=0, opened=false;
-const playerEl=document.getElementById("player");
-const frame=document.getElementById("frame"), stage=document.getElementById("stage");
-const cv=document.getElementById("gfx");
-const main=cv.getContext("2d",{alpha:false});
-const gcv=document.createElement("canvas"), glow=gcv.getContext("2d");
-const bcv=document.createElement("canvas"), blr=bcv.getContext("2d");
-const tcv=document.createElement("canvas"), tnt=tcv.getContext("2d");
-const acv=document.createElement("canvas"), act=acv.getContext("2d");
-const AW=480, AH=270;
-acv.width=AW; acv.height=AH; tcv.width=AW; tcv.height=AH;
-let K=1, TW=960, TH=540;
-function fit(){
-  const bw=playerEl.clientWidth-40, bh=playerEl.clientHeight-96;
-  const s=Math.max(.1,Math.min(bw/W,bh/H));
-  frame.style.width=(W*s)+"px"; frame.style.height=(H*s)+"px";
-  stage.style.transform="scale("+s+")";
-  const px=Math.max(.6,Math.min((window.devicePixelRatio||1)*s,2560/W));
-  K=px; cv.width=Math.round(W*K); cv.height=Math.round(H*K);
-  gcv.width=Math.round(W*K*.5); gcv.height=Math.round(H*K*.5);
-  bcv.width=gcv.width; bcv.height=gcv.height;
-  TW=gcv.width; TH=gcv.height;
-  tex(); dirty=true;
-}
-window.addEventListener("resize",fit);
+/* ------------------------- scene infrastructure -------------------------- */
+const SCENES=[];
+let DPR=Math.min(window.devicePixelRatio||1,2);
 
-/* -------------------------- pre-rendered fx ----------------------------- */
-let grainPat=[], vig=null, scanPat=null;
-function noiseTile(size,a){
-  const c=document.createElement("canvas"); c.width=c.height=size;
-  const x=c.getContext("2d"), im=x.createImageData(size,size), d=im.data;
-  for(let i=0;i<d.length;i+=4){ const v=(R()*255)|0; d[i]=d[i+1]=d[i+2]=v; d[i+3]=a; }
-  x.putImageData(im,0,0); return c;
+function addScene(id,cfg){
+  const cv=T(id); if(!cv) return null;
+  const wrap=cv.parentNode, ctx=cv.getContext("2d");
+  const s=Object.assign({
+    cv:cv, ctx:ctx, wrap:wrap, w:300, h:150, k:1,
+    visible:false, reveal:0, rTarget:0, inited:false,
+    px:-999, py:-999, over:false, down:false, taps:[],
+    hover:-1, sel:-1, hit:null, onTap:null, t0:performance.now(), t:0
+  },cfg);
+  s.draw=s.draw.bind(s);
+  SCENES.push(s);
+  fit(s);
+  io.observe(wrap);
+  rev.observe(wrap.closest("section")||wrap);
+  const move=e=>{
+    const r=cv.getBoundingClientRect();
+    s.px=e.clientX-r.left; s.py=e.clientY-r.top;
+    s.over=s.px>=0&&s.py>=0&&s.px<=s.w&&s.py<=s.h;
+  };
+  wrap.addEventListener("pointermove",move,{passive:true});
+  wrap.addEventListener("pointerenter",e=>{move(e);s.over=true;},{passive:true});
+  wrap.addEventListener("pointerleave",()=>{s.over=false;s.px=-999;s.py=-999;s.hover=-1;},{passive:true});
+  wrap.addEventListener("pointerdown",e=>{
+    move(e); s.down=true;
+    s.taps.push({x:s.px,y:s.py,t0:performance.now()});
+    if(s.taps.length>6) s.taps.shift();
+    if(s.hit) s.hover=s.hit(s.px,s.py);
+    if(s.onTap) s.onTap(s.hit?s.hit(s.px,s.py):-1,s.px,s.py);
+    if(navigator.vibrate) try{navigator.vibrate(8);}catch(_){}
+  });
+  wrap.addEventListener("pointerup",()=>{s.down=false;});
+  wrap.addEventListener("pointercancel",()=>{s.down=false;});
+  return s;
 }
-function tex(){
-  grainPat=[0,1,2].map(()=>main.createPattern(noiseTile(256,30),"repeat"));
-  const v=document.createElement("canvas"); v.width=W; v.height=H;
-  const vx=v.getContext("2d");
-  const g=vx.createRadialGradient(CX,CY,H*.34,CX,CY,H*1.02);
-  g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(.62,"rgba(0,0,0,.18)"); g.addColorStop(1,"rgba(0,0,0,.66)");
-  vx.fillStyle=g; vx.fillRect(0,0,W,H); vig=v;
-  const s=document.createElement("canvas"); s.width=4; s.height=6;
-  const sx=s.getContext("2d"); sx.fillStyle="rgba(0,0,0,.5)"; sx.fillRect(0,0,4,3);
-  scanPat=main.createPattern(s,"repeat");
+function fit(s){
+  const r=s.wrap.getBoundingClientRect();
+  s.w=Math.max(40,Math.round(r.width));
+  s.h=Math.max(40,Math.round(r.height));
+  const k=Math.min(DPR, Math.sqrt(2600000/Math.max(1,s.w*s.h)));
+  s.k=cl(k,.6,2);
+  s.cv.width=Math.round(s.w*s.k);
+  s.cv.height=Math.round(s.h*s.k);
 }
-function grid(c,step,col,alpha,lw,ox,oy){
-  if(alpha<=0) return;
-  c.save(); c.globalAlpha=alpha; c.strokeStyle=col; c.lineWidth=lw||1; c.beginPath();
-  ox=ox||0; oy=oy||0;
-  for(let x=((ox%step)+step)%step;x<W;x+=step){ c.moveTo(x+.5,0); c.lineTo(x+.5,H); }
-  for(let y=((oy%step)+step)%step;y<H;y+=step){ c.moveTo(0,y+.5); c.lineTo(W,y+.5); }
+
+/* scroll reveal + render gating */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{
+    const s=SCENES.find(x=>x.wrap===e.target);
+    if(s){ s.visible=e.isIntersecting; if(e.isIntersecting) s.rTarget=1; }
+  });
+},{rootMargin:"25% 0px 25% 0px",threshold:0});
+const rev=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add("in"); });
+},{threshold:.12});
+
+/* tap ripples + pointer halo, drawn under every scene's content */
+function under(s,now){
+  const c=s.ctx;
+  c.save();
+  for(let i=s.taps.length-1;i>=0;i--){
+    const tp=s.taps[i], a=(now-tp.t0)/700;
+    if(a>=1){ s.taps.splice(i,1); continue; }
+    const r=18+a*Math.max(70,Math.min(s.w,s.h)*.22);
+    c.globalAlpha=(1-a)*(1-a)*.55;
+    c.strokeStyle=C.brand2; c.lineWidth=2*(1-a)+.4;
+    c.beginPath(); c.arc(tp.x,tp.y,r,0,TAU); c.stroke();
+  }
+  if(s.over&&s.hit){
+    const h=s.hit(s.px,s.py);
+    if(h>=0){
+      const col=s.hitColor?s.hitColor(h):C.brand2;
+      c.globalAlpha=.10; c.fillStyle=col;
+      c.beginPath(); c.arc(s.px,s.py,34,0,TAU); c.fill();
+      c.globalAlpha=.5; c.strokeStyle=col; c.lineWidth=1;
+      c.beginPath(); c.arc(s.px,s.py,34,0,TAU); c.stroke();
+    }
+  }
+  c.restore();
+}
+/* shared chrome: faint grid + vignette, gives every canvas one visual language */
+function ground(s,a){
+  const c=s.ctx;
+  c.save(); c.globalAlpha=.055*a;
+  c.strokeStyle=C.fg; c.lineWidth=1; c.beginPath();
+  const st=s.w<520?28:44;
+  for(let x=(s.w/2)%st;x<s.w;x+=st){c.moveTo(Math.round(x)+.5,0);c.lineTo(Math.round(x)+.5,s.h);}
+  for(let y=(s.h/2)%st;y<s.h;y+=st){c.moveTo(0,Math.round(y)+.5);c.lineTo(s.w,Math.round(y)+.5);}
   c.stroke(); c.restore();
 }
-function ringMark(c,x,y,r,rot,gap,sw,col,alpha){
-  if(alpha<=0||r<=0) return;
-  c.save(); c.globalAlpha=alpha; c.strokeStyle=col; c.lineWidth=sw; c.lineCap="round";
-  c.beginPath(); c.arc(x,y,r,rot+gap/2,rot+TAU-gap/2); c.stroke(); c.restore();
+const vig=(()=>{const c=document.createElement("canvas");c.width=c.height=256;const x=c.getContext("2d");
+  const g=x.createRadialGradient(128,128,40,128,128,190);
+  g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.5)");x.fillStyle=g;x.fillRect(0,0,256,256);
+  return c;})();
+function edge(s){
+  const c=s.ctx;
+  c.save(); c.globalAlpha=.9;
+  const g=c.createRadialGradient(s.w/2,s.h/2,Math.min(s.w,s.h)*.2,s.w/2,s.h/2,Math.max(s.w,s.h)*.72);
+  g.addColorStop(0,"rgba(0,0,0,0)"); g.addColorStop(1,"rgba(0,0,0,.55)");
+  c.fillStyle=g; c.fillRect(0,0,s.w,s.h); c.restore();
 }
-function roundRect(c,x,y,w,h,r){
+
+/* ---------------------------- draw helpers ------------------------------- */
+function rrect(c,x,y,w,h,r){
   c.beginPath();
   c.moveTo(x+r,y); c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r);
   c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
   c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r);
   c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y); c.closePath();
 }
-function bez(c,x0,y0,x1,y1,x2,y2,x3,y3){
+function bz(c,x0,y0,x1,y1,x2,y2,x3,y3,prog){
   c.beginPath(); c.moveTo(x0,y0);
-  c.bezierCurveTo(x1,y1,x2,y2,x3,y3);
-}
-const bg=c=>{ c.setTransform(K,0,0,K,0,0); c.globalAlpha=1; c.globalCompositeOperation="source-over"; c.fillStyle=C.ink; c.fillRect(0,0,W,H); };
-
-/* ------------------------------ DOM type -------------------------------- */
-const B=id=>document.getElementById(id);
-const blocks=["b1","b2","b3","b4","b5","b6","b7","b8"].map(B);
-const L={};
-function split(node,txt){
-  node.textContent=""; const out=[];
-  for(const ch of txt){
-    if(ch===" "){ node.appendChild(document.createTextNode(" ")); continue; }
-    const s=document.createElement("span"); s.className="l"; s.textContent=ch;
-    node.appendChild(s); out.push(s);
-  }
-  return out;
-}
-const mk=(blk,id,cls,html,css)=>{ const d=document.createElement("div"); d.id=id; d.className=cls; d.innerHTML=html;
-  d.style.cssText=css; B(blk).appendChild(d); return d; };
-const sp=(node)=>{ node.style.whiteSpace="pre"; return split(node,node.textContent); };
-
-/* ===================== SCENE TYPE (built in JS) ========================= */
-(function buildType(){
-  const D="display", M="monoT", K="codeT";
-  /* --- 01 the promise --- */
-  mk("b1","s1k",M,"A 24-SECOND TOUR OF THE ROUTER","position:absolute;left:112px;top:126px;font-size:17px;color:"+C.brand+";letter-spacing:.34em");
-  mk("b1","s1a",D,"Zero","position:absolute;left:106px;top:398px;font-size:224px;color:"+C.fg);
-  mk("b1","s1b",D,"Gateway","position:absolute;left:106px;top:648px;font-size:224px;color:"+C.fg);
-  mk("b1","s1c",M,"One endpoint · eight providers · zero 429s","position:absolute;left:114px;top:920px;font-size:18px;color:rgba(226,232,240,.72);letter-spacing:.28em");
-  mk("b1","s1d","",
-    '<div class="mkrow"><b>8</b><span>Free providers</span></div>'+
-    '<div class="mkrow"><b>21</b><span>Models indexed</span></div>'+
-    '<div class="mkrow"><b>25</b><span>Model aliases</span></div>'+
-    '<div class="mkrow"><b>1</b><span>OpenAI endpoint</span></div>',
-    "position:absolute;left:1252px;top:372px;width:520px;font-family:'JetBrains Mono',monospace");
-
-  /* --- 02 the registry --- */
-  mk("b2","s2k",M,"02 / Registry — compiled from registry/providers/*.yaml","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b2","s2a",D,"8","position:absolute;left:150px;top:396px;font-size:212px;color:"+C.brand+";text-align:right;width:330px");
-  mk("b2","s2a2",M,"providers","position:absolute;left:520px;top:492px;font-size:28px;color:rgba(226,232,240,.8);letter-spacing:.2em");
-  mk("b2","s2b",D,"21","position:absolute;left:150px;top:552px;font-size:212px;color:"+C.brand2+";text-align:right;width:330px");
-  mk("b2","s2b2",M,"models","position:absolute;left:520px;top:648px;font-size:28px;color:rgba(226,232,240,.8);letter-spacing:.2em");
-  mk("b2","s2c",D,"25","position:absolute;left:150px;top:708px;font-size:212px;color:"+C.accent+";text-align:right;width:330px");
-  mk("b2","s2c2",M,"aliases","position:absolute;left:520px;top:804px;font-size:28px;color:rgba(226,232,240,.8);letter-spacing:.2em");
-  mk("b2","s2d",M,"model: &quot;fast-smart&quot;   ·   model: &quot;llama-3.3-70b&quot;   ·   model: &quot;gemini-flash&quot;","position:absolute;left:112px;top:958px;font-size:16px;color:rgba(226,232,240,.6);letter-spacing:.1em");
-
-  /* --- 03 alias fan-out --- */
-  mk("b3","s3k",M,"03 / Alias fan-out — one name, every provider that can serve it","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b3","s3a",K,"model: &quot;fast-smart&quot;","position:absolute;left:0;right:0;top:866px;text-align:center;font-size:44px;color:"+C.brand);
-  mk("b3","s3b",M,"resolves to all 8 tracked providers","position:absolute;left:0;right:0;top:918px;text-align:center;font-size:17px;color:rgba(226,232,240,.6);letter-spacing:.26em");
-
-  /* --- 04 catching a 429 --- */
-  mk("b4","s4k",M,"04 / Rate limit caught in flight","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b4","s4a",D,"429","position:absolute;left:0;right:0;top:150px;text-align:center;font-size:252px;color:"+C.warn);
-  mk("b4","s4b",M,"Too Many Requests","position:absolute;left:0;right:0;top:646px;text-align:center;font-size:32px;color:rgba(226,232,240,.85);letter-spacing:.24em");
-  mk("b4","s4c",K,"cooldown parsed from  Retry-After  ·  x-ratelimit-reset  ·  retryDelay","position:absolute;left:0;right:0;top:744px;text-align:center;font-size:19px;color:"+C.cyan);
-  mk("b4","s4d",M,"key and provider enter cooldown → the next route is tried immediately","position:absolute;left:0;right:0;top:800px;text-align:center;font-size:17px;color:rgba(226,232,240,.55);letter-spacing:.14em");
-
-  /* --- 05 multi-key --- */
-  mk("b5","s5k",M,"05 / Intra-provider multi-key rotation","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b5","s5a",K,"GEMINI_API_KEY=&quot;key1,key2,key3&quot;","position:absolute;left:0;right:0;top:212px;text-align:center;font-size:48px;color:"+C.brand);
-  mk("b5","s5b",M,"Key 1 exhausts its quota","position:absolute;left:0;right:0;top:806px;text-align:center;font-size:26px;color:rgba(226,232,240,.85);letter-spacing:.2em");
-  mk("b5","s5c",M,"→  key 2 takes the same request. The call never fails.","position:absolute;left:0;right:0;top:858px;text-align:center;font-size:19px;color:rgba(226,232,240,.6);letter-spacing:.12em");
-
-  /* --- 06 one endpoint --- */
-  mk("b6","s6k",M,"06 / One OpenAI-compatible endpoint","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b6","s6a",K,"http://localhost:8080/v1","position:absolute;left:0;right:0;top:178px;text-align:center;font-size:70px;color:"+C.fg);
-  mk("b6","s6b",K,"api key:  zerogateway","position:absolute;left:0;right:0;top:846px;text-align:center;font-size:24px;color:"+C.brand);
-  mk("b6","s6c",M,"api key:  zerogateway    ·    any OpenAI client    ·    streaming works","position:absolute;left:0;right:0;top:892px;text-align:center;font-size:17px;color:rgba(226,232,240,.6);letter-spacing:.14em");
-  mk("b6","s6d",K,"npm i zerogateway     ·     pip install zerogateway     ·     zerogateway serve --port 8080","position:absolute;left:0;right:0;top:934px;text-align:center;font-size:17px;color:rgba(226,232,240,.75)");
-
-  /* --- 07 what the free tiers give you --- */
-  mk("b7","s7k",M,"07 / What the free tiers actually give you","position:absolute;left:112px;top:126px;font-size:15px;color:rgba(226,232,240,.55);letter-spacing:.3em");
-  mk("b7","s7a",D,"60","position:absolute;left:0;right:0;top:268px;left:1080px;text-align:left;font-size:180px;color:"+C.brand);
-  mk("b7","s7a2",M,"requests / minute — Mistral, with no daily cap","position:absolute;left:0;right:0;top:456px;left:1080px;text-align:left;font-size:21px;color:rgba(226,232,240,.8);letter-spacing:.16em");
-  mk("b7","s7b",D,"1,000,000","position:absolute;left:0;right:0;top:516px;left:1080px;text-align:left;font-size:104px;color:"+C.brand2);
-  mk("b7","s7b2",M,"tokens / minute on Google AI Studio","position:absolute;left:0;right:0;top:632px;left:1080px;text-align:left;font-size:21px;color:rgba(226,232,240,.75);letter-spacing:.16em");
-  mk("b7","s7c",M,"no credit card on any of the eight","position:absolute;left:0;right:0;top:872px;left:1080px;text-align:left;font-size:16px;color:rgba(226,232,240,.5);letter-spacing:.26em");
-
-  /* --- 08 ship it --- */
-  mk("b8","s8a",D,"Zero Gateway","position:absolute;left:0;right:0;top:376px;text-align:center;font-size:196px;color:"+C.fg);
-  mk("b8","s8b",M,"Never hit a 429 again","position:absolute;left:0;right:0;top:604px;text-align:center;font-size:34px;color:"+C.brand+";letter-spacing:.2em");
-  mk("b8","s8c",M,"MIT licensed  ·  free forever  ·  no credit card","position:absolute;left:0;right:0;top:686px;text-align:center;font-size:19px;color:rgba(226,232,240,.6);letter-spacing:.2em");
-  mk("b8","s8d",K,"github.com/victor-the-ai/zero-gateway","position:absolute;left:0;right:0;top:962px;text-align:center;font-size:19px;color:rgba(226,232,240,.85)");
-  mk("b8","s8t","","","position:absolute;left:0;top:104px;width:1920px;overflow:hidden;height:40px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)");
-  mk("b8","s8e","","","position:absolute;left:0;top:922px;width:1920px;overflow:hidden;height:34px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)");
-
-  /* every id'd leaf block becomes a per-letter rig.
-     Ids holding element children (s1d rows, s8t/s8e marquees) are skipped. */
-  const WHOLE={s8t:1,s8e:1,s7a:1,s7b:1};
-  blocks.forEach(blk=>{
-    Array.prototype.slice.call(blk.querySelectorAll("[id]")).forEach(n=>{
-      if(n.children.length===0&&!WHOLE[n.id]) L[n.id]=sp(n);
-    });
-  });
-  L.s1d=Array.prototype.slice.call(B("s1d").children);
-
-  const t1=DATA.P.map(p=>p.n).join("   ✦   ");
-  B("s8t").innerHTML='<div class="monoT" style="font-size:19px;color:rgba(226,232,240,.42);white-space:nowrap">'+t1+"   ✦   "+t1+"   ✦   "+t1+"</div>";
-  B("s8e").innerHTML='<div class="monoT" style="font-size:15px;color:rgba(226,232,240,.26);white-space:nowrap">Available for Cursor · Cline · Continue.dev · LibreChat · Open WebUI</div>';
-
-  const st=document.createElement("style");
-  st.textContent=".mkrow{display:flex;align-items:baseline;gap:20px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.09)}"+
-    ".mkrow b{font-size:64px;font-weight:700;color:"+C.brand+";min-width:88px;letter-spacing:-.04em;line-height:1}"+
-    ".mkrow span{font-size:19px;letter-spacing:.18em;color:rgba(226,232,240,.72);text-transform:uppercase}";
-  document.head.appendChild(st);
-})();
-
-/* ==================== PAGE-SIDE: facts + poster ========================= */
-(function pageBits(){
-  const g=document.getElementById("facts");
-  g.innerHTML=DATA.P.map(p=>{
-    const dpd=p.rpd===null?"no daily cap":p.rpd.toLocaleString()+" / day";
-    return '<div class="glass rounded-xl p-5">'+
-      '<div class="flex items-center justify-between mb-3">'+
-        '<span class="font-bold text-white text-sm">'+p.n+'</span>'+
-        '<span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">'+p.tag+'</span>'+
-      '</div>'+
-      '<div class="mono text-[11px] text-slate-400 space-y-1">'+
-        '<div class="flex justify-between"><span>RPM</span><span class="text-emerald-300">'+p.rpm+'</span></div>'+
-        '<div class="flex justify-between"><span>Daily</span><span class="text-emerald-300">'+dpd+'</span></div>'+
-        '<div class="flex justify-between"><span>Ctx</span><span class="text-emerald-300">'+p.ctx.toLocaleString()+'</span></div>'+
-      '</div></div>';
-  }).join("");
-
-  /* idle poster: a mini always-on topology animation behind the play button */
-  const pc=document.getElementById("poster");
-  const px=pc.getContext("2d");
-  let t0=0,raf=0;
-  function sizePoster(){
-    const r=pc.getBoundingClientRect(), d=Math.min(window.devicePixelRatio||1,2);
-    pc.width=Math.max(2,Math.round(r.width*d)); pc.height=Math.max(2,Math.round(r.height*d));
-  }
-  function posterFrame(ts){
-    if(!t0) t0=ts;
-    const el=((ts-t0)/1000)%6, w=pc.width, h=pc.height, s=w/1920;
-    px.setTransform(s,0,0,s,0,0);
-    px.fillStyle=C.ink; px.fillRect(0,0,1920,1080);
-    grid(px,80,C.fg,.07,1,el*26,0);
-    DATA.P.forEach((p,i)=>{
-      const a=-PI/2+i/8*TAU;
-      const x=CX+Math.cos(a)*560, y=CY+Math.sin(a)*330;
-      const on=(((el-i*.22)%3)+3)%3<1.1;
-      if(on){
-        bez(px,CX,CY,(CX+x)/2,CY,x,(y+y)/2,x,y);
-        px.globalAlpha=.45; px.strokeStyle=C.brand; px.lineWidth=1.8; px.stroke();
-      }
-      px.globalAlpha=on?.9:.22; px.strokeStyle=on?C.brand2:C.dim; px.lineWidth=2.5;
-      px.beginPath(); px.arc(x,y,42,0,TAU); px.stroke();
-      px.globalAlpha=1;
-    });
-    px.globalAlpha=1; px.strokeStyle=C.brand; px.lineWidth=3;
-    px.beginPath(); px.arc(CX,CY,52,0,TAU); px.stroke();
-    px.textAlign="left";
-    px.fillStyle="rgba(16,185,129,.9)"; px.font='700 46px "JetBrains Mono", monospace';
-    px.fillText("8 / 8",92,116);
-    px.fillStyle="rgba(226,232,240,.4)"; px.font='600 21px "Plus Jakarta Sans", sans-serif';
-    px.fillText("providers online",92,150);
-    px.fillStyle="rgba(226,232,240,.28)"; px.font='600 19px "JetBrains Mono", monospace';
-    px.fillText("zerogateway — visual guide",92,996);
-    px.fillStyle="rgba(226,232,240,.22)"; px.font='600 17px "JetBrains Mono", monospace';
-    px.fillText("00:24",W-92-56,996);
-    raf=requestAnimationFrame(posterFrame);
-  }
-  function startPoster(){ if(!raf){ sizePoster(); t0=0; raf=requestAnimationFrame(posterFrame); } }
-  function stopPoster(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
-  window.addEventListener("resize",()=>{ if(raf) sizePoster(); });
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?startPoster():stopPoster()),{threshold:.05}).observe(pc);
-  } else startPoster();
-})();
-
-/* ============================== AUDIO =================================== */
-let visTime=0;
-const A={
-  ctx:null,t0:0,startT:0,mute:false,ready:false,score:[],nb:null,
-  spec:new Float32Array(128),freq:null,band:{low:0,mid:0,high:0,level:0},
-  build(){
-    const Cx=window.AudioContext||window.webkitAudioContext; if(!Cx) return false;
-    const c=this.ctx=new Cx();
-    const n=c.sampleRate*2, b=c.createBuffer(1,n,c.sampleRate), d=b.getChannelData(0);
-    for(let i=0;i<n;i++) d[i]=Math.random()*2-1;
-    this.nb=b;
-    this.dry=c.createGain();
-    this.verb=c.createConvolver(); this.verb.buffer=this.ir(c,2.6,2.8);
-    const vr=c.createGain(); vr.gain.value=.95;
-    this.dly=c.createDelay(1); this.dly.delayTime.value=.375;
-    const dfb=c.createGain(); dfb.gain.value=.34;
-    const df=c.createBiquadFilter(); df.type="lowpass"; df.frequency.value=2400;
-    const dr=c.createGain(); dr.gain.value=.5;
-    this.filt=c.createBiquadFilter(); this.filt.type="lowpass"; this.filt.frequency.value=16000; this.filt.Q.value=.8;
-    this.master=c.createGain(); this.master.gain.value=.0001;
-    const cp=c.createDynamicsCompressor();
-    cp.threshold.value=-14; cp.knee.value=22; cp.ratio.value=8; cp.attack.value=.004; cp.release.value=.16;
-    this.an=c.createAnalyser(); this.an.fftSize=1024; this.an.smoothingTimeConstant=.72;
-    this.freq=new Uint8Array(this.an.frequencyBinCount);
-    this.dry.connect(this.filt);
-    this.verb.connect(vr); vr.connect(this.filt);
-    this.dly.connect(df); df.connect(dfb); dfb.connect(this.dly); df.connect(dr); dr.connect(this.filt);
-    this.filt.connect(this.master); this.master.connect(cp);
-    cp.connect(this.an); this.an.connect(c.destination);
-    this.ready=true; return true;
-  },
-  ir(c,dur,dec){
-    const n=Math.floor(c.sampleRate*dur), b=c.createBuffer(2,n,c.sampleRate), pre=Math.floor(c.sampleRate*.02);
-    for(let ch=0;ch<2;ch++){ const d=b.getChannelData(ch);
-      for(let i=0;i<n;i++){ if(i<pre){ d[i]=0; continue; }
-        d[i]=(Math.random()*2-1)*Math.pow(1-i/n,dec)*(1-Math.exp(-(i-pre)/400)); } }
-    return b;
-  },
-  out(node,amp,v,d,pan){
-    const c=this.ctx; let head=node;
-    if(pan){ const p=c.createStereoPanner(); p.pan.value=clamp(pan,-1,1); node.connect(p); head=p; }
-    const g=c.createGain(); g.gain.value=amp==null?1:amp; head.connect(g); g.connect(this.dry);
-    if(v>0){ const s=c.createGain(); s.gain.value=v; g.connect(s); s.connect(this.verb); }
-    if(d>0){ const s=c.createGain(); s.gain.value=d; g.connect(s); s.connect(this.dly); }
-  },
-  noise(T,dur,amp,o){
-    o=o||{}; const c=this.ctx;
-    const s=c.createBufferSource(); s.buffer=this.nb; s.loop=true; s.playbackRate.value=.8+R()*.5;
-    const f=c.createBiquadFilter(); f.type=o.type||"bandpass"; f.frequency.value=o.f||1200; f.Q.value=o.q==null?1:o.q;
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T);
-    g.gain.exponentialRampToValueAtTime(Math.max(.0002,amp),T+(o.atk||.004));
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    s.connect(f); f.connect(g); this.out(g,1,o.v||0,o.d||0,o.pan);
-    s.start(T,R()*1.4); s.stop(T+dur+.05);
-  },
-  kick(T,a){
-    const c=this.ctx,o=c.createOscillator(),g=c.createGain();
-    o.type="sine";
-    o.frequency.setValueAtTime(178,T); o.frequency.exponentialRampToValueAtTime(46,T+.09);
-    o.frequency.exponentialRampToValueAtTime(35,T+.4);
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a,T+.005);
-    g.gain.exponentialRampToValueAtTime(.0005,T+.4);
-    o.connect(g); this.out(g,1,.03,0); o.start(T); o.stop(T+.45);
-    this.noise(T,.02,a*.22,{type:"highpass",f:2400,q:.7});
-  },
-  clap(T,a){
-    for(let i=0;i<3;i++) this.noise(T+i*.011,.06,a*(1-i*.2),{type:"bandpass",f:1500,q:1.1,v:.28,d:.14});
-    this.noise(T+.02,.24,a*.3,{type:"bandpass",f:2000,q:.8,v:.6,d:.2});
-  },
-  hat(T,a,dur,open,pan){ this.noise(T,open?.26:(dur||.035),a,{type:"highpass",f:open?6800:8600,q:.8,v:open?.28:.09,d:open?.34:.06,pan:pan||0}); },
-  bass(T,midi,a,dur){
-    dur=dur||.24; const c=this.ctx,f=mtof(midi);
-    const fl=c.createBiquadFilter(); fl.type="lowpass"; fl.Q.value=7;
-    fl.frequency.setValueAtTime(260,T); fl.frequency.exponentialRampToValueAtTime(1200,T+.045);
-    fl.frequency.exponentialRampToValueAtTime(190,T+dur);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a*.95,T+.008);
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=f;
-    const s=c.createOscillator(); s.type="sine"; s.frequency.value=f/2;
-    const sg=c.createGain(); sg.gain.value=.7;
-    o.connect(fl); s.connect(sg); sg.connect(fl); fl.connect(g); this.out(g,1,.04,0);
-    o.start(T); o.stop(T+dur+.05); s.start(T); s.stop(T+dur+.05);
-  },
-  pluck(T,midi,a,pan){
-    const c=this.ctx,f=mtof(midi);
-    const o=c.createOscillator(); o.type="triangle"; o.frequency.value=f;
-    const o2=c.createOscillator(); o2.type="sawtooth"; o2.frequency.value=f; o2.detune.value=7;
-    const fl=c.createBiquadFilter(); fl.type="lowpass";
-    fl.frequency.setValueAtTime(5600,T); fl.frequency.exponentialRampToValueAtTime(760,T+.24);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a,T+.005);
-    g.gain.exponentialRampToValueAtTime(.0001,T+.3);
-    o.connect(fl); o2.connect(fl); fl.connect(g); this.out(g,1,.3,.32,pan);
-    o.start(T); o.stop(T+.34); o2.start(T); o2.stop(T+.34);
-  },
-  blip(T,midi,a,pan){  /* short UI/data tick used in the routing scenes */
-    const c=this.ctx,o=c.createOscillator();
-    o.type="square"; o.frequency.value=mtof(midi);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a,T+.004);
-    g.gain.exponentialRampToValueAtTime(.0001,T+.09);
-    o.connect(g); this.out(g,1,.22,.2,pan); o.start(T); o.stop(T+.12);
-  },
-  pad(T,midi,dur,a,j){
-    const c=this.ctx,f=mtof(midi);
-    const fl=c.createBiquadFilter(); fl.type="lowpass"; fl.Q.value=2.4;
-    fl.frequency.setValueAtTime(420,T);
-    fl.frequency.linearRampToValueAtTime(1500,T+dur*.45);
-    fl.frequency.linearRampToValueAtTime(520,T+dur);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T);
-    g.gain.exponentialRampToValueAtTime(Math.max(.0002,a),T+.85);
-    g.gain.setValueAtTime(a,T+dur*.55);
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    fl.connect(g); this.out(g,1,.95,.12,(j%2?1:-1)*.35);
-    [-8,9].forEach(dt=>{ const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=f; o.detune.value=dt;
-      o.connect(fl); o.start(T); o.stop(T+dur+.1); });
-  },
-  riser(T,dur,a){
-    const c=this.ctx,s=c.createBufferSource(); s.buffer=this.nb; s.loop=true;
-    const f=c.createBiquadFilter(); f.type="bandpass"; f.Q.value=3.2;
-    f.frequency.setValueAtTime(360,T); f.frequency.exponentialRampToValueAtTime(7600,T+dur);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a*.42,T+dur*.92);
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    s.connect(f); f.connect(g); this.out(g,1,.5,.2); s.start(T,R()); s.stop(T+dur+.05);
-    const o=c.createOscillator(); o.type="sawtooth";
-    o.frequency.setValueAtTime(mtof(45),T); o.frequency.exponentialRampToValueAtTime(mtof(69),T+dur);
-    const og=c.createGain();
-    og.gain.setValueAtTime(.0001,T); og.gain.exponentialRampToValueAtTime(a*.15,T+dur*.9);
-    og.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    o.connect(og); this.out(og,1,.45,.1); o.start(T); o.stop(T+dur+.05);
-  },
-  whoosh(T,dur,a,up){
-    const c=this.ctx,s=c.createBufferSource(); s.buffer=this.nb; s.loop=true;
-    const f=c.createBiquadFilter(); f.type="bandpass"; f.Q.value=1.1;
-    if(up){ f.frequency.setValueAtTime(280,T); f.frequency.exponentialRampToValueAtTime(5400,T+dur); }
-    else   { f.frequency.setValueAtTime(5400,T); f.frequency.exponentialRampToValueAtTime(240,T+dur); }
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T);
-    g.gain.exponentialRampToValueAtTime(a*.6,T+dur*.45);
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    const p=c.createStereoPanner();
-    p.pan.setValueAtTime(up?-.85:.85,T); p.pan.linearRampToValueAtTime(up?.85:-.85,T+dur);
-    s.connect(f); f.connect(g); g.connect(p); this.out(p,1,.34,.1);
-    s.start(T,R()); s.stop(T+dur+.05);
-  },
-  impact(T,a){
-    const c=this.ctx,o=c.createOscillator(); o.type="sine";
-    o.frequency.setValueAtTime(120,T); o.frequency.exponentialRampToValueAtTime(26,T+.75);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a*1.05,T+.004);
-    g.gain.exponentialRampToValueAtTime(.0001,T+1.15);
-    o.connect(g); this.out(g,1,.75,.05); o.start(T); o.stop(T+1.25);
-    this.noise(T,.75,a*.32,{type:"lowpass",f:1600,q:.6,v:.85});
-    this.noise(T,.045,a*.42,{type:"highpass",f:4200,q:.7,v:.3});
-  },
-  error(T,a){  /* the 429: a hard detuned buzz */
-    const c=this.ctx;
-    [0,-6].forEach((dt,i)=>{
-      const o=c.createOscillator(); o.type="sawtooth"; o.frequency.value=196; o.detune.value=dt;
-      const f=c.createBiquadFilter(); f.type="lowpass"; f.frequency.value=1800; f.Q.value=4;
-      const g=c.createGain();
-      g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a*(i?.5:1),T+.006);
-      g.gain.exponentialRampToValueAtTime(.0001,T+.5);
-      o.connect(f); f.connect(g); this.out(g,1,.4,.1); o.start(T); o.stop(T+.55);
-    });
-    this.noise(T,.16,a*.4,{type:"bandpass",f:800,q:2,v:.5});
-  },
-  shimmer(T,a){
-    const c=this.ctx;
-    [0,7,12,19,24].forEach((d,i)=>{
-      const o=c.createOscillator(); o.type="sine"; o.frequency.value=mtof(81+d);
-      const g=c.createGain();
-      g.gain.setValueAtTime(.0001,T);
-      g.gain.exponentialRampToValueAtTime(a*.09/(1+i*.5),T+.9);
-      g.gain.exponentialRampToValueAtTime(.0001,T+3.4);
-      o.connect(g); this.out(g,1,1,0,(i%2?1:-1)*.5); o.start(T); o.stop(T+3.6);
-    });
-  },
-  downlift(T,dur,a){
-    const c=this.ctx,o=c.createOscillator(); o.type="sawtooth";
-    o.frequency.setValueAtTime(mtof(72),T); o.frequency.exponentialRampToValueAtTime(mtof(33),T+dur);
-    const f=c.createBiquadFilter(); f.type="lowpass"; f.Q.value=8;
-    f.frequency.setValueAtTime(6000,T); f.frequency.exponentialRampToValueAtTime(300,T+dur);
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(a*.3,T+.02);
-    g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    o.connect(f); f.connect(g); this.out(g,1,.6,.2); o.start(T); o.stop(T+dur+.05);
-    this.noise(T,dur,a*.3,{type:"bandpass",f:1200,q:.8,v:.6});
-  },
-  vinyl(T,dur){
-    const c=this.ctx,s=c.createBufferSource(); s.buffer=this.nb; s.loop=true; s.playbackRate.value=.35;
-    const f=c.createBiquadFilter(); f.type="highpass"; f.frequency.value=1400;
-    const g=c.createGain();
-    g.gain.setValueAtTime(.0001,T); g.gain.exponentialRampToValueAtTime(.011,T+.9);
-    g.gain.setValueAtTime(.011,T+22.6); g.gain.exponentialRampToValueAtTime(.0001,T+dur);
-    s.connect(f); f.connect(g); this.out(g,1,0,0); s.start(T,1.1); s.stop(T+dur+.1);
-  },
-  start(pos){
-    if(!this.ready && !this.build()) return false;
-    const c=this.ctx; if(c.state==="suspended") c.resume();
-    this.t0=c.currentTime+.16;
-    this.startT=this.t0-pos;
-    const m=this.master.gain, fe=this.filt.frequency, pk=this.mute?.0001:.95;
-    m.setValueAtTime(.0001,Math.max(0,this.t0-.18));
-    m.exponentialRampToValueAtTime(pk,this.t0+.05);
-    m.setValueAtTime(pk,this.t0+20.7);
-    m.exponentialRampToValueAtTime(this.mute?.0001:.44,this.t0+22.4);
-    m.exponentialRampToValueAtTime(.0001,this.t0+24.2);
-    [[0,420],[1.4,3000],[2.75,18000],[2.85,520],[3.4,18000],[8.9,7000],[9.1,18000],
-     [12.3,19000],[12.45,600],[13.2,18000],[15.1,2000],[15.6,9000],[17.9,5000],
-     [20.9,2000],[21.1,14000],[24.2,600]].forEach((k,i)=>{ const T=this.t0+k[0];
-      if(i===0) fe.setValueAtTime(k[1],T); else fe.exponentialRampToValueAtTime(k[1],T); });
-    if(pos<.12) this.vinyl(this.t0,24.2);
-    for(const e of this.score) if(e.t>=pos-.05) e.f(this.t0+e.t);
-    return true;
-  },
-  read(){
-    const n=128, t=visTime;
-    if(this.ready&&!this.mute&&this.an){
-      this.an.getByteFrequencyData(this.freq);
-      const L=this.freq.length;
-      for(let i=0;i<n;i++){
-        const j=Math.min(L-1,Math.round(Math.pow(i/n,1.55)*L*.6));
-        const real=this.freq[j]/255;
-        const fake=(.2+.8*Math.abs(Math.sin(i*.37+t*7.1)))*Math.exp(-((i%44)/30))*(.5+.5*Math.cos(i*.11+t*2.3));
-        this.spec[i]=clamp(real*.85+fake*.38);
-      }
-      let lo=0,mi=0,hi=0,al=0;
-      for(let i=0;i<n;i++){ const v=this.spec[i]; al+=v; if(i<10) lo+=v; else if(i<46) mi+=v; else hi+=v; }
-      const b=this.band;
-      b.low=lerp(b.low,clamp(lo/10*1.35),.32);
-      b.mid=lerp(b.mid,clamp(mi/36*1.5),.32);
-      b.high=lerp(b.high,clamp(hi/82*2),.3);
-      b.level=lerp(b.level,clamp(al/n*1.8),.3);
-    }else{
-      for(let i=0;i<n;i++)
-        this.spec[i]=clamp((.2+.8*Math.abs(Math.sin(i*.37+t*7.1)))*Math.exp(-((i%44)/30))*.85);
-      const b=this.band,k=(.5+.5*Math.sin(t*6))*E.outExpo((t%2)/2);
-      b.low=lerp(b.low,k,.2); b.mid=lerp(b.mid,k*.7,.2); b.high=lerp(b.high,k*.45,.2); b.level=lerp(b.level,k*.6,.2);
-    }
-  }
-};
-
-/* ------------------------------ the score -------------------------------- */
-const CHORDS=[[45,57,60,64],[41,53,57,60],[48,52,55,59],[43,47,50,53],
-              [45,57,60,64],[41,53,57,60],[48,52,55,59],[43,47,50,53],
-              [45,57,60,64],[41,53,57,60],[50,57,62,65],[45,57,60,67]];
-const TRANS=[2.80,5.60,9.00,12.40,15.20,18.00,21.00];
-const secG=t=>t<1?.55:t<2.8?.74:t<5.6?.9:t<21?.1:t<22.1?.62:.45;
-const barOf=t=>Math.min(11,Math.floor(t/2));
-(function score(){
-  const ev=[];
-  const P=(t,fn)=>{ if(t>=-.001&&t<24.4) ev.push({t:t,f:T=>fn(T,secG(t))}); };
-  CHORDS.forEach((ch,i)=>{ const t=i*2;
-    ch.forEach((n,j)=>P(t,(T,a)=>A.pad(T,n,2.5,a*(.1-j*.011),j))); });
-  for(let b=0;b*.5<24.1;b++){
-    const t=b*.5;
-    if(t>=.5) P(t,(T,a)=>A.hat(T,a*.14,.035,false,-.22));
-    if(t>=.75) P(t+.25,(T,a)=>A.hat(T,a*(b%4===3?.2:.1),.16,b%4===3,.22));
-    if(t>=1) P(t,(T,a)=>A.kick(T,a*.95));
-    if(t>=2&&(b%4===1||b%4===3)) P(t,(T,a)=>A.clap(T,a*.5));
-    if(t>=2&&t<21){
-      const root=CHORDS[barOf(t)][0];
-      P(t,(T,a)=>A.bass(T,root,a*.5,.21));
-      P(t+.375,(T,a)=>A.bass(T,root+(b%2?7:0),a*.34,.16));
-    }
-    if(t>=5.6&&t<21){
-      const ch=CHORDS[barOf(t)], pat=[0,1,2,3,2,1,0,2];
-      for(let s=0;s<4;s++){
-        if(s===3) continue;
-        const tt=t+s*.125, idx=pat[(b*4+s)%pat.length], pan=(s%2?1:-1)*.32;
-        P(tt,(T,a)=>A.pluck(T,ch[idx]+12,a*(s===0?.22:.14),pan));
-      }
-    }
-    /* data ticks under the routing scenes */
-    if((t>=5.6&&t<12.4)||(t>=15.2&&t<18)){
-      for(let s=0;s<8;s++) if(s%2===0) P(t+s*.0625,(T,a)=>A.blip(T,84+(s%4)*3,a*.055,(s%2?.4:-.4)));
-    }
-    TRANS.forEach(tr=>{ if(t<tr-.5||t>tr) return;
-      for(let s=0;s<4;s++) P(t+s*.125,(T,a)=>A.hat(T,a*.09*(1+s*.3),.03,false,(s%2?.3:-.3))); });
-  }
-  TRANS.forEach((tr,i)=>{
-    P(tr-.92,(T,a)=>A.riser(T,.92,a*.9));
-    P(tr-.02,(T,a)=>A.whoosh(T,.5,a*.85,true));
-    P(tr,(T,a)=>A.impact(T,i===0?.7:.85));
-    if(i>0) P(tr-.24,(T,a)=>A.pluck(T,CHORDS[i%4][3]+24,a*.18,0));
-  });
-  /* the 429 moment gets its own sting */
-  P(9.16,(T,a)=>A.error(T,a*.6));
-  P(9.18,(T,a)=>A.noise(T,.5,a*.3,{type:"highpass",f:2400,q:.7,v:.4}));
-  P(9.92,(T,a)=>A.pluck(T,72,a*.24,0));
-  P(9.94,(T,a)=>A.pluck(T,76,a*.2,0));
-  P(9.96,(T,a)=>A.pluck(T,79,a*.18,0));
-  P(12.52,(T,a)=>A.blip(T,88,a*.12,0));
-  P(12.78,(T,a)=>A.blip(T,88,a*.12,0));
-  P(12.80,(T,a)=>A.blip(T,91,a*.1,.2));
-  P(.9,(T,a)=>A.whoosh(T,.9,a*.5,false));
-  P(21.0,(T,a)=>A.downlift(T,1.0,a*.85));
-  P(21.0,(T,a)=>A.shimmer(T,a));
-  P(23.1,(T,a)=>A.pluck(T,69,a*.16,0));
-  A.score=ev;
-})();
-
-/* ================================ SCENES ================================= */
-const SCN=[];  /* filled after the scene functions are defined (see _v6.js) */
-const sceneAt=t=>{ for(let i=SCN.length-1;i>=0;i--) if(t>=SCN[i].t0-.0001) return {s:SCN[i],i:i}; return {s:SCN[0],i:0}; };
-
-/* reusable bits ------------------------------------------------------- */
-function brackets(c,a,arm,m){
-  m=m||62; arm=arm||90;
-  c.save(); c.globalAlpha=a; c.strokeStyle=C.fg; c.lineWidth=2; c.beginPath();
-  [[m,m,1,1],[W-m,m,-1,1],[m,H-m,1,-1],[W-m,H-m,-1,-1]].forEach(q=>{
-    c.moveTo(q[0],q[1]+q[3]*arm); c.lineTo(q[0],q[1]); c.lineTo(q[0]+q[2]*arm,q[1]);
-  });
-  c.stroke(); c.restore();
-}
-function hubNode(c,g,x,y,r,on,alpha,pulsev){
-  c.save(); c.globalAlpha=alpha; c.translate(x,y);
-  c.strokeStyle=on?C.brand:C.dim; c.lineWidth=3;
-  c.beginPath(); c.arc(0,0,r,0,TAU); c.stroke();
-  c.globalAlpha=alpha*(on?.28:.12); c.fillStyle=on?C.brand:C.dim;
-  c.beginPath(); c.arc(0,0,r,0,TAU); c.fill();
-  c.globalAlpha=alpha*(on?.95:.4); c.strokeStyle=on?C.brand2:C.dim; c.lineWidth=4.5; c.lineCap="round";
-  c.beginPath(); c.moveTo(6,-r*.62); c.lineTo(-r*.34,4); c.lineTo(2,4); c.lineTo(-6,r*.62); c.lineTo(r*.34,-4); c.lineTo(-2,-4); c.closePath();
-  c.stroke(); c.restore();
-  g.save(); g.globalAlpha=alpha*(on?.34:0); g.fillStyle=C.brand;
-  g.beginPath(); g.arc(x,y,r*.92,0,TAU); g.fill(); g.restore();
-  if(on&&pulsev>0){
-    c.save(); c.globalAlpha=alpha*pulsev*.5; c.strokeStyle=C.brand2; c.lineWidth=2;
-    c.beginPath(); c.arc(x,y,r*(1.3+(1-pulsev)*2.4),0,TAU); c.stroke(); c.restore();
+  if(prog>=1) c.bezierCurveTo(x1,y1,x2,y2,x3,y3);
+  else{
+    const n=28, lim=prog*n;
+    for(let i=1;i<=lim;i++){const t=i/n,u=1-t;
+      c.lineTo(u*u*u*x0+3*u*u*t*x1+3*u*t*t*x2+t*t*t*x3, u*u*u*y0+3*u*u*t*y1+3*u*t*t*y2+t*t*t*y3);}
   }
 }
-function provNode(c,g,x,y,r,col,on,alpha,rot,tag){
-  c.save(); c.globalAlpha=alpha; c.translate(x,y);
-  c.strokeStyle=col; c.lineWidth=3;
-  roundRect(c,-r,-r,r*2,r*2,14); c.stroke();
-  c.globalAlpha=alpha*(on?.22:.07); c.fillStyle=col; c.fill();
-  c.globalAlpha=alpha*(on?1:.42);
-  c.fillStyle=on?col:C.dim;
-  c.textAlign="center"; c.textBaseline="middle";
-  c.font='700 '+Math.round(r*.34)+'px "JetBrains Mono", monospace';
-  c.fillText(tag,0,1);
+function node(s,x,y,r,col,on,a,rot){
+  const c=s.ctx;
+  c.save(); c.globalAlpha=a; c.translate(x,y); if(rot)c.rotate(rot);
+  if(on){ c.globalAlpha=a*.14; c.fillStyle=col; rrect(c,-r,-r,r*2,r*2,r*.32); c.fill(); }
+  c.globalAlpha=on?a:a*.4; c.strokeStyle=on?col:"#475569"; c.lineWidth=1.8;
+  rrect(c,-r,-r,r*2,r*2,r*.32); c.stroke();
   c.restore();
-  if(on){
-    c.save(); c.globalAlpha=alpha*.5; c.strokeStyle=col; c.lineWidth=1.6;
-    c.translate(x,y); c.rotate(rot);
-    c.setLineDash([7,9]);
-    c.beginPath(); c.arc(0,0,r*1.5,0,TAU); c.stroke();
-    c.setLineDash([]); c.restore();
-    g.save(); g.globalAlpha=alpha*.3; g.fillStyle=col;
-    g.beginPath(); g.arc(x,y,r*1.1,0,TAU); g.fill(); g.restore();
-  }
 }
-function provLabel(c,x,y,col,alpha,size){
-  c.save(); c.globalAlpha=alpha; c.textAlign="center"; c.fillStyle=col;
-  c.font='700 '+size+'px "Plus Jakarta Sans", sans-serif'; c.fillText(c._l,x,y); c.restore();
+function bolt(s,x,y,r,col,a){
+  const c=s.ctx;
+  c.save(); c.translate(x,y); c.globalAlpha=a; c.strokeStyle=col; c.lineWidth=Math.max(2.2,r*.17);
+  c.lineJoin="round"; c.lineCap="round"; c.beginPath();
+  c.moveTo(r*.2,-r*.45); c.lineTo(-r*.22,r*.04); c.lineTo(r*.02,r*.04);
+  c.lineTo(-r*.2,r*.45); c.lineTo(r*.22,-r*.04); c.lineTo(-r*.02,-r*.04); c.closePath();
+  c.stroke(); c.restore();
 }
-function link(c,x0,y0,x1,y1,prog,col,alpha,lw){
+function link(s,x0,y0,x1,y1,prog,col,a,lw,dash){
   if(prog<=0) return;
-  c.save(); c.globalAlpha=alpha; c.strokeStyle=col; c.lineWidth=lw||2;
-  c.lineCap="round";
-  const mx=(x0+x1)/2;
-  bez(c,x0,y0,mx,y0,mx,y1,x1,y1);
-  c.stroke();
-  c.restore();
+  const c=s.ctx;
+  c.save(); c.globalAlpha=a; c.strokeStyle=col; c.lineWidth=lw||1.8;
+  c.lineCap="round"; if(dash)c.setLineDash(dash);
+  bz(c,x0,y0,(x0+x1)/2,y0,(x0+x1)/2,y1,x1,y1,cl(prog,0,1));
+  c.stroke(); c.restore();
 }
-function packet(c,g,x,y,s,col,alpha,rot){
-  c.save(); c.globalAlpha=alpha; c.translate(x,y); c.rotate(rot||0);
-  c.fillStyle=col; c.fillRect(-s/2,-s/2,s,s);
-  c.globalAlpha=alpha*.5; c.fillStyle="#fff";
-  c.fillRect(-s/2,-s/2,s,s*.28);
-  c.restore();
-  g.save(); g.globalAlpha=alpha*.55; g.fillStyle=col;
-  g.fillRect(x-s*1.6,y-s*1.6,s*3.2,s*3.2); g.restore();
-}
-function flowDots(c,x0,y0,x1,y1,n,phase,col,alpha,sz){
-  c.save(); c.fillStyle=col;
+function flow(s,x0,y0,x1,y1,n,ph,col,a,sz){
+  const c=s.ctx; c.save(); c.fillStyle=col;
   for(let i=0;i<n;i++){
-    const p=((i/n)+phase)%1;
-    const mx=(x0+x1)/2, it=1-p;
+    const p=((i/n)+ph)%1, mx=(x0+x1)/2, it=1-p;
     const px=it*it*it*x0+3*it*it*p*mx+3*it*p*p*mx+p*p*p*x1;
     const py=it*it*it*y0+3*it*it*p*y0+3*it*p*p*y1+p*p*p*y1;
-    c.globalAlpha=alpha*Math.sin(p*PI);
+    c.globalAlpha=a*Math.sin(p*PI);
     c.fillRect(px-sz/2,py-sz/2,sz,sz);
   }
   c.restore();
 }
-
-/* -- 01 THE PROMISE -- */
-function sc1(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,2.80);
-  grid(c,80,C.fg,.085*E.outQuad(seg(tl,.05,.9))*fade,1,tl*34,0);
-  grid(c,320,C.brand,.14*E.outQuad(seg(tl,.2,1))*fade,1,0,0);
-  const LY=296, lw=620*E.outExpo(seg(tl,.08,.6))+E.inExpo(seg(tl,2.0,2.6))*2600;
-  c.save(); c.globalAlpha=(.85-E.outQuad(seg(tl,2.05,2.3))*.7)*fade;
-  c.strokeStyle=mix(C.fg,C.brand,seg(tl,.5,2)); c.lineWidth=lerp(2,5,E.inExpo(seg(tl,2,2.6)));
-  c.beginPath(); c.moveTo(CX-lw/2,LY); c.lineTo(CX+lw/2,LY); c.stroke(); c.restore();
-  g.save(); g.globalAlpha=.45*(1-seg(tl,2.1,2.45))*fade; g.strokeStyle=C.brand; g.lineWidth=6;
-  g.beginPath(); g.moveTo(CX-lw/2,LY); g.lineTo(CX+lw/2,LY); g.stroke(); g.restore();
-  brackets(c,E.outExpo(seg(tl,.18,.85))*.45*fade,90);
-  /* ambient bloom */
-  g.save(); const gr=g.createRadialGradient(CX,CY,0,CX,CY,760);
-  gr.addColorStop(0,"rgba(16,185,129,"+(.10*fade)+")"); gr.addColorStop(1,"rgba(16,185,129,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-  const sy=-200+(H+400)*E.inOutQuad(seg(tl,.2,1.3)), sa=(1-seg(tl,1.15,1.4))*.15*fade;
-  if(sa>0){
-    const lg=c.createLinearGradient(0,sy-170,0,sy+170);
-    lg.addColorStop(0,"rgba(226,232,240,0)"); lg.addColorStop(.5,"rgba(226,232,240,.6)"); lg.addColorStop(1,"rgba(226,232,240,0)");
-    c.save(); c.globalCompositeOperation="lighter"; c.globalAlpha=sa; c.fillStyle=lg;
-    c.fillRect(0,sy-170,W,340); c.restore();
-  }
-  const ig=E.outExpo(seg(tl,2.0,2.18))*fade;
-  if(ig>0){
-    c.save(); c.globalCompositeOperation="lighter"; c.globalAlpha=ig*.4;
-    c.fillStyle=C.brand; c.fillRect(0,CY-3-ig*12,W,5+ig*22);
-    c.fillStyle=C.cyan; c.fillRect(0,CY+3+ig*12,W,3+ig*10); c.restore();
-  }
+function label(s,str,x,y,col,a,size,font,align,maxW){
+  const c=s.ctx;
+  c.save(); c.globalAlpha=a; c.fillStyle=col; c.textAlign=align||"center"; c.textBaseline="middle";
+  c.font=(font||'"Plus Jakarta Sans",sans-serif')+" "+size+'px';
+  if(maxW){ c.fillText(str,x,y,maxW); if(c.measureText(str).width>maxW){
+    c.beginPath(); c.rect(align==="left"?x-2:x-(align==="right"?0:maxW/2)-2,y-size*0.8,maxW+4,size*1.6); c.clip();
+    c.fillText(str,x,y); c.restore(); return; } }
+  c.fillText(str,x,y); c.restore();
 }
+const MONO='"JetBrains Mono",monospace';
+const SANS='"Plus Jakarta Sans",sans-serif';
 
-/* -- 02 THE REGISTRY -- */
-const CHIPS=(function(){
-  _s=31337;
-  return DATA.P.map((p,i)=>({
-    p:p, col:i%2?C.brand2:C.brand,
-    fx:1180+(i%2)*400+(R()-.5)*240, fy:280+Math.floor(i/2)*210+(R()-.5)*160,
-    tx:1090+(i%2)*400, ty:330+Math.floor(i/2)*190, dly:i*.06
-  }));
-})();
-function sc2(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,5.60);
-  grid(c,90,C.fg,.06*E.outQuad(seg(tl,0,.5))*fade,1,tl*22,-tl*18);
-  g.save(); const gr=g.createRadialGradient(CX,CY,0,CX,CY,820);
-  gr.addColorStop(0,"rgba(99,102,241,"+(.1*fade)+")"); gr.addColorStop(1,"rgba(99,102,241,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-  CHIPS.forEach((ch,i)=>{
-    const p=E.outExpo(seg(tl,ch.dly,ch.dly+.6));
-    const x=lerp(ch.fx,ch.tx,p), y=lerp(ch.fy,ch.ty,p);
-    const a=p*fade;
-    if(a<=.01) return;
-    c.save(); c.globalAlpha=a*.16; c.strokeStyle=ch.col; c.lineWidth=1.4;
-    c.setLineDash([6,8]);
-    c.beginPath(); c.moveTo(760,540); c.lineTo(x,y); c.stroke(); c.setLineDash([]); c.restore();
-    c.save(); c.globalAlpha=a*.9; c.strokeStyle=ch.col; c.lineWidth=2;
-    roundRect(c,x-176,y-42,352,84,12); c.stroke();
-    c.globalAlpha=a; c.fillStyle=ch.col; c.textAlign="left"; c.textBaseline="middle";
-    c.font='700 27px "Plus Jakarta Sans", sans-serif'; c.fillText(ch.p.n,x-160,y-9);
-    c.fillStyle="rgba(226,232,240,.55)"; c.font='500 18px "JetBrains Mono", monospace';
-    const daily=ch.p.rpd===null?"no daily cap":ch.p.rpd.toLocaleString()+" / day";
-    c.fillText(ch.p.rpm+" RPM  ·  "+daily,x-160,y+18);
+/* --------------------------------- loop --------------------------------- */
+let last=performance.now();
+function tick(now){
+  requestAnimationFrame(tick);
+  const dt=Math.min(64,now-last); last=now;
+  for(const s of SCENES){
+    if(!s.visible) continue;
+    if(s.taps.length&&!s.visible) s.taps.length=0;
+    s.reveal += (s.rTarget-s.reveal)*(RM?1:.12);
+    if(s.reveal>.999) s.reveal=1;
+    s.t=RM?2:(now-s.t0)/1000;
+    const c=s.ctx;
+    c.setTransform(s.k,0,0,s.k,0,0);
+    c.clearRect(0,0,s.w,s.h);
+    c.fillStyle=C.ink; c.fillRect(0,0,s.w,s.h);
+    ground(s,s.reveal);
+    under(s,now);
+    c.save();
+    try{ s.draw(s,dt/1000,now); }catch(err){ if(!s.err){s.err=1;console.error("scene",s.cv.id,err);} }
     c.restore();
-    c.save(); c.globalAlpha=a; c.fillStyle=ch.col;
-    c.beginPath(); c.arc(x+152,y,6+3*pulse(t),0,TAU); c.fill(); c.restore();
-  });
-  /* 21 model dots */
-  for(let i=0;i<21;i++){
-    const p=E.outBack(seg(tl,.6+i*.028,.6+i*.028+.5));
-    if(p<=0) continue;
-    const x=880+i*44, y=902;
-    c.save(); c.globalAlpha=clamp(p)*fade;
-    c.fillStyle=i%7===0?C.brand:C.dim;
-    c.beginPath(); c.arc(x,y,4+6*clamp(p),0,TAU); c.fill(); c.restore();
+    edge(s);
   }
-  c.save(); c.globalAlpha=.2*fade; c.strokeStyle=C.fg; c.lineWidth=1;
-  c.beginPath(); c.moveTo(860,902); c.lineTo(1800,902); c.stroke(); c.restore();
 }
+window.addEventListener("resize",()=>{ DPR=Math.min(window.devicePixelRatio||1,2); SCENES.forEach(fit); });
 
-/* -- 03 ALIAS FAN-OUT -- */
-const HUB3=470;
-const NODES=(function(){
-  return DATA.P.map((p,i)=>{
-    const a=-PI/2+i/8*TAU;
-    return {p:p, col:i%3===0?C.brand:(i%3===1?C.brand2:C.cyan), a:a,
-            x:CX+Math.cos(a)*660, y:HUB3+Math.sin(a)*250, tx:CX+Math.cos(a)*660, ty:HUB3+Math.sin(a)*250};
-  });
-})();
-const FAN=DATA.fanout["fast-smart"].map(id=>NODES.find(n=>n.p.id===id)).filter(Boolean);
-function sc3(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,9.00);
-  grid(c,120,C.fg,.045*fade,1,tl*70,0);
-  g.save(); const gr=g.createRadialGradient(CX,CY,0,CX,CY,700);
-  gr.addColorStop(0,"rgba(16,185,129,"+(.14*fade)+")"); gr.addColorStop(1,"rgba(16,185,129,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-
-  const req=E.inOutCubic(seg(tl,.05,.75));
-  const rx=lerp(-60,CX,E.inExpo(seg(tl,.05,.75))), ry=HUB3;
-  const showHub=E.outExpo(seg(tl,.2,.7));
-
-  /* fan-out links */
-  FAN.forEach((n,i)=>{
-    const d=.85+i*.075;
-    const p=E.outQuint(seg(tl,d,d+.42));
-    if(p<=0) return;
-    link(c,CX,HUB3,n.tx,n.ty,p,n.col,(.2+.5*p)*fade,2.4);
-    if(p>0.6) flowDots(c,CX,HUB3,n.tx,n.ty,4,(tl*1.5+i*.2)%1,n.col,.55*fade*(p-.6)/.4,5);
-  });
-  /* request entering */
-  if(req<1) packet(c,g,rx,ry,22,C.fg,.95*fade,tl*3);
-  else if(tl<2.2){
-    const t2=seg(tl,1.3,2.2);
-    g.save(); g.globalAlpha=(1-t2)*.5*fade; g.fillStyle=C.brand2;
-    g.beginPath(); g.arc(CX,HUB3,40+t2*90,0,TAU); g.fill(); g.restore();
-  }
-  /* nodes */
-  FAN.forEach((n,i)=>{
-    const d=.85+i*.075;
-    const on=E.outExpo(seg(tl,d+.28,d+.62));
-    const app=E.outExpo(seg(tl,.9+i*.05,.9+i*.05+.5));
-    if(app<=.01) return;
-    const x=lerp(CX,n.tx,app), y=lerp(HUB3,n.ty,app);
-    provNode(c,g,x,y,46,n.col,on>0,on*fade*app,tl*.8+i,n.p.c);
-    c.save(); c.globalAlpha=app*fade*(on>0?.85:.3); c.textAlign="center";
-    c.fillStyle=on>0?C.fg:C.dim; c.font='700 24px "Plus Jakarta Sans", sans-serif';
-    c.fillText(n.p.n,x,y+76);
-    c.globalAlpha=app*fade*(on>0?.6:.2);
-    c.fillStyle=C.brand2; c.font='500 19px "JetBrains Mono", monospace';
-    c.fillText(n.p.rpm+" RPM",x,y+104); c.restore();
-  });
-  hubNode(c,g,CX,HUB3,80,showHub>0,showHub*fade,pulse(t));
-  c.save(); c.globalAlpha=showHub*.9*fade; c.textAlign="center";
-  c.fillStyle=C.fg; c.font='600 22px "JetBrains Mono", monospace';
-  c.fillText("zerogateway",CX,HUB3+116); c.restore();
-}
-
-/* -- 04 CATCHING A 429 -- */
-const SET5=DATA.fanout["llama-3.3-70b"].map(id=>NODES.find(n=>n.p.id===id)).filter(Boolean);
-const GROQ=SET5.find(n=>n.p.id==="groq"), CERE=SET5.find(n=>n.p.id==="cerebras");
-const Y5=[230,388,546,704,846];
-function sc4(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,12.40);
-  grid(c,100,C.fg,.05*fade,1,0,0);
-  const HX=430;
-  const boom=E.outExpo(seg(tl,1.16,1.42));        /* the 429 lands */
-  const recover=E.inOutCubic(seg(tl,1.95,2.5));   /* reroute */
-  const back=E.outExpo(seg(tl,2.45,2.9));
-
-  g.save(); const gr=g.createRadialGradient(HX,CY,0,HX,CY,620);
-  gr.addColorStop(0,"rgba(16,185,129,"+(.12*fade)+")"); gr.addColorStop(1,"rgba(16,185,129,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-
-  /* hub */
-  hubNode(c,g,HX,CY,74,true,.95*fade,pulse(t));
-  c.save(); c.globalAlpha=.85*fade; c.textAlign="center"; c.fillStyle=C.fg;
-  c.font='600 20px "JetBrains Mono", monospace'; c.fillText("zerogateway",HX,CY+110); c.restore();
-
-  /* the request */
-  const rp=E.inExpo(seg(tl,.1,.75));
-  if(rp<1) packet(c,g,lerp(-60,HX,rp),CY,20,C.fg,.95*fade,tl*3);
-
-  SET5.forEach((n,i)=>{
-    const y=Y5[i], x=1400;
-    const isGroq=n===GROQ, isCere=n===CERE;
-    /* link state */
-    let p=0, col=n.col, a=.3*fade, lw=2.2;
-    if(isGroq){
-      p=E.outQuint(seg(tl,.5,.95));
-      if(boom>0){ col=mix(C.brand,C.warn,clamp(boom*1.4)); a=(.35+.4*boom)*fade; lw=lerp(2.2,5,boom); }
-    }else if(isCere){
-      p=E.outQuint(seg(tl,1.95,2.45));
-      a=(.2+.55*p)*fade; lw=lerp(2.2,4.5,p);
-      if(p>0) flowDots(c,HX,CY,x,y,5,(tl*1.8)%1,C.brand2,.7*fade,5);
-    }else{
-      p=E.outQuint(seg(tl,.55+i*.06,.55+i*.06+.4));
-      a=.22*fade;
+/* ===================== 1 · LIVE TOPOLOGY (ambient + tactile) ============= */
+addScene("c1",{
+  pinned:[], nodes:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal;
+    const cx=w/2, cy=h*.52;
+    const small=w<620;
+    const rx=small?Math.min(w*.31,h*.62):Math.min(w*.36,h*.72);
+    const ry=small?Math.min(h*.30,w*.15):Math.min(h*.34,w*.17);
+    const t=s.t, nr=small?Math.max(15,Math.min(26,Math.min(w,h)*.14)):34, hr0=small?Math.max(22,Math.min(40,Math.min(w,h)*.22)):52;
+    s.nodes.length=0;
+    for(let i=0;i<8;i++){
+      const a=-PI/2+i/8*TAU+Math.sin(t*.28+i*1.7)*.05;
+      let x=cx+Math.cos(a)*rx*(R), y=cy+Math.sin(a)*ry*(R);
+      /* pointer field */
+      if(s.over){
+        const dx=x-s.px, dy=y-s.py, d=Math.hypot(dx,dy)||1, f=Math.max(0,1-d/(nr*4.2));
+        if(f>0){ const push=f*f*(s.pinned[i]?12:46); x+=dx/d*push; y+=dy/d*push; }
+      }
+      if(s.down&&Math.hypot(x-s.px,y-s.py)<nr*2.2){ y-=4; }
+      s.nodes.push({x:x,y:y,a:a,p:DATA.P[i]});
     }
-    link(c,HX,CY,x,y,p,col,a,lw);
-    /* node */
-    const app=E.outExpo(seg(tl,.45+i*.06,.45+i*.06+.45));
-    if(app<=.01) return;
-    const na=app*fade;
-    let ncol=n.col, nal=na;
-    if(isGroq&&boom>0){ ncol=mix(n.col,C.warn,clamp(boom*1.5)); nal=na*(.4+.6*boom); }
-    let on=0;
-    if(isGroq) on=(1-boom)*(1-clamp(recover*1.6));
-    else if(isCere) on=E.outExpo(seg(tl,2.1,2.5));
-    else on=E.outExpo(seg(tl,.5+i*.06,.9+i*.06));
-    provNode(c,g,x,y,44,ncol,on>0,nal,tl*.7+i,n.p.c);
-    /* cooldown ring on the dead provider */
-    if(isGroq&&boom>0&&recover<1){
-      const cd=clamp(seg(tl,1.3,1.3+recover*1.6));
-      c.save(); c.globalAlpha=.9*fade; c.strokeStyle=C.warn; c.lineWidth=5; c.lineCap="round";
-      c.beginPath(); c.arc(x,y,68,-PI/2,-PI/2+TAU*cd); c.stroke();
-      c.globalAlpha=.4*fade; c.lineWidth=1.4; c.setLineDash([5,7]);
-      c.beginPath(); c.arc(x,y,68,0,TAU); c.stroke(); c.setLineDash([]); c.restore();
+    /* links — start at the hub rim so the bus reads cleanly */
+    const hubX0=cx, hubY0=cy;
+    for(let i=0;i<8;i++){
+      const n=s.nodes[i], k=cl((i/8*TAU+PI)/(2*PI),0,1);   /* 0 = nearest, 1 = far side */
+      const ang=Math.atan2(n.y-cy,n.x-cx);
+      const ex=cx+Math.cos(ang)*(hr0*1.05), ey=cy+Math.sin(ang)*(hr0*1.05);
+      const ang2=Math.atan2(cy-n.y,cx-n.x);
+      const nx=n.x+Math.cos(ang2)*(nr*1.25), ny=n.y+Math.sin(ang2)*(nr*1.25);
+      link(s,ex,ey,nx,ny,cl(R*1.15,0,1),C.brand,(0.26+0.34*k)*R,1+0.9*k);
     }
-    c.save(); c.globalAlpha=nal*(on>0?.9:.3); c.textAlign="center";
-    c.fillStyle=on>0?C.fg:C.dim; c.font='700 24px "Plus Jakarta Sans", sans-serif';
-    c.fillText(n.p.n,x,y+72);
-    c.globalAlpha=nal*(on>0?.55:.2); c.fillStyle=C.warn;
-    c.font='500 18px "JetBrains Mono", monospace';
-    c.fillText(isGroq&&boom>0?"cooldown":n.p.rpm+" RPM",x,y+98); c.restore();
-  });
-  /* the returning stream */
-  if(back>0){
-    const p=clamp(seg(tl,2.45,3.0));
-    c.save(); c.globalAlpha=back*fade; c.strokeStyle=C.brand2; c.lineWidth=3; c.lineCap="round";
-    const x=lerp(1400,HX,p);
-    c.beginPath(); c.moveTo(x,Y5[0]); c.lineTo(x,CY); c.stroke();
-    for(let i=0;i<7;i++){
-      const yy=300+i*44, w=(30+((i*37)%70))*back;
-      c.globalAlpha=back*fade*.6; c.fillStyle=C.cyan;
-      c.fillRect(x-70,yy,w,5);
+    if(R>.35) flow(s,cx,cy,s.nodes[3].x,s.nodes[3].y,4,(t*.55)%1,C.brand2,.7,3);
+    /* hub */
+    const hr=(small?40:52)*(Eo(R));
+    c.save(); c.globalAlpha=.5*R;
+    const gg=c.createRadialGradient(cx,cy,0,cx,cy,hr*3.2);
+    gg.addColorStop(0,"rgba(16,185,129,.28)"); gg.addColorStop(1,"rgba(16,185,129,0)");
+    c.fillStyle=gg; c.beginPath(); c.arc(cx,cy,hr*3.2,0,TAU); c.fill(); c.restore();
+    c.save(); c.globalAlpha=R; c.strokeStyle=C.brand; c.lineWidth=2.4;
+    c.beginPath(); c.arc(cx,cy,hr,0,TAU); c.stroke(); c.restore();
+    bolt(s,cx,cy,hr*.62,C.brand2,R);
+    if(!small) label(s,"zerogateway",cx,cy+hr+22,C.fg,.55*R,13,MONO);
+    /* nodes */
+    let hov=-1;
+    for(let i=0;i<8;i++){
+      const n=s.nodes[i], p=DATA.P[i];
+      if(s.over&&Math.hypot(n.x-s.px,n.y-s.py)<nr*1.5) hov=i;
+      const col=i%3===0?C.brand:(i%3===1?C.brand2:C.cyan);
+      const pin=s.pinned[i];
+      if(pin){
+        c.save(); c.globalAlpha=.5*R; c.strokeStyle=col; c.lineWidth=1.2; c.setLineDash([4,5]);
+        c.beginPath(); c.arc(n.x,n.y,nr*1.7,0,TAU); c.stroke(); c.setLineDash([]); c.restore();
+        c.save(); c.globalAlpha=R; c.fillStyle=col;
+        c.beginPath(); c.arc(n.x,n.y-nr*1.7-6,3.5,0,TAU); c.fill(); c.restore();
+      }
+      if(hov===i){
+        c.save(); c.globalAlpha=.16*R; c.fillStyle=col;
+        c.beginPath(); c.arc(n.x,n.y,nr*1.9,0,TAU); c.fill(); c.restore();
+      }
+      node(s,n.x,n.y,nr,col,hov===i||pin,R*.95,Math.sin(t*.4+i)*.05);
+      label(s,p.c,n.x,n.y,hov===i||pin?C.fg:"rgba(226,232,240,.5)",R*.95,nr*.42,MONO);
+      if(!small) label(s,p.n,n.x,n.y+nr+18,hov===i||pin?C.fg:"rgba(226,232,240,.42)",R*.9,12.5,SANS);
     }
-    c.restore();
-    packet(c,g,lerp(1400,HX,p),CY,18,C.brand2,back*fade,-tl*3);
+    s.hover=hov;
+    const info=hov>=0?DATA.P[hov]:null;
+    ro("c1out", info
+      ? `<span><b>${info.n}</b></span><span>${info.rpm} RPM</span><span>${num(info.rpd)} / day</span>`+
+        `<span>${info.tpm?info.tpm.toLocaleString():"—"} TPM</span><span>${info.ctx.toLocaleString()} ctx</span>`+
+        `<span class="acc">${info.tag}</span><span class="${s.pinned[hov]?"ok":""}">${s.pinned[hov]?"pinned":"hover"}</span>`
+      : `<span><b>${s.pinned.filter(Boolean).length}</b> pinned</span><span>8 nodes online</span>`+
+        `<span>every node answers the same alias</span><span>${s.down?"holding":"move or tap"}</span>`);
+  },
+  hit(x,y){ for(let i=0;i<(this.nodes||[]).length;i++){const n=this.nodes[i]; if(Math.hypot(n.x-x,n.y-y)<38) return i;} return -1; },
+  hitColor(i){ return i%3===0?C.brand:(i%3===1?C.brand2:C.cyan); },
+  onTap(i){
+    if(i<0){ this.pinned=[]; return; }
+    this.pinned[i]=!this.pinned[i];
   }
-}
-
-/* -- 05 MULTI-KEY SWAP -- */
-function sc5(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,15.20);
-  grid(c,110,C.fg,.05*fade,1,-tl*60,0);
-  const NX=470, KY=[360,560,760];
-  g.save(); const gr=g.createRadialGradient(NX,CY,0,NX,CY,560);
-  gr.addColorStop(0,"rgba(99,102,241,"+(.12*fade)+")"); gr.addColorStop(1,"rgba(99,102,241,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-
-  /* the request never breaks: a continuous rail */
-  const rail=E.outExpo(seg(tl,.1,.7));
-  c.save(); c.globalAlpha=rail*.28*fade; c.strokeStyle=C.brand2; c.lineWidth=2;
-  c.beginPath(); c.moveTo(-40,CY); c.lineTo(1400,CY); c.stroke(); c.restore();
-
-  hubNode(c,g,NX,CY,72,true,.95*fade,pulse(t));
-  c.save(); c.globalAlpha=.9*fade; c.textAlign="center"; c.fillStyle=C.fg;
-  c.font='700 24px "Plus Jakarta Sans", sans-serif'; c.fillText("Groq",NX,CY+106);
-  c.globalAlpha=.5*fade; c.fillStyle=C.dim;
-  c.font='500 18px "JetBrains Mono", monospace'; c.fillText("1 key exhausted",NX,CY+132); c.restore();
-  if(rail<1) packet(c,g,lerp(-60,NX,E.inExpo(seg(tl,.1,.7))),CY,20,C.fg,.95*fade,tl*3);
-
-  /* three key slots */
-  const hop=seg(tl,1.05,1.75);          /* 0 = key1, 1 = key2, 2 = key3 */
-  const active=hop<.5?0:(hop<1.3?1:2);
-  KY.forEach((y,i)=>{
-    const app=E.outExpo(seg(tl,.35+i*.18,.35+i*.18+.55));
-    if(app<=.01) return;
-    const a=app*fade, x=1330;
-    const isAct=active===i;
-    const used=i===0?(0.2+clamp(seg(tl,.5,1.3))*.8):(i===1?clamp(seg(tl,1.6,2.1)):clamp(seg(tl,2.4,2.7)));
-    const dead=i<active;
-    const col=isAct?C.brand2:(dead?C.warn:C.dim);
-    c.save(); c.globalAlpha=a; c.translate(x,y); c.scale(app,app);
-    roundRect(c,-250,-56,500,112,14);
-    c.globalAlpha=a*(isAct?.1:.05); c.fillStyle=col; c.fill();
-    c.globalAlpha=a*(isAct?.95:.4); c.strokeStyle=col; c.lineWidth=isAct?2.6:1.8; c.stroke();
-    c.textAlign="left"; c.textBaseline="middle";
-    c.fillStyle=isAct?C.fg:(dead?"rgba(245,158,11,.7)":C.dim);
-    c.font='700 27px "Plus Jakarta Sans", sans-serif'; c.fillText("key "+(i+1),-228,0);
-    c.fillStyle="rgba(226,232,240,.5)"; c.font='500 18px "JetBrains Mono", monospace';
-    c.fillText(dead?"cooldown":(isAct?"serving request":"standby"),-140,1);
-    /* quota bar */
-    c.globalAlpha=a*.22; c.fillStyle=C.dim; c.fillRect(-228,34,456,9);
-    c.globalAlpha=a*.95; c.fillStyle=dead?C.warn:C.brand2; c.fillRect(-228,34,456*used,9);
-    c.restore();
-    /* wire from hub */
-    link(c,NX,CY,x,y,E.outQuint(seg(tl,.4+i*.18,.4+i*.18+.5)),col,(isAct?.6:.22)*fade,isAct?2.8:1.8);
-    if(isAct) flowDots(c,NX,CY,x,y,4,(tl*1.7)%1,C.brand2,.75*fade,5);
-  });
-  /* hop flash */
-  const hf=E.outExpo(seg(tl,1.28,1.42))*(1-seg(tl,1.42,1.7));
-  if(hf>0){
-    c.save(); c.globalCompositeOperation="lighter"; c.globalAlpha=hf*.15*fade;
-    c.fillStyle=C.fg; c.fillRect(0,0,W,H); c.restore();
-  }
-  c.save(); c.globalAlpha=(.55+.45*Math.abs(Math.sin(tl*3)))*E.outQuad(seg(tl,1.5,1.9))*fade;
-  c.fillStyle=C.brand2; c.textAlign="center";
-  c.font='600 20px "JetBrains Mono", monospace';
-  c.fillText("no request is ever failed",CX,1000); c.restore();
-}
-
-/* -- 06 ONE OPENAI ENDPOINT -- */
-const TTY=(function(){
-  _s=5150;
-  const lines=[
-    "$ zerogateway serve --port 8080",
-    "→ OpenAI-compatible server on http://localhost:8080/v1",
-    "→ base url  http://localhost:8080/v1",
-    "→ api key   zerogateway",
-    "→ clients   Cursor · Cline · Continue.dev · LibreChat · Open WebUI"
-  ];
-  return lines;
-})();
-function sc6(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,18.00);
-  grid(c,120,C.fg,.05*fade,1,0,tl*40);
-  const bx=352, by=288, bw=1216, bh=446;
-  const open=E.outExpo(seg(tl,.05,.6));
-  g.save(); const gr=g.createRadialGradient(CX,CY,0,CX,CY,700);
-  gr.addColorStop(0,"rgba(16,185,129,"+(.1*fade)+")"); gr.addColorStop(1,"rgba(16,185,129,0)");
-  g.fillStyle=gr; g.fillRect(0,0,W,H); g.restore();
-  if(open<=.01) return;
-  c.save(); c.globalAlpha=open; c.translate(-(1-open)*170,0);
-  roundRect(c,bx,by,bw,bh,16);
-  c.globalAlpha=open*.55; c.strokeStyle=C.brand; c.lineWidth=2; c.stroke();
-  c.globalAlpha=open; c.clip();
-  /* title bar */
-  c.globalAlpha=open*.08; c.fillStyle=C.brand; c.fillRect(bx,by,bw,64);
-  c.globalAlpha=open*.9; c.globalCompositeOperation="source-over";
-  c.fillStyle=C.bg; c.globalAlpha=open; c.fillStyle="#0b1120"; c.fillRect(bx,by,bw,64);
-  [[C.bad,C.warn,C.brand]].forEach(d=>{});
-  ["#ef4444","#f59e0b","#10b981"].forEach((col,i)=>{
-    c.globalAlpha=open*.9; c.fillStyle=col;
-    c.beginPath(); c.arc(bx+30+i*26,by+32,7,0,TAU); c.fill();
-  });
-  c.globalAlpha=open*.6; c.fillStyle=C.dim; c.textAlign="left"; c.textBaseline="middle";
-  c.font='500 19px "JetBrains Mono", monospace'; c.fillText("zerogateway — proxy :8080",bx+124,by+32);
-  c.globalAlpha=open*.5; c.strokeStyle=C.fg; c.lineWidth=1;
-  c.beginPath(); c.moveTo(bx,by+64); c.lineTo(bx+bw,by+64); c.stroke();
-  /* typed lines */
-  let y=by+112;
-  TTY.forEach((ln,i)=>{
-    const p=seg(tl,.28+i*.34,.28+i*.34+.28);
-    if(p<=0) return;
-    const n=Math.ceil(ln.length*p);
-    c.globalAlpha=open; c.textAlign="left"; c.textBaseline="middle";
-    c.font=(i===0?'600 ':'400 ')+'24px "JetBrains Mono", monospace';
-    c.fillStyle=i===0?C.brand:(i===3?C.brand2:"rgba(226,232,240,.72)");
-    c.fillText(ln.slice(0,n),bx+44,y);
-    if(p<1&&Math.floor(tl*6)%2===0){
-      c.fillStyle=C.brand2; c.fillRect(bx+44+c.measureText(ln.slice(0,n)).width+6,y-11,10,22);
-    }
-    y+=46;
-  });
-  /* streaming response */
-  const sp=seg(tl,1.85,2.4);
-  if(sp>0){
-    c.globalAlpha=open; c.textAlign="left"; c.textBaseline="middle";
-    c.font='400 22px "JetBrains Mono", monospace';
-    c.fillStyle="rgba(34,211,238,.85)"; c.fillText("▸ stream:",bx+44,y);
-    const chars="▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇█";
-    for(let i=0;i<40;i++){
-      const on=clamp(sp*46-i);
-      if(on<=0) break;
-      c.globalAlpha=open*.85*on;
-      c.fillStyle=i%9===0?C.brand2:C.cyan;
-      c.fillText(chars[(i*3+Math.floor(tl*9))%chars.length],bx+150+i*22,y);
-    }
-  }
-  c.restore();
-  /* client chips */
-  const cp=seg(tl,1.1,2.2);
-  DATA.clients.forEach((cl,i)=>{
-    const d=1.15+i*.15, a=E.outExpo(seg(tl,d,d+.4));
-    if(a<=.01) return;
-    const x=bx+bw/2-(DATA.clients.length-1)*88+i*176, y=by+bh+58;
-    c.save(); c.globalAlpha=a*fade; c.textAlign="center";
-    c.strokeStyle=C.brand; c.lineWidth=1.6;
-    const w=Math.max(120,cl.length*13+34);
-    roundRect(c,x-w/2,y-24,w,48,10); c.stroke();
-    c.fillStyle=C.fg; c.font='600 22px "Plus Jakarta Sans", sans-serif'; c.fillText(cl,x,y+1);
-    c.globalAlpha=a*fade*.5; c.strokeStyle=C.brand2; c.lineWidth=1.6;
-    c.beginPath(); c.moveTo(x,y-24); c.lineTo(x,by+bh+6); c.stroke();
-    c.restore();
-  });
-  c.save(); c.globalAlpha=E.outExpo(seg(tl,2.0,2.5))*fade; c.textAlign="center";
-  c.fillStyle=C.dim; c.font='500 20px "JetBrains Mono", monospace';
-  c.fillText("HTTP/1.1 200 OK   ·   stream=true   ·   0 credit card",CX,246); c.restore();
-}
-
-/* -- 07 WHAT THE FREE TIERS GIVE -- */
-const BARS=(function(){
-  const max=60;
-  return DATA.P.slice().sort((a,b)=>b.rpm-a.rpm).map((p,i)=>({p:p, v:p.rpm/max, y:340+i*68, i:i}));
-})();
-const on0=p=>p.rpm>=30;
-function sc7(c,g,tl,t){
-  bg(c);
-  const fade=outA(t,21.00);
-  grid(c,100,C.fg,.05*fade,1,0,0);
-  BARS.forEach((b,i)=>{
-    const p=E.outExpo(seg(tl,.15+i*.07,.15+i*.07+.55));
-    if(p<=0) return;
-    const a=p*fade, y=b.y, bw=480*b.v*p, col=b.p.rpm>=30?C.brand:(b.p.rpm>=20?C.brand2:C.accent);
-    c.save(); c.globalAlpha=a*.9; c.textAlign="right"; c.textBaseline="middle";
-    c.fillStyle=on0(b.p)?"#fff":"rgba(226,232,240,.62)";
-    c.font='600 23px "Plus Jakarta Sans", sans-serif'; c.fillText(b.p.n,272,y+13);
-    c.globalAlpha=a*.14; c.fillStyle=C.dim; c.fillRect(290,y,480,26);
-    c.globalAlpha=a*.92; c.fillStyle=col; c.fillRect(290,y,bw,26);
-    c.globalAlpha=a; c.fillStyle="#fff"; c.fillRect(290+bw-3,y,3,26);
-    c.textAlign="left"; c.fillStyle=col;
-    c.font='500 21px "JetBrains Mono", monospace';
-    c.fillText(b.p.rpm+" RPM"+(b.p.rpd===null?"   ·   no daily cap":""),800,y+14);
-    c.restore();
-  });
-  /* context window bar, bottom right */
-  const cp=E.outExpo(seg(tl,1.35,2.1));
-  if(cp>0){
-    c.save(); c.globalAlpha=cp*fade; c.textAlign="right";
-    c.fillStyle=C.cyan; c.font='600 22px "Plus Jakarta Sans", sans-serif';
-    c.fillText("Gemini 2.5 Flash · context window",1800,742);
-    c.globalAlpha=cp*.2*fade; c.fillStyle=C.dim; c.fillRect(1080,764,720,16);
-    c.globalAlpha=cp*.9*fade; c.fillStyle=C.cyan; c.fillRect(1080,764,720*cp,16);
-    c.globalAlpha=cp*fade; c.fillStyle=C.fg; c.font='500 20px "JetBrains Mono", monospace';
-    c.fillText("1,048,576",1800,822); c.restore();
-  }
-  /* the "no card" stamp */
-  const st=E.outBack(seg(tl,1.9,2.4));
-  if(st>0){
-    c.save(); c.globalAlpha=st*fade; c.translate(500,916); c.rotate(-.1); c.scale(st,st);
-    c.strokeStyle=C.brand; c.lineWidth=3; roundRect(c,-168,-38,336,76,10); c.stroke();
-    c.fillStyle=C.brand; c.textAlign="center"; c.textBaseline="middle";
-    c.font='800 27px "Plus Jakarta Sans", sans-serif'; c.fillText("NO CREDIT CARD",0,2);
-    c.restore();
-  }
-}
-
-/* -- 08 SHIP IT -- */
-function sc8(c,g,tl,t){
-  bg(c);
-  const dim=1-E.inQuad(seg(tl,2.55,3.0));
-  const fade=outA(t,24)*( .45+.55*E.outQuad(seg(tl,0,.3)) )*dim;
-  grid(c,80,C.fg,.06*fade,1,0,0);
-  const mp=E.outExpo(seg(tl,.05,.5));
-  drawMark(c,g,CX,318,64*mp,tl*.9,mp*fade);
-  c.save(); c.globalAlpha=.3*fade*E.outQuad(seg(tl,1.1,1.6)); c.strokeStyle=C.fg; c.lineWidth=1;
-  c.beginPath(); c.moveTo(240,470); c.lineTo(W-240,470); c.stroke();
-  c.beginPath(); c.moveTo(240,900); c.lineTo(W-240,900); c.stroke(); c.restore();
-  const rp=(tl-1.9)/1.1;
-  if(rp>0){
-    c.save(); c.globalAlpha=(1-clamp(rp))*fade*.4; c.strokeStyle=C.brand; c.lineWidth=2;
-    c.beginPath(); c.arc(CX,660,120+rp*420,0,TAU); c.stroke(); c.restore();
-  }
-  c.save(); c.globalAlpha=E.outQuad(seg(tl,1.3,1.9))*fade; c.textAlign="center";
-  c.fillStyle=C.dim; c.font='500 21px "JetBrains Mono", monospace';
-  c.fillText("pip install zerogateway     ·     npm i zerogateway     ·     MIT",CX,760); c.restore();
-}
-function drawMark(c,g,x,y,r,t,alpha){
-  if(r<=0||alpha<=0) return;
-  c.save(); c.globalAlpha=alpha; c.translate(x,y);
-  c.strokeStyle=C.fg; c.lineWidth=5; c.lineCap="round";
-  c.beginPath(); c.arc(0,0,r,t,t+TAU*.78); c.stroke();
-  c.globalAlpha=alpha; c.fillStyle=C.brand;
-  c.beginPath(); c.arc(Math.cos(t+TAU*.78)*r,Math.sin(t+TAU*.78)*r,7,0,TAU); c.fill();
-  c.globalAlpha=alpha*.9; c.strokeStyle=C.brand; c.lineWidth=4;
-  c.beginPath();
-  c.moveTo(r*.22,-r*.44); c.lineTo(-r*.2,r*.04); c.lineTo(r*.02,r*.04);
-  c.lineTo(-r*.22,r*.44); c.lineTo(r*.2,-r*.04); c.lineTo(-r*.02,-r*.04); c.closePath();
-  c.stroke(); c.restore();
-  g.save(); g.globalAlpha=alpha*.3; g.strokeStyle=C.brand; g.lineWidth=3;
-  g.beginPath(); g.arc(x,y,r*1.25,0,TAU); g.stroke(); g.restore();
-}
-
-/* ============================== POST FX ================================== */
-function post(c,t,si){
-  blr.setTransform(1,0,0,1,0,0);
-  blr.clearRect(0,0,TW,TH);
-  blr.save(); blr.filter="blur(9px)"; blr.drawImage(gcv,0,0,TW,TH); blr.restore();
-  c.save(); c.setTransform(1,0,0,1,0,0);
-  c.globalCompositeOperation="lighter";
-  c.globalAlpha=.95; c.drawImage(bcv,0,0,cv.width,cv.height);
-  c.globalAlpha=.45; c.drawImage(gcv,0,0,cv.width,cv.height);
-  c.restore();
-  let fl=0,wipe=-1,ab=0;
-  for(let i=0;i<TRANS.length;i++){
-    const d=t-TRANS[i];
-    if(d>=0&&d<.18) fl=Math.max(fl,(1-d/.18)*.8);
-    if(d>=-.42&&d<.34) wipe=Math.max(wipe,(d+.42)/.76);
-    if(d>=-.05&&d<.26) ab=Math.max(ab,1-Math.abs(d)/.26);
-  }
-  ab=Math.max(ab,E.outExpo(seg(t,2.0,2.14))*(1-seg(t,2.14,2.42)));
-  ab=Math.max(ab,E.outExpo(seg(t,9.16,9.3))*(1-seg(t,9.3,9.66))*.9);
-  if(ab>.012){
-    c.save(); c.setTransform(1,0,0,1,0,0); c.globalCompositeOperation="lighter";
-    const dx=ab*26*K, cols=["#ff0000","#00ff00","#0000ff"], offs=[dx,0,-dx];
-    act.setTransform(1,0,0,1,0,0);
-    act.globalCompositeOperation="source-over"; act.clearRect(0,0,AW,AH);
-    for(let i=0;i<3;i++){
-      tnt.globalCompositeOperation="source-over"; tnt.clearRect(0,0,AW,AH);
-      tnt.drawImage(cv,0,0,AW,AH);
-      tnt.globalCompositeOperation="multiply";
-      tnt.fillStyle=cols[i]; tnt.fillRect(0,0,AW,AH);
-      act.globalCompositeOperation="lighter";
-      act.drawImage(tcv,offs[i],0,AW,AH);
-    }
-    c.globalAlpha=ab*.34; c.drawImage(acv,0,0,cv.width,cv.height);
-    c.restore();
-  }
-  if(wipe>=0&&wipe<=1){
-    const x=(wipe*1.4-.2)*W, w=150;
-    c.save(); c.setTransform(1,0,0,1,0,0); c.globalCompositeOperation="lighter";
-    const gr=c.createLinearGradient(x-w,0,x+w,0);
-    gr.addColorStop(0,"rgba(226,232,240,0)"); gr.addColorStop(.5,"rgba(226,232,240,.8)"); gr.addColorStop(1,"rgba(226,232,240,0)");
-    c.fillStyle=gr; c.fillRect(x-w,0,w*2,cv.height);
-    c.globalAlpha=.45; c.fillStyle=C.brand; c.fillRect(x-2,0,4,cv.height);
-    c.restore();
-  }
-  if(fl>.002){
-    c.save(); c.setTransform(1,0,0,1,0,0);
-    c.globalCompositeOperation="lighter"; c.globalAlpha=fl*.3; c.fillStyle="#fff";
-    c.fillRect(0,0,cv.width,cv.height); c.restore();
-  }
-  c.save(); c.setTransform(1,0,0,1,0,0);
-  if(si===0||si>=5){
-    c.globalAlpha=.055; c.fillStyle=scanPat;
-    c.save(); c.translate(0,(visTime*44)%6); c.fillRect(0,-6,cv.width,cv.height+12); c.restore();
-  }
-  c.globalAlpha=.08; c.globalCompositeOperation="overlay";
-  const gp=grainPat[(visTime*24|0)%3];
-  gp.setTransform(new DOMMatrix().translateSelf(-((visTime*911|0)%256),-((visTime*577|0)%256)));
-  c.fillStyle=gp; c.fillRect(0,0,cv.width,cv.height);
-  c.globalAlpha=1; c.globalCompositeOperation="source-over";
-  c.drawImage(vig,0,0,cv.width,cv.height);
-  c.restore();
-}
-
-
-/* scene table (draw fns are hoisted function declarations) */
-[[0,2.80,"The promise",sc1],[2.80,5.60,"The registry",sc2],[5.60,9.00,"Alias fan-out",sc3],
- [9.00,12.40,"Catching a 429",sc4],[12.40,15.20,"Multi-key swapping",sc5],[15.20,18.00,"One OpenAI endpoint",sc6],
- [18.00,21.00,"What the free tiers give",sc7],[21.00,24.00,"Ship it",sc8]]
- .forEach(r=>SCN.push({t0:r[0],t1:r[1],name:r[2],draw:r[3]}));
-
-/* --------------------------- DOM animation ------------------------------ */
-const setT=(n,x,y,s,sk,o)=>{ n.style.transform="translate3d("+x+"px,"+y+"px,0)"
-  +(s!==1?" scale("+s+")":"")+(sk?" skewX("+sk+"deg)":""); n.style.opacity=o; };
-const setO=(n,o)=>{ n.style.opacity=o; };
-function stagger(arr,tl,st,dur,fn){ for(let i=0;i<arr.length;i++){ const p=seg(tl,st+i*(dur/Math.max(1,arr.length)),st+i*(dur/Math.max(1,arr.length))+dur*.5); fn(arr[i],p,i); } }
-const DOM=[
-/* 01 */
-function(tl,t){
-  const ab=E.outExpo(seg(t,2.0,2.14))*(1-seg(t,2.14,2.42))*26;
-  B("b1").style.setProperty("--ab",ab.toFixed(1)+"px");
-  for(let i=0;i<L.s1k.length;i++){ const p=seg(tl,.2+i*.02,.2+i*.02+.45),e=E.outExpo(p); setT(L.s1k[i],0,(1-e)*20,1,0,e); }
-  for(let i=0;i<L.s1a.length;i++){ const p=seg(tl,.32+i*.05,.32+i*.05+.7),e=E.outExpo(p);
-    setT(L.s1a[i],0,(1-e)*170,lerp(1.18,1,e),(1-e)*-9,e); }
-  for(let i=0;i<L.s1b.length;i++){ const p=seg(tl,.55+i*.045,.55+i*.045+.7),e=E.outExpo(p);
-    setT(L.s1b[i],(1-e)*-280,0,lerp(1.14,1,e),(1-e)*8,e); }
-  for(let i=0;i<L.s1d.length;i++){ const p=seg(tl,.7+i*.11,.7+i*.11+.5),e=E.outExpo(p);
-    setT(L.s1d[i],(1-e)*60,0,1,0,e); }
-  for(let i=0;i<L.s1c.length;i++){ const p=seg(tl,1.15+i*.014,1.5+i*.014),e=E.outCubic(p);
-    setT(L.s1c[i],(1-e)*-14,0,1,0,e*.85); }
-},
-/* 02 */
-function(tl,t){
-  setO(B("s2k"),E.outCubic(seg(tl,.04,.45))*.9);
-  const cnt=(id,to,st,dur)=>{ const p=seg(tl,st,st+dur);
-    L[id][0].textContent=String(Math.round(to*E.outExpo(p))).padStart(id==="s2a"||id==="s2b"?1:2,"0"); return p; };
-  const a=cnt("s2a",8,.3,.7), b=cnt("s2b",21,.55,.7), c=cnt("s2c",25,.8,.7);
-  [[a,"s2a2"],[b,"s2b2"],[c,"s2c2"]].forEach(([p,id])=>{
-    const e=E.outCubic(p);
-    if(id==="s2a"){ setT(L[id][0],(1-e)*40,0,1,0,e); }
-    else { for(let i=0;i<L[id].length;i++){ const q=seg(tl,.38+i*.03,.38+i*.03+.5),ee=E.outCubic(q); setT(L[id][i],(1-ee)*20,0,1,0,ee); } }
-  });
-  for(let i=0;i<L.s2d.length;i++){ const p=seg(tl,1.5+i*.008,1.8+i*.008),e=E.outCubic(p); setT(L.s2d[i],(1-e)*-10,0,1,0,e*.8); }
-},
-/* 03 */
-function(tl,t){
-  setO(B("s3k"),E.outCubic(seg(tl,.04,.45))*.9);
-  for(let i=0;i<L.s3a.length;i++){ const p=seg(tl,1.0+i*.014,1.4+i*.014),e=E.outCubic(p);
-    setT(L.s3a[i],0,(1-e)*22,lerp(1.1,1,e),0,e); }
-  for(let i=0;i<L.s3b.length;i++){ const p=seg(tl,1.5+i*.012,1.9+i*.012),e=E.outCubic(p);
-    setT(L.s3b[i],0,0,1,0,e*.85); }
-},
-/* 04 */
-function(tl,t){
-  setO(B("s4k"),E.outCubic(seg(tl,.04,.45))*.9);
-  for(let i=0;i<L.s4a.length;i++){ const p=seg(tl,1.16+i*.04,1.16+i*.04+.34);
-    const e=p<=0?0:E.outExpo(p)*(1-smooth(.5,1.05,p));
-    setT(L.s4a[i],0,0,lerp(2.6,1,clamp(p*2.2)),lerp(-16,0,clamp(p*2.2)),e); }
-  for(let i=0;i<L.s4b.length;i++){ const p=seg(tl,1.5+i*.02,1.9+i*.02),e=E.outCubic(p); setT(L.s4b[i],0,(1-e)*16,1,0,e); }
-  for(let i=0;i<L.s4c.length;i++){ const p=seg(tl,1.95+i*.012,2.35+i*.012),e=E.outCubic(p); setT(L.s4c[i],0,0,1,0,e*.95); }
-  for(let i=0;i<L.s4d.length;i++){ const p=seg(tl,2.3+i*.01,2.7+i*.01),e=E.outCubic(p); setT(L.s4d[i],0,0,1,0,e*.7); }
-},
-/* 05 */
-function(tl,t){
-  setO(B("s5k"),E.outCubic(seg(tl,.04,.45))*.9);
-  for(let i=0;i<L.s5a.length;i++){ const p=seg(tl,.2+i*.022,.2+i*.022+.5),e=E.outExpo(p);
-    setT(L.s5a[i],0,(1-e)*40,lerp(1.12,1,e),0,e); }
-  for(let i=0;i<L.s5b.length;i++){ const p=seg(tl,1.0+i*.02,1.4+i*.02),e=E.outCubic(p); setT(L.s5b[i],0,(1-e)*18,1,0,e); }
-  for(let i=0;i<L.s5c.length;i++){ const p=seg(tl,1.5+i*.012,1.9+i*.012),e=E.outCubic(p); setT(L.s5c[i],0,0,1,0,e*.85); }
-},
-/* 06 */
-function(tl,t){
-  setO(B("s6k"),E.outCubic(seg(tl,.04,.45))*.9);
-  for(let i=0;i<L.s6a.length;i++){ const p=seg(tl,.45+i*.024,.45+i*.024+.5),e=E.outExpo(p);
-    setT(L.s6a[i],0,(1-e)*46,lerp(1.1,1,e),0,e); }
-  for(let i=0;i<L.s6b.length;i++){ const p=seg(tl,1.9+i*.012,2.3+i*.012),e=E.outCubic(p); setT(L.s6b[i],0,0,1,0,e); }
-  for(let i=0;i<L.s6d.length;i++){ const p=seg(tl,2.25+i*.008,2.6+i*.008),e=E.outCubic(p); setT(L.s6d[i],0,0,1,0,e*.8); }
-},
-/* 07 */
-function(tl,t){
-  setO(B("s7k"),E.outCubic(seg(tl,.04,.45))*.9);
-  const p1=seg(tl,.2,.9);
-  B("s7a").textContent=String(Math.round(60*E.outExpo(p1)));
-  const e1=E.outExpo(seg(tl,.15,.75));
-  setT(B("s7a"),0,(1-e1)*110,lerp(1.5,1,e1),0,e1);
-  for(let i=0;i<L.s7a2.length;i++){ const p=seg(tl,1.0+i*.012,1.4+i*.012),e=E.outCubic(p); setT(L.s7a2[i],0,0,1,0,e*.85); }
-  const p2=seg(tl,1.25,2.0);
-  B("s7b").textContent=Math.round(1000000*E.outExpo(p2)).toLocaleString();
-  const e2=E.outExpo(seg(tl,1.2,1.85));
-  setT(B("s7b"),0,(1-e2)*64,lerp(1.3,1,e2),0,e2);
-  for(let i=0;i<L.s7b2.length;i++){ const p=seg(tl,1.9+i*.012,2.3+i*.012),e=E.outCubic(p); setT(L.s7b2[i],0,0,1,0,e*.8); }
-  for(let i=0;i<L.s7c.length;i++){ const p=seg(tl,2.3+i*.012,2.7+i*.012),e=E.outCubic(p); setT(L.s7c[i],0,0,1,0,e*.55); }
-},
-/* 08 */
-function(tl,t){
-  const fa=outA(t,24);
-  for(let i=0;i<L.s8a.length;i++){ const p=seg(tl,.18+i*.035,.18+i*.035+.6),e=E.outExpo(p);
-    setT(L.s8a[i],0,(1-e)*110,lerp(1.16,1,e),(1-e)*5,e*fa); }
-  for(let i=0;i<L.s8b.length;i++){ const p=seg(tl,.7+i*.02,1.1+i*.02),e=E.outCubic(p); setT(L.s8b[i],0,(1-e)*18,1,0,e*fa); }
-  for(let i=0;i<L.s8c.length;i++){ const p=seg(tl,1.1+i*.012,1.5+i*.012),e=E.outCubic(p); setT(L.s8c[i],0,0,1,0,e*fa*.85); }
-  for(let i=0;i<L.s8d.length;i++){ const p=seg(tl,1.6+i*.014,2.0+i*.014),e=E.outCubic(p); setT(L.s8d[i],0,0,1,0,e*fa); }
-  B("s8t").firstChild.style.transform="translate3d("+(-tl*300)+"px,0,0)";
-  B("s8t").firstChild.style.opacity=E.outQuad(seg(tl,.2,.8))*.9*fa;
-  B("s8e").firstChild.style.transform="translate3d("+(tl*190)+"px,0,0)";
-  B("s8e").firstChild.style.opacity=E.outQuad(seg(tl,1.2,1.8))*.9*fa;
-}
-];
-
-/* ================================ RENDER ================================= */
-function render(t){
-  t=clamp(t,0,DUR); visTime=t;
-  A.read();
-  const sc=sceneAt(t), tl=t-sc.s.t0;
-  bg(main);
-  glow.setTransform(K*.5,0,0,K*.5,0,0);
-  glow.clearRect(0,0,W,H);
-  sc.s.draw(main,glow,tl,t);
-  post(main,t,sc.i);
-  for(let i=0;i<blocks.length;i++) blocks[i].classList.toggle("on",i===sc.i);
-  DOM[sc.i](tl,t);
-  B("scname").textContent=sc.s.name;
-  B("scidx").textContent=("0"+(sc.i+1))+" / 08";
-  B("hprog").style.width=(t/DUR*100)+"%";
-  B("fg").style.width=(t/DUR*100)+"%";
-  B("kn").style.left=(t/DUR*100)+"%";
-  B("tcode").textContent=t.toFixed(2).padStart(5,"0")+" / 24.00";
-  B("uisc").textContent=sc.s.name;
-}
-
-/* ------------------------------ transport ------------------------------- */
-function clock(){
-  if(!playing) return tVis;
-  if(A.ready) return A.ctx.currentTime-A.startT;
-  return (performance.now()-wallStart)/1000;
-}
-A.kill=function(){ if(this.ctx){ try{ this.ctx.close(); }catch(e){} } this.ctx=null; this.ready=false; this.an=null; };
-function play(pos){
-  let p=pos==null?tVis:pos;
-  if(p>=DUR-.02||p<0) p=0;
-  A.kill();
-  tVis=p; started=true;
-  if(!A.start(p)) wallStart=performance.now()-p*1000;
-  playing=true; dirty=true;
-  B("start").classList.add("hide");
-  document.getElementById("ui").classList.remove("off");
-  bplay.innerHTML=ICON.pause;
-  B("hint").textContent="Click to pause";
-  lastMove=performance.now();
-}
-function pause(){
-  tVis=clamp(clock(),0,DUR);
-  playing=false; A.kill(); dirty=true;
-  bplay.innerHTML=ICON.play;
-  B("hint").textContent=started?"Click to resume":"Click to play";
-}
-function toggle(){ if(!started) play(0); else if(playing) pause(); else play(tVis); }
-function seek(v){ v=clamp(v,0,DUR); if(playing) play(v); else { tVis=v; dirty=true; } }
-function finish(){
-  playing=false; tVis=DUR; dirty=true;
-  bplay.innerHTML=ICON.play;
-  B("hint").textContent="Click to replay";
-  document.getElementById("ui").classList.remove("off");
-}
-function openPlayer(t){
-  playerEl.classList.add("on");
-  document.body.style.overflow="hidden";
-  opened=true;
-  requestAnimationFrame(()=>{ fit(); play(t==null?0:t); });
-}
-function closePlayer(){
-  pause();
-  playerEl.classList.remove("on");
-  document.body.style.overflow="";
-  opened=false; started=false; tVis=0; dirty=true;
-}
-
-const ICON={
-  play:'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
-  pause:'<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',
-  sound:'<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" stroke="#E2E8F0" stroke-width="1.8" fill="none"/></svg>',
-  mute:'<svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 9l5 6M21 9l-5 6" stroke="#E2E8F0" stroke-width="1.8" fill="none"/></svg>',
-  replay:'<svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a5 5 0 11-5 5H5a7 7 0 107-7z"/></svg>'
-};
-const bplay=document.getElementById("bplay"), bmute=document.getElementById("bmute"), brep=document.getElementById("brep");
-bplay.innerHTML=ICON.pause; bmute.innerHTML=ICON.sound; brep.innerHTML=ICON.replay;
-
-/* chapter markers on the scrub bar */
-const track=document.getElementById("track");
-SCN.forEach(s=>{ const m=document.createElement("div"); m.className="mk"; m.style.left=(s.t0/DUR*100)+"%"; track.appendChild(m); });
-function trackTo(e){ const r=track.getBoundingClientRect(); seek(((e.clientX-r.left)/r.width)*DUR); }
-track.addEventListener("pointerdown",e=>{ e.stopPropagation(); track.setPointerCapture(e.pointerId); trackTo(e);
-  track.onpointermove=ev=>{ if(ev.buttons) trackTo(ev); }; });
-frame.addEventListener("click",e=>{ if(e.target.closest(".iconbtn,#track")) return; toggle(); });
-bplay.addEventListener("click",e=>{ e.stopPropagation(); toggle(); });
-brep.addEventListener("click",e=>{ e.stopPropagation(); play(0); });
-bmute.addEventListener("click",e=>{ e.stopPropagation(); A.mute=!A.mute; bmute.innerHTML=A.mute?ICON.mute:ICON.sound; if(playing) play(tVis); });
-window.addEventListener("keydown",e=>{
-  const k=e.key.toLowerCase();
-  if(k==="escape"&&opened){ closePlayer(); return; }
-  if(!opened){ if(k==="enter"||k===" "){ e.preventDefault(); openPlayer(0); } return; }
-  if(k===" "||k==="k"){ e.preventDefault(); toggle(); }
-  else if(k==="r"){ play(0); }
-  else if(k==="m"){ bmute.click(); }
-  else if(k==="arrowright"){ seek(tVis+1); }
-  else if(k==="arrowleft"){ seek(tVis-1); }
 });
-window.addEventListener("mousemove",()=>{ if(!opened) return; lastMove=performance.now();
-  document.getElementById("ui").classList.remove("off"); });
-document.addEventListener("visibilitychange",()=>{ if(document.hidden&&playing) pause(); });
 
-/* -------------------------------- loop ---------------------------------- */
-function loop(){
-  requestAnimationFrame(loop);
-  if(!opened) return;
-  const t=clock();
-  if(playing){
-    if(t>=DUR) render(DUR), finish();
-    else render(t);
-    if(performance.now()-lastMove>3200) document.getElementById("ui").classList.add("off");
-  }else if(dirty){ dirty=false; render(tVis); }
-}
-fit();
-render(0);
-loop();
-const q=new URLSearchParams(location.search);
-if(q.get("bare")==="1"){ B("start").style.display="none"; B("ui").style.display="none"; }
-if(q.has("t")){
-  const v=clamp(parseFloat(q.get("t"))||0,0,DUR);
-  openPlayer(v);
-  if(q.has("paused")) setTimeout(pause,120);
-}
-window.reel={play:play,pause:pause,seek:seek,render:render,open:openPlayer,close:closePlayer,A:A,SCN:SCN,DUR:DUR};
+/* ===================== 2 · REGISTRY (selectable cards) =================== */
+addScene("c2",{
+  sel:-1, cards:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t;
+    const cols=w<520?2:(w<860?3:4);
+    const gap=Math.max(10,w*.012);
+    const pad=Math.max(14,w*.022);
+    const cw=(w-pad*2-gap*(cols-1))/cols;
+    const rows=Math.ceil(8/cols);
+    const chh=cl((h-pad*2-gap*(rows-1))/rows, 70, cw*.95);
+    s.cards.length=0;
+    let hov=-1;
+    for(let i=0;i<8;i++){
+      const p=DATA.P[i];
+      const cx=pad+(i%cols)*(cw+gap), cy=pad+Math.floor(i/cols)*(chh+gap);
+      const ord=cl(R*9-i*.7,0,1), e=Eo(ord);
+      const hot=(s.hover===i||s.sel===i);
+      const lift=hot?5:0;
+      const y=cy+(1-e)*22-lift;
+      const col=i%3===0?C.brand:(i%3===1?C.brand2:C.cyan);
+      s.cards.push({x:cx,y:cy,w:cw,h:chh,i:i});
+      if(s.over&&s.px>=cx-4&&s.px<=cx+cw+4&&s.py>=y-4&&s.py<=y+chh+4) hov=i;
+      const a=e;
+      c.save(); c.globalAlpha=a;
+      rrect(c,cx,y,cw,chh,14);
+      c.fillStyle=hot?"rgba(16,185,129,.09)":"rgba(255,255,255,.028)"; c.fill();
+      c.globalAlpha=a*(hot?1:.5); c.strokeStyle=hot?col:"rgba(255,255,255,.12)"; c.lineWidth=hot?2:1;
+      rrect(c,cx,y,cw,chh,14); c.stroke();
+      if(hot){
+        c.globalAlpha=a*.2; c.strokeStyle=col; c.lineWidth=3;
+        rrect(c,cx-1.5,y-1.5,cw+3,chh+3,15); c.stroke();
+      }
+      const fs=cl(cw*.062,10,17), sm=cl(cw*.05,9,13);
+      label(s,p.n,cx+14,y+chh*.28,hot?C.fg:"rgba(226,232,240,.88)",a,fs,SANS,"left");
+      label(s,p.c,cx+cw-14,y+chh*.28,col,a*.85,sm,MONO,"right");
+      /* rpm bar */
+      const bx=cx+14, bw=cw-28, by=y+chh*.52;
+      c.globalAlpha=a*.16; c.fillStyle=C.dim; rrect(c,bx,by,bw,6,3); c.fill();
+      c.globalAlpha=a*.95; c.fillStyle=col;
+      rrect(c,bx,by,Math.max(6,bw*(p.rpm/60)),6,3); c.fill();
+      label(s,p.rpm+" RPM",bx,by+18,col,a*.95,sm,MONO,"left");
+      label(s,num(p.rpd),bx+bw,by+18,"rgba(226,232,240,.45)",a*.8,sm,MONO,"right");
+      if(chh>78) label(s,p.tag,bx,y+chh-14,hot?col:"rgba(226,232,240,.32)",a*.85,sm*.92,SANS,"left");
+      c.restore();
+    }
+    s.hover=hov;
+    const p=s.sel>=0?DATA.P[s.sel]:(hov>=0?DATA.P[hov]:null);
+    ro("c2ro",s.sel>=0?("selected · "+DATA.P[s.sel].n):"8 providers · 21 models");
+    ro("c2out",p
+      ? `<span><b>${p.n}</b></span><span class="mono">${p.id}</span><span>${p.rpm} RPM</span>`+
+        `<span>${num(p.rpd)} / day</span><span>${p.tpm?p.tpm.toLocaleString()+" TPM":"no token cap listed"}</span>`+
+        `<span>${p.ctx.toLocaleString()} context</span><span class="acc">${p.tag}</span>`+
+        `<span class="mono">model: ${p.m}</span>`
+      : `<span><b>21</b> models</span><span><b>25</b> aliases</span><span>no credit card required on any of the 8</span><span>tap a card</span>`);
+  },
+  hit(x,y){ for(const k of this.cards){ if(x>=k.x-4&&x<=k.x+k.w+4&&y>=k.y-4&&y<=k.y+k.h+4) return k.i; } return -1; },
+  hitColor(i){ return i%3===0?C.brand:(i%3===1?C.brand2:C.cyan); },
+  onTap(i){ this.sel = (i<0||this.sel===i) ? -1 : i; }
+});
+
+/* ===================== 3 · ALIAS FAN-OUT (switchable) ==================== */
+addScene("c3",{
+  alias:"fast-smart", prog:new Array(8).fill(0), sent:-1, sentT:-9, nodes:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t, small=w<560;
+    const cx=w/2, cy=h*.5;
+    const rx=small?Math.min(w*.32,h*.66):Math.min(w*.37,h*.8);
+    const ry=small?Math.min(h*.31,w*.16):Math.min(h*.36,w*.2);
+    const nr=small?Math.max(14,Math.min(24,Math.min(w,h)*.14)):30;
+    const set=DATA.aliases[s.alias]||[];
+    s.nodes.length=0;
+    for(let i=0;i<8;i++){
+      const p=DATA.P[i], a=-PI/2+i/8*TAU+Math.sin(t*.25+i*1.4)*.04;
+      const inSet=set.indexOf(p.id)>=0;
+      const tgt=inSet?1:0, d=Eo(tgt);
+      s.prog[i]=lp(s.prog[i],d,RM?1:.09);
+      const k=Eo(s.prog[i])*Eo(R);
+      s.nodes.push({x:cx+Math.cos(a)*rx*Eo(R),y:cy+Math.sin(a)*ry*Eo(R),on:k,i:i});
+    }
+    const hr0=(small?34:44);
+    for(let i=0;i<8;i++){
+      const n=s.nodes[i]; if(n.on<=0.02) continue;
+      const col=i%3===0?C.brand:(i%3===1?C.brand2:C.cyan);
+      const ang=Math.atan2(n.y-cy,n.x-cx), a2=Math.atan2(cy-n.y,cx-n.x);
+      link(s,cx+Math.cos(ang)*hr0*1.05,cy+Math.sin(ang)*hr0*1.05,
+             n.x+Math.cos(a2)*nr*1.25,n.y+Math.sin(a2)*nr*1.25,
+             n.on,col,.2+.44*n.on,1.2+1.1*n.on);
+      if(n.on>.7) flow(s,cx,cy,n.x,n.y,3,(t*.7+i*.13)%1,col,.5*n.on,3);
+    }
+    /* request flight */
+    const age=t-s.sentT;
+    if(s.sent>=0&&age<1.4){
+      const n=s.nodes[s.sent], p=.5-.5*Math.cos(cl(age/1.1,0,1)*PI);
+      const mx=(cx+n.x)/2;
+      c.save(); c.globalAlpha=1-p*.6;
+      const q=.5-.5*Math.cos(cl(age/1.1,0,1)*PI);
+      c.fillStyle=C.fg;
+      c.fillRect(lp(cx,mx,q)-5,cy-5,10,10);
+      c.fillRect(lp(mx,n.x,q)-5,lp(cy,n.y,q)-5,10,10);
+      c.restore();
+    }
+    /* hub */
+    const hr=(small?34:44)*Eo(R);
+    c.save(); c.globalAlpha=.55*R;
+    const gg=c.createRadialGradient(cx,cy,0,cx,cy,hr*3.4);
+    gg.addColorStop(0,"rgba(16,185,129,.26)"); gg.addColorStop(1,"rgba(16,185,129,0)");
+    c.fillStyle=gg; c.beginPath(); c.arc(cx,cy,hr*3.4,0,TAU); c.fill(); c.restore();
+    c.save(); c.globalAlpha=R; c.strokeStyle=C.brand; c.lineWidth=2.2;
+    c.beginPath(); c.arc(cx,cy,hr,0,TAU); c.stroke(); c.restore();
+    bolt(s,cx,cy,hr*.6,C.brand2,R);
+    if(!small) label(s,"zerogateway",cx,cy+hr+20,C.fg,.5*R,12.5,MONO);
+    /* nodes */
+    let hov=-1;
+    for(let i=0;i<8;i++){
+      const n=s.nodes[i], p=DATA.P[i];
+      if(s.over&&Math.hypot(n.x-s.px,n.y-s.py)<nr*1.5) hov=i;
+      const col=i%3===0?C.brand:(i%3===1?C.brand2:C.cyan);
+      const a=n.on*R, act=hov===i||s.sel===i;
+      if(act){ c.save(); c.globalAlpha=.16*a; c.fillStyle=col;
+        c.beginPath(); c.arc(n.x,n.y,nr*1.9,0,TAU); c.fill(); c.restore(); }
+      node(s,n.x,n.y,nr,col,act||s.sent===i,a,0);
+      label(s,p.c,n.x,n.y,a>.02?(act?C.fg:"rgba(226,232,240,.5)"):"rgba(100,116,139,.45)",a*.95,nr*.42,MONO);
+      if(!small&&a>.25) label(s,p.n,n.x,n.y+nr+16,act?C.fg:"rgba(226,232,240,.5)",a*.9,12,SANS);
+    }
+    s.hover=hov;
+    const sel=hov>=0?DATA.P[hov]:(s.sel>=0?DATA.P[s.sel]:null);
+    ro("c3alias",s.alias);
+    ro("c3ro",set.length+" candidate"+(set.length===1?"":"s"));
+    ro("c3out",sel
+      ? `<span><b>${sel.n}</b></span><span class="mono">${sel.id}</span>`+
+        `<span class="mono">serves ${s.alias}</span><span>${sel.rpm} RPM</span><span>${sel.tag}</span>`
+      : `<span class="mono">model: "<b>${s.alias}</b>"</span><span>${set.length} of 8 providers can serve it</span>`+
+        `<span>tap a node to send the request there</span>`);
+  },
+  hit(x,y){ for(const n of (this.nodes||[])){ if(n.on<.25) continue; if(Math.hypot(n.x-x,n.y-y)<34) return n.i; } return -1; },
+  hitColor(i){ return i%3===0?C.brand:(i%3===1?C.brand2:C.cyan); },
+  onTap(i){ if(i>=0){ this.sent=i; this.sentT=this.t; this.sel=i; } }
+});
+
+/* ===================== 4 · THE 429 (playable failover) ================== */
+const SET4=DATA.aliases["llama-3.3-70b"].map(byId);
+addScene("c4",{
+  dead:[], serving:2, attempt:1, req:null, log:[], nodes:[], auto:0, last:0, resAt:0,
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t, small=w<640;
+    const ids=SET4, n=ids.length;
+    const hx=w*(small?.14:.15), hcy=h*(small?.26:.5), hr=(small?24:40)*Eo(R);
+    const nx=w*(small?.56:.6), nr=small?Math.max(13,Math.min(24,Math.min(w,h)*.13)):30;
+    const sp=Math.min(h*.78,(n-1)*(small?78:92));
+    s.nodes.length=0;
+    for(let i=0;i<n;i++){
+      s.nodes.push(small
+        ? {x:w*(0.30+i*0.155), y:h*0.72, i:i}
+        : {x:nx, y:hcy-sp/2+i*(sp/(n-1)), i:i});
+    }
+    if(s.auto){
+      if(t-s.last>1.25){
+        s.last=t;
+        if(s.auto===1){ this.kill(ids.indexOf(byId("groq"))); s.auto=2; }
+        else { s.auto=0; const b2=T("b429auto"); if(b2) b2.classList.remove("on"); }
+      }
+    }
+    /* active request */
+    if(s.req){
+      const q=cl((t-s.req.t0)/.55,0,1), di=s.req.i, tg=s.nodes[di];
+      const ang=Math.atan2(tg.y-hcy,tg.x-hx), a2=ang+PI;
+      link(s,hx+Math.cos(ang)*hr*1.1,hcy+Math.sin(ang)*hr*1.1,
+           tg.x+Math.cos(a2)*nr*1.3,tg.y+Math.sin(a2)*nr*1.3,
+           q,s.dead[di]?C.warn:C.brand2,.9,2.6);
+      flow(s,hx,hcy,tg.x,tg.y,3,(t*1.2)%1,s.dead[di]?C.warn:C.brand2,1,5);
+    }
+    /* resting links */
+    for(const nd of s.nodes){
+      const dead=s.dead[nd.i], srv=nd.i===s.serving, prog=cl(R*1.2,0,1);
+      const ang=Math.atan2(nd.y-hcy,nd.x-hx);
+      link(s,hx+Math.cos(ang)*hr*1.1,hcy+Math.sin(ang)*hr*1.1,
+           nd.x+Math.cos(ang+PI)*nr*1.3,nd.y+Math.sin(ang+PI)*nr*1.3,
+           prog, dead?"rgba(245,158,11,.3)":srv?C.brand2:"rgba(226,232,240,.14)",
+           dead?.4:srv?.5:.26, srv?2.2:1.3);
+    }
+    /* hub */
+    c.save(); c.globalAlpha=.5*R;
+    const gg=c.createRadialGradient(hx,hcy,0,hx,hcy,hr*3.4);
+    gg.addColorStop(0,"rgba(16,185,129,.26)"); gg.addColorStop(1,"rgba(16,185,129,0)");
+    c.fillStyle=gg; c.beginPath(); c.arc(hx,hcy,hr*3.4,0,TAU); c.fill(); c.restore();
+    c.save(); c.globalAlpha=R; c.strokeStyle=C.brand; c.lineWidth=2.2;
+    c.beginPath(); c.arc(hx,hcy,hr,0,TAU); c.stroke(); c.restore();
+    bolt(s,hx,hcy,hr*.6,C.brand2,R);
+    label(s,"zerogateway",hx,hcy+hr+18,C.fg,.5*R,small?10:12.5,MONO);
+    if(!small) label(s,"in flight",hx,hcy-hr-16,"rgba(226,232,240,.4)",R*.9,11,MONO);
+    else label(s,"in flight →",w*0.56,h*0.26,"rgba(226,232,240,.4)",R*.9,11,MONO);
+    /* nodes + labels to the right */
+    let hov=-1;
+    for(const nd of s.nodes){
+      const p=DATA.P[SET4[nd.i]], dead=s.dead[nd.i], srv=nd.i===s.serving;
+      if(s.over&&Math.hypot(nd.x-s.px,nd.y-s.py)<nr*1.7) hov=nd.i;
+      const hit=hov===nd.i;
+      const cd=dead?cl((t-(s.cdAt[nd.i]||0))/60,0,.999):0;
+      if(dead){
+        c.save(); c.globalAlpha=.45*R; c.strokeStyle="rgba(245,158,11,.4)"; c.lineWidth=1; c.setLineDash([4,6]);
+        c.beginPath(); c.arc(nd.x,nd.y,nr*1.8,0,TAU); c.stroke(); c.setLineDash([]); c.restore();
+        c.save(); c.globalAlpha=R*.9; c.strokeStyle=C.warn; c.lineWidth=4; c.lineCap="round";
+        c.beginPath(); c.arc(nd.x,nd.y,nr*1.8,-PI/2,-PI/2+TAU*cd); c.stroke(); c.restore();
+      }
+      if(srv||hit){
+        c.save(); c.globalAlpha=(dead?.12:.18)*R; c.fillStyle=dead?C.warn:C.brand2;
+        c.beginPath(); c.arc(nd.x,nd.y,nr*2,0,TAU); c.fill(); c.restore();
+      }
+      node(s,nd.x,nd.y,nr,dead?C.warn:(srv?C.brand2:C.dim),srv||hit,R*(dead?.65:.95),0);
+      label(s,p.c,nd.x,nd.y,dead?C.warn:(srv?C.fg:"rgba(226,232,240,.5)"),R*.95,nr*.42,MONO);
+      if(small){
+        label(s,dead?"cooling":(srv?"serving":p.rpm),nd.x,nd.y+nr+15,dead?C.warn:(srv?C.brand2:"rgba(226,232,240,.45)"),R*.85,9.5,MONO);
+        label(s,p.n,nd.x,nd.y+nr+28,dead?"rgba(245,158,11,.8)":(srv?C.fg:"rgba(226,232,240,.5)"),R*.8,9,SANS,"center",w*.145);
+      }else{
+        const lx=nd.x+nr+18;
+        label(s,p.n,lx,nd.y-9,dead?"rgba(245,158,11,.85)":(srv?C.fg:"rgba(226,232,240,.62)"),R*.92,cl(w*.013,11,15),SANS,"left");
+        label(s,dead?"cooling down":(srv?"serving · attempt "+s.attempt:p.rpm+" RPM"),lx,nd.y+11,
+              dead?C.warn:(srv?C.brand2:"rgba(226,232,240,.3)"),R*.8,cl(w*.0105,10,12),MONO,"left");
+        label(s,p.m,lx,nd.y+29,"rgba(148,163,184,.34)",R*.75,cl(w*.0092,9,11),MONO,"left");
+      }
+    }
+    s.hover=hov;
+    const cool=s.dead.filter(Boolean).length;
+    ro("c4ro","attempt "+s.attempt);
+    T("b429state").textContent = cool? cool+" candidate"+(cool>1?"s":"")+" cooling down"
+                                       : "all "+n+" candidates healthy";
+    T("b429state").style.color = cool?"#fbbf24":"#94a3b8";
+    ro("c4out",s.log.length
+      ? s.log.slice(0,3).map(l=>`<span class="${l.k}">${l.t}</span>`).join("")
+      : `<span class="ok">request in flight</span><span>tap a provider to return a 429</span>`);
+  },
+  p0(i){ return DATA.P[SET4[i]]; },
+  pushLog(k,t){ this.log.unshift({k:k,t:t}); if(this.log.length>3) this.log.pop(); },
+  cdAt:{},
+  hit(x,y){ const R=Math.max(26,Math.min(42,Math.min(this.w,this.h)*.16));
+    for(const nd of (this.nodes||[])){ if(Math.hypot(nd.x-x,nd.y-y)<R) return nd.i; } return -1; },
+  hitColor(i){ return this.dead[i]?C.warn:C.brand2; },
+  kill(i){
+    if(i<0) return;
+    if(this.dead[i]){ this.dead[i]=0; this.pushLog("ok",`${this.p0(i).n} quota reset — back in rotation`); }
+    else{
+      this.dead[i]=1; this.cdAt[i]=this.t;
+      const ra=Math.max(8,Math.round(60*((i+1)/SET4.length)));
+      this.pushLog("warn",`HTTP 429 from ${this.p0(i).n} · parsed Retry-After: ${ra}s`);
+      this.attempt++;
+      this.serving=-1;
+      const nxt=this.nodes&&this.nodes.find(x=>!this.dead[x.i]);
+      if(nxt){ this.serving=nxt.i; this.req={i:nxt.i,t0:this.t}; this.pushLog("ok",`retrying on ${this.p0(nxt.i).n} — request never surfaced an error`); }
+    }
+  },
+  reset(){
+    this.dead=[0,0,0,0,0]; this.cdAt={}; this.serving=2; this.attempt=1;
+    this.req={i:2,t0:this.t}; this.log=[]; this.auto=0;
+    T("b429auto").classList.remove("on");
+  },
+  onTap(i){ if(i>=0) this.kill(i); }
+});
+
+/* ===================== 5 · MULTI-KEY ROTATION =========================== */
+addScene("c5",{
+  keys:[{q:0,dead:0},{q:0,dead:0},{q:0,dead:0}], act:0, hopAt:-9, fails:0, slots:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t, small=w<620;
+    const n=3, hx=w*(small?.17:.15), cx=w*(small?.62:.62), hcy=h*.5;
+    const sw=Math.min(430,w*(small?.36:.4)), sh=small?62:78, hr0=small?30:40;
+    const gapY=Math.min(h*.74,(n-1)*(small?104:134));
+    s.slots.length=0;
+    /* settle the active key */
+    if(!this.keys[this.act].dead){
+      this.act=this.keys.findIndex(k=>!k.dead);
+      if(this.act<0) this.act=0;
+    }
+    for(let i=0;i<n;i++){
+      const y=hcy-gapY/2+i*(gapY/(n-1));
+      s.slots.push({x:cx,y:y,i:i,w:sw,h:sh});
+    }
+    /* continuous request rail */
+    c.save(); c.globalAlpha=.3*R; c.strokeStyle=C.brand2; c.lineWidth=2;
+    c.beginPath(); c.moveTo(-20,hcy); c.lineTo(hx-hr0*1.1,hcy); c.stroke();
+    c.setLineDash([3,9]); c.lineDashOffset=-(t*40)%12;
+    c.beginPath(); c.moveTo(hx+hr0*1.1,hcy); c.lineTo(s.slots[0]?s.slots[0].x-s.slots[0].w/2-24:w-20,hcy); c.stroke(); c.setLineDash([]); c.restore();
+    for(const k of s.slots){
+      if(k.i!==this.act) link(s,hx+hr0*1.1,hcy,k.x-k.w/2,k.y,cl(R*1.2,0,1),"rgba(226,232,240,.16)",.35,1.5);
+    }
+    /* hub */
+    const hr=hr0*Eo(R);
+    c.save(); c.globalAlpha=.5*R;
+    const gg=c.createRadialGradient(hx,hcy,0,hx,hcy,hr*3.4);
+    gg.addColorStop(0,"rgba(99,102,241,.3)"); gg.addColorStop(1,"rgba(99,102,241,0)");
+    c.fillStyle=gg; c.beginPath(); c.arc(hx,hcy,hr*3.4,0,TAU); c.fill(); c.restore();
+    c.save(); c.globalAlpha=R; c.strokeStyle=C.brand; c.lineWidth=2.2;
+    c.beginPath(); c.arc(hx,hcy,hr,0,TAU); c.stroke(); c.restore();
+    bolt(s,hx,hcy,hr*.6,C.brand2,R);
+    label(s,"provider",hx,hcy+hr+18,"rgba(226,232,240,.5)",R*.9,11,MONO);
+    /* flow into the active slot */
+    const a=s.slots[this.act];
+    if(a) flow(s,hx+hr0*1.1,hcy,a.x-a.w/2,a.y,3,(t*.8)%1,C.brand2,.8,4);
+    /* slots */
+    let hov=-1;
+    for(const k of s.slots){
+      const key=this.keys[k.i], isA=k.i===this.act;
+      if(s.over&&s.px>=k.x-k.w/2-6&&s.px<=k.x+k.w/2+6&&s.py>=k.y-k.h/2-6&&s.py<=k.y+k.h/2+6) hov=k.i;
+      const hot=isA||hov===k.i;
+      const col=key.dead?C.warn:isA?C.brand2:C.dim;
+      c.save(); c.globalAlpha=R*(hot?1:.42);
+      rrect(c,k.x-k.w/2,k.y-k.h/2,k.w,k.h,12);
+      c.fillStyle=isA?"rgba(16,185,129,.09)":"rgba(255,255,255,.025)"; c.fill();
+      c.globalAlpha=R*(hot?.95:.35); c.strokeStyle=col; c.lineWidth=isA?2:1.2; c.stroke();
+      c.restore();
+      label(s,"key "+(k.i+1),k.x-k.w/2+16,k.y-8,isA?C.fg:(key.dead?"rgba(245,158,11,.8)":"rgba(226,232,240,.5)"),R*(hot?1:.6),cl(w*.014,12,17),SANS,"left");
+      label(s,key.dead?"cooldown":(isA?"serving request":"standby"),k.x-k.w/2+16,k.y+12,
+            key.dead?C.warn:(isA?C.brand2:"rgba(226,232,240,.3)"),R*.75,cl(w*.011,10,12.5),MONO,"left");
+      /* quota */
+      const qw=k.w-32, qy=k.y+k.h/2-14;
+      c.save(); c.globalAlpha=R*.2; c.fillStyle=C.dim; rrect(c,k.x-k.w/2+16,qy,qw,7,3.5); c.fill();
+      c.globalAlpha=R*.95; c.fillStyle=key.dead?C.warn:C.brand2;
+      rrect(c,k.x-k.w/2+16,qy,Math.max(4,qw*key.q),7,3.5); c.fill();
+      c.restore();
+      label(s,Math.round(key.q*100)+"%",k.x+k.w/2-16,k.y-8,col,R*.8,cl(w*.011,10,12.5),MONO,"right");
+      /* hop flash */
+      if(this.hopAt>t-0.5){
+        const a2=cl((t-this.hopAt)/.5,0,1);
+        c.save(); c.globalAlpha=(1-a2)*R*.5; c.strokeStyle=C.brand2; c.lineWidth=2;
+        rrect(c,k.x-k.w/2-6,k.y-k.h/2-6,k.w+12,k.h+12,16); c.stroke(); c.restore();
+      }
+    }
+    s.hover=hov;
+    T("b5state").textContent = "key "+(this.act+1)+" serving"+(this.fails?" · "+this.fails+" key"+(this.fails>1?"s":"")+" rotated":"");
+    T("b5state").style.color = this.fails?"#fbbf24":"#94a3b8";
+    ro("c5ro",this.fails+" failed requests");
+    ro("c5out",hov>=0
+      ? `<span><b>key ${hov+1}</b></span><span>${Math.round(this.keys[hov].q*100)}% of quota used</span>`+
+        `<span>${this.keys[hov].dead?"on cooldown":"standing by"}</span><span>tap to exhaust</span>`
+      : `<span class="ok">request never surfaced an error</span><span>${this.fails} rotation"+(this.fails===1?"":"s")+" so far</span>`+
+        `<span class="mono">GEMINI_API_KEY="key1,key2,key3"</span>`);
+  },
+  hit(x,y){ for(const k of (this.slots||[])){ if(Math.abs(x-k.x)<k.w/2+6&&Math.abs(y-k.y)<k.h/2+6) return k.i; } return -1; },
+  hitColor(i){ return this.keys[i].dead?C.warn:C.brand2; },
+  burn(i){
+    const k=this.keys[i];
+    if(k.dead) return;
+    k.dead=1; k.q=1; this.fails++;
+    this.hopAt=this.t;
+    const nxt=this.keys.findIndex(x=>!x.dead);
+    if(nxt>=0){ this.act=nxt; this.keys[nxt].q=cl(this.keys[nxt].q+.34,0,1); }
+  },
+  reset(){ this.keys.forEach(k=>{k.q=0;k.dead=0;}); this.act=0; this.fails=0; this.hopAt=-9; },
+  onTap(i){ if(i>=0) this.burn(i); }
+});
+
+/* ===================== 6 · OPENAI ENDPOINT (runnable terminal) =========== */
+const TTY=(function(){
+  let q=[], cur=null;
+  function run(model){
+    q=[
+      {t:"$ zerogateway serve --port 8080",k:"in",d:.5},
+      {t:"→ OpenAI-compatible server on http://localhost:8080/v1",k:"out",d:.6},
+      {t:"",k:"gap",d:.05},
+      {t:"→ POST /v1/chat/completions",k:"out",d:.35},
+      {t:"    model: "+model,k:"in",d:.35},
+      {t:"    stream: true",k:"in",d:.2},
+      {t:"",k:"gap",d:.05},
+      {t:"▸ attempt 1 · 200 OK",k:"ok",d:.3},
+      {t:"▍ ",k:"stream",d:0}
+    ];
+    cur=0; return this;
+  }
+  function at(t){
+    const out=[]; let acc=0;
+    for(const L of q){ if(cur===null) break;
+      if(acc+d.L_d>0 || true){ /* placeholder */ }
+      acc+=L.d||0;
+      if(acc>=t) break;
+      out.push(L);
+    }
+    return out;
+  }
+  return {run:run, q:()=>q, cur:()=>cur, set:v=>cur=v, at:at};
+})();
+addScene("c6",{
+  model:"llama-3.3-70b", start:-9, clients:{}, lines:null, t0:-9,
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t, small=w<600;
+    const pad=Math.max(14,w*.02);
+    const bx=pad, by=pad, bw=w-pad*2, bh=h-pad*2-(small?30:46);   /* leave a band for the client connectors */
+    const r=14, open=Eo(R);
+    c.save(); c.globalAlpha=open;
+    rrect(c,bx,by,bw,bh,r);
+    c.fillStyle="rgba(4,7,14,.72)"; c.fill();
+    c.globalAlpha=open*.6; c.strokeStyle="rgba(255,255,255,.14)"; c.lineWidth=1.4; c.stroke();
+    c.save(); rrect(c,bx,by,bw,bh,r); c.clip();
+    /* title bar */
+    c.globalAlpha=open; c.fillStyle="rgba(16,185,129,.07)"; c.fillRect(bx,by,bw,small?34:42);
+    c.fillStyle="rgba(255,255,255,.1)"; c.fillRect(bx,by+(small?34:42),bw,1);
+    const tr=small?34:42;
+    ["#ef4444","#f59e0b","#10b981"].forEach((col,i)=>{
+      c.globalAlpha=open*.9; c.fillStyle=col;
+      c.beginPath(); c.arc(bx+18+i*17,by+tr/2,small?4.5:5.5,0,TAU); c.fill();
+    });
+    label(s,"zerogateway — proxy :8080",bx+(small?78:104),by+tr/2,"rgba(226,232,240,.5)",open*.9,small?11:13,MONO,"left");
+    /* client pills in the bar */
+    const active=Object.keys(this.clients).length;
+    if(!small) label(s,active+" client"+(active===1?"":"s")+" connected",bx+bw-14,by+tr/2,active?C.brand2:"rgba(148,163,184,.6)",open*.9,12,MONO,"right");
+    /* body */
+    const fs=small?11:cl(w*.0128,12,16.5);
+    const L=fs*(small?1.42:1.62);
+    let y=by+tr+fs*2.1;
+    const age=t-this.t0;
+    const show=this.t0>-1;
+    const put=(str,col,al,left)=>{ label(s,str,left||bx+20,y,col,open*(al==null?.95:al),fs,MONO,"left"); y+=L; };
+    if(!show){
+      put("$ zerogateway serve --port 8080",C.brand);
+      y+=L*.35;
+      put("→ OpenAI-compatible server on http://localhost:8080/v1","rgba(226,232,240,.7)");
+      y+=L*.5;
+      put("base_url    http://localhost:8080/v1","rgba(226,232,240,.5)",.85);
+      put("api_key     zerogateway",C.brand,.8);
+      put("format      OpenAI chat/completions · stream","rgba(226,232,240,.5)",.85);
+      y+=L*.5;
+      put("supported   "+DATA.clients.join("  ·  "),"rgba(148,163,184,.55)",.9);
+      y+=L*.6;
+      /* blinking prompt */
+      if(Math.floor(t*2)%2===0){
+        c.save(); c.globalAlpha=open; c.fillStyle=C.brand2;
+        c.fillRect(bx+20,y-fs*.5,fs*.62,fs); c.restore();
+      }
+      put("",null,0);
+    }else{
+      const Ln=[
+        {t:"$ zerogateway serve --port 8080",k:"in",d:.45},
+        {t:"→ OpenAI-compatible server on http://localhost:8080/v1",k:"out",d:.55},
+        {t:"",k:"gap",d:.06},
+        {t:"→ POST /v1/chat/completions",k:"out",d:.3},
+        {t:"    model:  "+this.model,k:"in",d:.3},
+        {t:"    stream: true",k:"in",d:.18},
+        {t:"",k:"gap",d:.06},
+        {t:"▸ attempt 1 · 200 OK · 38 tok/s",k:"ok",d:.3},
+        {t:"▍ ",k:"stream",d:0},
+        {t:"▏ 128 tokens · provider: groq · 0 credit card",k:"out",d:1e9}
+      ];
+      let acc=0;
+      for(let i=0;i<Ln.length;i++){
+        if(Ln[i].d>1e8 && age-acc<3.4) break;
+        const line=Ln[i], d=line.d||0;
+        if(acc>age) break;
+        const p=d>0?cl((age-(acc-d))/d,0,1):1;
+        acc+=d;
+        if(line.k==="gap"){ y+=L*.4; continue; }
+        if(line.k==="stream"){
+          const chars="▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇";
+          const n=cl(Math.floor((age-acc)*22),0,44);
+          c.save(); c.globalAlpha=open; c.textAlign="left"; c.textBaseline="middle";
+          c.font=fs+"px "+MONO; c.fillStyle=C.cyan; c.fillText("▍ ",bx+20,y);
+          for(let k2=0;k2<n;k2++){
+            c.fillStyle=k2%9===0?C.brand2:C.cyan;
+            c.fillText(chars[(k2*3+Math.floor(t*10))%chars.length],bx+20+fs*1.5+k2*fs*.7,y);
+          }
+          c.restore();
+          break;
+        }
+        const txt=line.t.slice(0,Math.ceil(line.t.length*p));
+        const col=line.k==="in"?C.brand:(line.k==="ok"?C.brand2:"rgba(226,232,240,.72)");
+        label(s,txt,bx+20,y,col,open,fs,MONO,"left");
+        if(p<1&&Math.floor(t*6)%2===0){
+          c.save(); c.globalAlpha=open; c.fillStyle=C.brand2;
+          c.fillRect(bx+20+c.measureText(txt).width+3,y-fs*.55,fs*.5,fs*1.1); c.restore();
+        }
+        y+=L;
+      }
+    }
+    c.restore();
+    /* connection lines to the bottom edge */
+    const cn=Object.keys(this.clients);
+    cn.forEach((name,i)=>{
+      const x=bx+bw*((i+.5)/Math.max(1,cn.length)), y2=by+bh+(small?18:28);
+      link(s,bx+bw/2,by+bh,x,y2,cl(R*1.3,0,1),C.brand2,.45,1.6);
+      flow(s,bx+bw/2,by+bh,x,y2,3,(t*.8+i*.2)%1,C.brand2,.7,3.4);
+      label(s,name,x,y2+11,C.brand2,R*.75,cl(w*.0105,10,12.5),MONO);
+    });
+    c.restore();
+    ro("c6ro",show?"streaming":"idle");
+    ro("c6out",show
+      ? `<span class="ok">HTTP/1.1 200 OK</span><span class="mono">${this.model}</span><span>stream: true</span><span>0 credit card</span>`
+      : `<span class="mono">base_url <b>http://localhost:8080/v1</b></span><span class="mono">api_key <b>zerogateway</b></span>`+
+        `<span>${cn.length?cn.length+" connected":DATA.clients.length+" clients supported"}</span>`);
+  },
+  tap(){ this.t0=this.t; TTY.run(this.model); }
+});
+
+/* ===================== 7 · FREE TIER LIMITS (tappable bars) ============== */
+const BARS=DATA.P.slice().sort((a,b)=>b.rpm-a.rpm);
+addScene("c7",{
+  sel:-1, bars:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t, small=w<560;
+    const rows=8, padX=Math.max(16,w*.03), top=Math.max(18,h*.09), bot=h-Math.max(18,h*.1);
+    const chartW=small?w-padX*2:Math.min(w*.56,760);
+    const x0=padX+(small?0:0);
+    const rowH=(bot-top)/rows;
+    s.bars.length=0;
+    let hov=-1;
+    for(let i=0;i<rows;i++){
+      const p=BARS[i];
+      const y=top+i*rowH;
+      const grow=Eo(cl(R*8-i*.55,0,1));
+      const v=(p.rpm/60)*grow;
+      const hot=(s.hover===i||s.sel===i);
+      const lx=small?padX:padX+150, lblW=small?0:132;
+      if(!small) label(s,p.n,lx-14,y+rowH*.5,hot?C.fg:"rgba(226,232,240,.7)",R,cl(w*.014,12,16),SANS,"right");
+      else label(s,p.n,padX,y+rowH*.13,hot?C.fg:"rgba(226,232,240,.7)",R,cl(w*.03,10,12),SANS,"left");
+      const bw=small?(w-padX*2-72):(chartW-190);
+      const byy=y+rowH*(small?.42:.28), bhh=rowH*(small?.3:.36);
+      c.save(); c.globalAlpha=R*.14; c.fillStyle=C.dim; rrect(c,lx,byy,bw,bhh,3); c.fill();
+      const col=p.rpm>=30?C.brand:(p.rpm>=20?C.brand2:C.accent);
+      c.globalAlpha=R*.95; c.fillStyle=col; rrect(c,lx,byy,Math.max(5,bw*v),bhh,3); c.fill();
+      if(hot){ c.globalAlpha=R*.35; c.fillStyle=C.fg; rrect(c,lx+Math.max(5,bw*v)-3,y+rowH*.28-2,3,rowH*.36+4,2); c.fill(); }
+      c.restore();
+      label(s,p.rpm+" RPM",lx+bw+12,y+rowH*.46,col,R*.95,cl(w*.0125,11,15),MONO,"left");
+      if(!small) label(s,num(p.rpd)+"/day",lx+bw+12,y+rowH*.78,"rgba(226,232,240,.35)",R*.8,cl(w*.0105,10,12.5),MONO,"left");
+      s.bars.push({x:lx-4,y:y,w:(small?w-padX*2-70:chartW)+80,h:rowH,i:i});
+      if(s.over&&s.py>=y&&s.py<=y+rowH&&s.px>=padX-10&&s.px<=padX+(small?w-padX*2:chartW+40)) hov=i;
+    }
+    /* right stats */
+    if(!small){
+      const rx=w-padX, top2=Math.max(20,h*.14);
+      const cnt=Math.round(60*Eo(cl(R*4,0,1)));
+      label(s,String(cnt),rx,top2,C.brand,R,cl(w*.105,72,150),SANS,"right");
+      label(s,"requests / minute — the ceiling on Mistral,",rx,top2+cl(w*.062,44,86),"rgba(226,232,240,.75)",R,cl(w*.0135,12,16),SANS,"right");
+      label(s,"with no daily cap at all",rx,top2+cl(w*.062,44,86)+cl(w*.019,20,27),"rgba(226,232,240,.75)",R,cl(w*.0135,12,16),SANS,"right");
+      const cy=top2+cl(w*.062,44,86)+cl(w*.035,24,40)+cl(w*.022,24,32);
+      label(s,"1,048,576",rx,cy,C.brand2,R,cl(w*.055,38,78),SANS,"right");
+      label(s,"token context window on Gemini 2.5 Flash",rx,cy+cl(w*.022,24,32),"rgba(226,232,240,.6)",R,cl(w*.0125,11,14),SANS,"right");
+    }
+    s.hover=hov;
+    const p=(s.sel>=0||hov>=0)?BARS[Math.max(s.sel,hov)]:null;
+    ro("c7ro","max 60");
+    ro("c7out",p
+      ? `<span><b>${p.n}</b></span><span>${p.rpm} requests / minute</span><span>${num(p.rpd)} per day</span>`+
+        `<span>${p.tpm?p.tpm.toLocaleString()+" tokens / min":"no token cap listed"}</span>`+
+        `<span>${p.ctx.toLocaleString()} ctx</span><span class="acc">${p.tag}</span>`
+      : `<span><b>8</b> providers</span><span>0 credit cards</span><span>tap a bar for exact limits</span>`);
+  },
+  hit(x,y){ for(const b of (this.bars||[])){ if(y>=b.y&&y<=b.y+b.h) return b.i; } return -1; },
+  hitColor(i){ const p=BARS[i]; return p.rpm>=30?C.brand:(p.rpm>=20?C.brand2:C.accent); },
+  onTap(i){ this.sel=(i<0||this.sel===i)?-1:i; }
+});
+
+/* ===================== 8 · THE MARK (tap to ripple) ====================== */
+addScene("c8",{
+  spin:0, taps:[],
+  draw(s){
+    const c=s.ctx, w=s.w, h=s.h, R=s.reveal, t=s.t;
+    const cx=w/2, cy=h/2, r=Math.min(w,h)*.17*Eo(R);
+    /* halo */
+    c.save(); c.globalAlpha=.5*R;
+    const gg=c.createRadialGradient(cx,cy,0,cx,cy,r*4);
+    gg.addColorStop(0,"rgba(16,185,129,.22)"); gg.addColorStop(1,"rgba(16,185,129,0)");
+    c.fillStyle=gg; c.beginPath(); c.arc(cx,cy,r*4,0,TAU); c.fill(); c.restore();
+    /* orbit dots */
+    for(let i=0;i<8;i++){
+      const a=t*.35+i/8*TAU, x=cx+Math.cos(a)*r*2.1, y=cy+Math.sin(a)*r*2.1;
+      c.save(); c.globalAlpha=.5*R; c.fillStyle=i%2?C.brand:C.brand2;
+      c.beginPath(); c.arc(x,y,2.6,0,TAU); c.fill(); c.restore();
+    }
+    /* ring */
+    c.save(); c.globalAlpha=R; c.strokeStyle=C.fg; c.lineWidth=Math.max(3,r*.1); c.lineCap="round";
+    c.beginPath(); c.arc(cx,cy,r,-PI/2+t*.4,-PI/2+t*.4+TAU*.8); c.stroke();
+    c.globalAlpha=R; c.fillStyle=C.brand;
+    const ea=-PI/2+t*.4+TAU*.8;
+    c.beginPath(); c.arc(cx+Math.cos(ea)*r,cy+Math.sin(ea)*r,r*.09,0,TAU); c.fill();
+    c.restore();
+    bolt(s,cx,cy,r*.62,C.brand,R);
+    label(s,"zerogateway",cx,cy+r*1.9,C.fg,.6*R,cl(w*.02,11,15),MONO);
+    label(s,"MIT · free forever · no credit card",cx,cy+r*2.6,"rgba(226,232,240,.45)",R,cl(w*.014,11,14),SANS);
+  }
+});
+
+/* ===================== 6 · DOM CONTROLS + BOOT ========================== */
+(function(){
+  /* --- scene 4: clean request resolution --- */
+  const S4=SCENES.find(s=>s.cv.id==="c4");
+  S4.p0=function(i){ return DATA.P[SET4[i]]; };
+  S4.pushLog=function(k,t){ this.log.unshift({k:k,t:t}); if(this.log.length>3) this.log.pop(); };
+  S4.cdAt={};
+  S4.reset=function(){
+    this.dead=[0,0,0,0,0]; this.cdAt={}; this.serving=2; this.attempt=1; this.done=0;
+    this.req={i:2,t0:this.t}; this.log=[]; this.auto=0;
+    const b=T("b429auto"); if(b) b.classList.remove("on");
+  };
+  S4.kill=function(i){
+    if(i<0) return;
+    if(this.dead[i]){
+      this.dead[i]=0; this.cdAt[i]=this.t;
+      this.pushLog("ok",this.p0(i).n+" quota reset — back in rotation");
+      if(this.req===null&&!this.serving||true){ /* re-pick if nothing healthy */ }
+    }else{
+      this.dead[i]=1; this.cdAt[i]=this.t;
+      this.attempt++;
+      const ra=Math.max(8,Math.round(60*((i+1)/SET4.length)));
+      this.pushLog("warn","HTTP 429 from "+this.p0(i).n+" · parsed Retry-After: "+ra+"s");
+      const nxt=this.nodes&&this.nodes.find(x=>!this.dead[x.i]);
+      if(nxt){
+        this.serving=nxt.i; this.req={i:nxt.i,t0:this.t}; this.done=0;
+        this.pushLog("ok","retrying on "+this.p0(nxt.i).n+" — the request never surfaced an error");
+      }else{
+        this.serving=-1; this.req=null;
+        this.pushLog("warn","every candidate is cooling down — the request is queued, not lost");
+      }
+    }
+  };
+  /* replace the inline resolver with a correct one */
+  const origDraw=S4.draw;
+  S4.draw=function(s,dt,now){
+    const t=s.t;
+    if(s.req && t-s.req.t0>.62 && !s.done){
+      s.done=1;
+      const di=s.req.i;
+      if(s.dead[di]){
+        const ra=Math.max(8,Math.round(60*((di+1)/SET4.length)));
+        s.pushLog("warn","HTTP 429 from "+s.p0(di).n+" · Retry-After "+ra+"s → cooldown");
+        s.attempt++;
+        const nxt=s.nodes.find(x=>!s.dead[x.i]);
+        if(nxt){ s.req={i:nxt.i,t0:t}; s.done=0; s.serving=nxt.i;
+          s.pushLog("ok","attempt "+s.attempt+" → "+s.p0(nxt.i).n+" · request never surfaced an error"); }
+        else { s.req=null; s.serving=-1; s.pushLog("warn","all candidates cooling down — queued, not lost"); }
+      }else{
+        s.req=null; s.serving=di;
+        s.pushLog("ok","HTTP 200 · served by "+s.p0(di).n+" (attempt "+s.attempt+")");
+        s.attempt=1;
+      }
+    }
+    origDraw(s,dt,now);
+  };
+
+  /* --- alias switcher --- */
+  const S3=SCENES.find(s=>s.cv.id==="c3");
+  const host=T("aliasBtns");
+  Object.keys(DATA.aliases).forEach((a,i)=>{
+    const b=document.createElement("button");
+    b.className="tbtn"+(i===0?" on":"");
+    b.textContent="model: \""+a+"\"";
+    b.onclick=()=>{
+      S3.alias=a; S3.sel=-1;
+      [...host.children].forEach(c=>c.classList.toggle("on",c===b));
+    };
+    host.appendChild(b);
+  });
+
+  /* --- 429 controls --- */
+  const ba=T("b429auto"), br=T("b429reset");
+  ba.onclick=()=>{
+    if(S4.auto){ S4.auto=0; ba.classList.remove("on"); return; }
+    S4.reset(); S4.auto=1; S4.last=S4.t; ba.classList.add("on");
+  };
+  br.onclick=()=>{ S4.reset(); ba.classList.remove("on"); };
+
+  /* --- multi-key --- */
+  T("b5reset").onclick=()=>SCENES.find(s=>s.cv.id==="c5").reset();
+
+  /* --- endpoint --- */
+  const S6=SCENES.find(s=>s.cv.id==="c6");
+  const inp=T("c6input");
+  T("b6run").onclick=()=>{ S6.model=(inp.value||"llama-3.3-70b").trim(); S6.tap(); };
+  T("b6clear").onclick=()=>{ S6.t0=-9; S6.start=-9; };
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ S6.model=(inp.value||"").trim(); S6.tap(); } });
+  const cb=T("clientBtns");
+  DATA.clients.forEach((c,i)=>{
+    const b=document.createElement("button");
+    b.className="tbtn ghost";
+    b.textContent=c;
+    b.onclick=()=>{
+      S6.clients[c]=!S6.clients[c];
+      b.classList.toggle("on",!!S6.clients[c]);
+      b.classList.toggle("ghost",!S6.clients[c]);
+      if(S6.t0<0||S6.t-S6.t0>4) S6.tap();
+    };
+    cb.appendChild(b);
+  });
+
+  /* --- keyboard accessibility: tab to a canvas, space/enter taps centre --- */
+  document.querySelectorAll(".cwrap").forEach(w=>{
+    w.setAttribute("tabindex","0");
+    w.setAttribute("role","img");
+    w.addEventListener("keydown",e=>{
+      if(e.key===" "||e.key==="Enter"){
+        e.preventDefault();
+        const s=SCENES.find(x=>x.wrap===w); if(!s) return;
+        const cx=s.w/2, cy=s.h/2;
+        s.taps.push({x:cx,y:cy,t0:performance.now()});
+        if(s.hit){ const i=s.hit(cx,cy); s.hover=i; if(s.onTap) s.onTap(i,cx,cy); }
+        if(navigator.vibrate) try{navigator.vibrate(8);}catch(_){}
+      }
+      if(e.key==="ArrowRight"&&e.altKey){ const s=SCENES.find(x=>x.wrap===w); if(s&&s.onTap) s.onTap(0,0,0); }
+    });
+    w.addEventListener("focus",()=>{ const s=SCENES.find(x=>x.wrap===w); if(s){ s.over=true; s.px=s.w/2; s.py=s.h/2; } });
+  });
+})();
+
+/* --------------------------------- boot --------------------------------- */
+requestAnimationFrame(tick);
+requestAnimationFrame(()=>{ SCENES.forEach(fit); });
+
+/* deep link: visual-guide.html#429 or ?t= jumps to a section */
+(function(){
+  const hash=(location.hash||"").replace("#","");
+  const map={"1":"c1","registry":"c2","2":"c2","aliases":"c3","3":"c3","429":"c4","4":"c4",
+             "keys":"c5","5":"c5","endpoint":"c6","6":"c6","limits":"c7","7":"c7","8":"c8"};
+  const target=map[hash];
+  if(target){
+    const sec=document.querySelector('[data-sec="'+target.replace("c","")+'"]');
+    if(sec) setTimeout(()=>sec.scrollIntoView({behavior:"smooth",block:"center"}),260);
+  }
+})();
 </script>
 </body>
 </html>

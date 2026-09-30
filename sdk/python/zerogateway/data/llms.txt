@@ -103,6 +103,6 @@ zerogateway serve --port 8080
 ## Detailed Documentation
 
 - Full Reference Specification: https://victor-the-ai.github.io/zero-gateway/llms-full.txt
-- Visual Guide (24s motion explainer of the routing & 429 failover): https://victor-the-ai.github.io/zero-gateway/visual-guide.html
+- Visual Guide (interactive diagrams of the routing, 429 failover and key rotation): https://victor-the-ai.github.io/zero-gateway/visual-guide.html
 - Online Playground: https://victor-the-ai.github.io/zero-gateway/#playground
 - Provider Limits Catalog: https://victor-the-ai.github.io/zero-gateway/#providers

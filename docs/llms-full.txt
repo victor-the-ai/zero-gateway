@@ -8,7 +8,7 @@ Zerogateway is an open-source, resilient AI API gateway that aggregates free-tie
 
 - **Primary Repository**: https://github.com/victor-the-ai/zero-gateway
 - **Official Documentation**: https://victor-the-ai.github.io/zero-gateway/
-- **Visual Guide (24s motion explainer)**: https://victor-the-ai.github.io/zero-gateway/visual-guide.html
+- **Visual Guide (interactive diagrams)**: https://victor-the-ai.github.io/zero-gateway/visual-guide.html
 - **PyPI Distribution**: https://pypi.org/project/zerogateway/
 - **npm Distribution**: https://www.npmjs.com/package/zerogateway
 - **License**: MIT License
